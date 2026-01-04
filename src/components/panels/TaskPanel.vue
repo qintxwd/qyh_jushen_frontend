@@ -79,7 +79,7 @@
             @dblclick="onOpenTask(task)"
           >
             <div class="task-icon">
-              <el-icon :size="24"><Document /></el-icon>
+              <SvgIcon name="document" :size="24" />
             </div>
             <div class="task-info">
               <span class="task-name">{{ task.name }}</span>
@@ -88,7 +88,7 @@
             </div>
             <div class="task-actions">
               <el-button size="small" type="danger" circle @click.stop="onDeleteTask(task)">
-                <el-icon><Delete /></el-icon>
+                <SvgIcon name="delete" :size="16" />
               </el-button>
             </div>
           </div>
@@ -99,7 +99,7 @@
         <div class="dialog-footer">
           <el-button @click="showTaskListDialog = false">取消</el-button>
           <el-button @click="refreshTaskList">
-            <el-icon><Refresh /></el-icon>
+            <SvgIcon name="refresh" :size="16" />
             刷新
           </el-button>
           <el-button 
@@ -107,7 +107,7 @@
             :disabled="!selectedTaskId"
             @click="onOpenSelectedTask"
           >
-            <el-icon><FolderOpened /></el-icon>
+            <SvgIcon name="folderopened" :size="16" />
             打开
           </el-button>
         </div>
@@ -120,17 +120,9 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  DocumentDelete, 
-  Document, 
-  Delete, 
-  Refresh,
-  FolderOpened
-} from '@element-plus/icons-vue'
 import { useTaskEditorStore } from '@/stores/task'
 import { useTaskWebSocket } from '@/composables/useTaskWebSocket'
 import { 

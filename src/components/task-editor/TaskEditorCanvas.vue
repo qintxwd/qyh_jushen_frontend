@@ -34,17 +34,17 @@
       <!-- 控制按钮 -->
       <Controls :show-interactive="false">
         <ControlButton @click="fitView">
-          <el-icon><Aim /></el-icon>
+          <SvgIcon name="aim" :size="16" />
         </ControlButton>
         <ControlButton @click="resetZoom">
-          <el-icon><ZoomIn /></el-icon>
+          <SvgIcon name="zoomin" :size="16" />
         </ControlButton>
       </Controls>
       
       <!-- 画布为空时的提示 -->
       <Panel v-if="nodes.length === 0" position="top-center" class="empty-hint-panel">
         <div class="empty-hint">
-          <el-icon :size="32"><DocumentAdd /></el-icon>
+          <SvgIcon name="plus" :size="32" />
           <p>拖拽左侧节点到此处开始编排任务</p>
         </div>
       </Panel>
@@ -53,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, computed, watch, markRaw, toRaw } from 'vue'
 import { 
   VueFlow, 
@@ -72,7 +73,6 @@ import { Controls, ControlButton } from '@vue-flow/controls'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 
-import { Aim, ZoomIn, DocumentAdd } from '@element-plus/icons-vue'
 import SkillNode from './SkillNode.vue'
 import ControlNode from './ControlNode.vue'
 import { useTaskEditorStore, generateNodeId, type FlowNode, type FlowNodeData } from '@/stores/task'

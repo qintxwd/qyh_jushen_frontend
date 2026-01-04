@@ -2,9 +2,9 @@
   <div class="auth-guard">
     <!-- 会话状态指示器 -->
     <div v-if="showSessionIndicator" class="session-indicator" :class="sessionStatus">
-      <el-icon v-if="sessionStatus === 'active'"><CircleCheckFilled /></el-icon>
-      <el-icon v-else-if="sessionStatus === 'warning'"><WarningFilled /></el-icon>
-      <el-icon v-else><CircleCloseFilled /></el-icon>
+      <SvgIcon v-if="sessionStatus === 'active'" name="circlecheck" :size="16" />
+      <SvgIcon v-else-if="sessionStatus === 'warning'" name="warningfilled" :size="16" />
+      <SvgIcon v-else name="circleclosefilled" :size="16" />
       <span>{{ sessionMessage }}</span>
     </div>
     
@@ -29,7 +29,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
-import { CircleCheckFilled, WarningFilled, CircleCloseFilled } from '@element-plus/icons-vue'
+import SvgIcon from '@/components/SvgIcon.vue'
 
 const authStore = useAuthStore()
 const showSessionIndicator = ref(false)

@@ -21,7 +21,7 @@
             class="tab-close"
             @click.stop="closeTab(tab)"
           >
-            <el-icon :size="12"><Close /></el-icon>
+            <SvgIcon name="close" :size="12" />
           </span>
         </div>
       </div>
@@ -29,7 +29,7 @@
       <div class="tabs-actions">
         <el-tooltip content="关闭面板" placement="bottom">
           <el-button text size="small" @click="layoutStore.toggleRightPanel">
-            <el-icon><Close /></el-icon>
+            <SvgIcon name="close" :size="16" />
           </el-button>
         </el-tooltip>
       </div>
@@ -55,15 +55,15 @@
       @click="hideContextMenu"
     >
       <div class="context-menu-item" @click="closeCurrentTab">
-        <el-icon><Close /></el-icon>
+        <SvgIcon name="close" :size="16" />
         <span>关闭</span>
       </div>
       <div class="context-menu-item" @click="closeOtherTabs">
-        <el-icon><FolderRemove /></el-icon>
+        <SvgIcon name="folderremove" :size="16" />
         <span>关闭其他</span>
       </div>
       <div class="context-menu-item" @click="closeAllTabs">
-        <el-icon><Delete /></el-icon>
+        <SvgIcon name="delete" :size="16" />
         <span>关闭全部</span>
       </div>
     </div>
@@ -71,6 +71,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
 import { useLayoutStore, type OpenTab } from '@/stores/layout'
 

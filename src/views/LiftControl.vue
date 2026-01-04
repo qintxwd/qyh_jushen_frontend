@@ -5,7 +5,7 @@
         <div class="header-content">
           <h2>升降电机控制</h2>
           <el-button @click="goBack" size="small">
-            <el-icon><Back /></el-icon>
+            <SvgIcon name="back" :size="16" />
             返回
           </el-button>
         </div>
@@ -116,8 +116,8 @@
                   :disabled="!state.connected"
                   style="width: 200px"
                 >
-                  <el-icon v-if="state.enabled"><SwitchButton /></el-icon>
-                  <el-icon v-else><VideoPlay /></el-icon>
+                  <SvgIcon v-if="state.enabled" name="switchbutton" :size="16" />
+                  <SvgIcon v-else name="videoplay" :size="16" />
                   {{ state.enabled ? '下使能' : '上使能' }}
                 </el-button>
               </div>
@@ -150,7 +150,7 @@
                       :loading="loading.speed"
                       :disabled="!state.connected || !state.enabled"
                     >
-                      <el-icon><Check /></el-icon>
+                      <SvgIcon name="check" :size="16" />
                       确认
                     </el-button>
                   </el-col>
@@ -186,7 +186,7 @@
                       :loading="loading.position"
                       :disabled="!state.connected || !state.enabled"
                     >
-                      <el-icon><Position /></el-icon>
+                      <SvgIcon name="position" :size="16" />
                       GO
                     </el-button>
                   </el-col>
@@ -222,7 +222,7 @@
                     @touchend.prevent="stopManualMove"
                     :disabled="!state.connected || !state.enabled"
                   >
-                    <el-icon><Top /></el-icon>
+                    <SvgIcon name="top" :size="16" />
                     上升
                   </el-button>
                   <el-button
@@ -236,7 +236,7 @@
                     @touchend.prevent="stopManualMove"
                     :disabled="!state.connected || !state.enabled"
                   >
-                    <el-icon><Bottom /></el-icon>
+                    <SvgIcon name="bottom" :size="16" />
                     下降
                   </el-button>
                 </div>
@@ -256,7 +256,7 @@
                   :disabled="!state.connected"
                   style="width: 200px"
                 >
-                  <el-icon><RefreshRight /></el-icon>
+                  <SvgIcon name="refreshright" :size="16" />
                   复位报警
                 </el-button>
               </div>
@@ -269,6 +269,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'

@@ -54,11 +54,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, h } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
-import { User, Lock } from '@element-plus/icons-vue'
+import SvgIcon from '@/components/SvgIcon.vue'
+
+// 创建图标渲染函数
+const User = () => h(SvgIcon, { name: 'view', size: 16 })
+const Lock = () => h(SvgIcon, { name: 'lock', size: 16 })
 
 const router = useRouter()
 const authStore = useAuthStore()

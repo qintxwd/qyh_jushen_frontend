@@ -65,8 +65,6 @@ import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getTaskTemplates, type TaskTemplate } from '@/api/task'
 import { useTaskEditorStore } from '@/stores/task'
-import * as Icons from '@element-plus/icons-vue'
-
 const visible = defineModel<boolean>('visible', { default: false })
 
 const taskStore = useTaskEditorStore()

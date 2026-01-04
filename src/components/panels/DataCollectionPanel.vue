@@ -35,11 +35,11 @@
       <h3 class="section-title">采集状态</h3>
       <div class="collection-status">
         <div class="status-badge" :class="collectionState">
-          <el-icon v-if="collectionState === 'idle'"><VideoCamera /></el-icon>
-          <el-icon v-else-if="collectionState === 'initializing'" class="rotating"><Loading /></el-icon>
-          <el-icon v-else-if="collectionState === 'ready'"><CircleCheckFilled /></el-icon>
-          <el-icon v-else-if="collectionState === 'recording'" class="recording-icon"><VideoCameraFilled /></el-icon>
-          <el-icon v-else-if="collectionState === 'stopped'"><VideoPause /></el-icon>
+          <SvgIcon v-if="collectionState === 'idle'" name="videocamera" :size="20" />
+          <SvgIcon v-else-if="collectionState === 'initializing'" name="loading" :size="20" class="rotating" />
+          <SvgIcon v-else-if="collectionState === 'ready'" name="circlecheck" :size="20" />
+          <SvgIcon v-else-if="collectionState === 'recording'" name="videocamera" :size="20" class="recording-icon" />
+          <SvgIcon v-else-if="collectionState === 'stopped'" name="videopause" :size="20" />
           <span>{{ stateText }}</span>
         </div>
         <div v-if="collectionState === 'recording'" class="recording-info">
@@ -56,32 +56,32 @@
       <h3 class="section-title">设备状态</h3>
       <div class="device-grid">
         <div class="device-tag" :class="globalArmStatusInfo.type">
-          <el-icon><Cpu /></el-icon>
+          <SvgIcon name="cpu" :size="16" />
           <span>双臂</span>
           <span class="status-text">{{ globalArmStatusInfo.text }}</span>
         </div>
         <div class="device-tag" :class="globalGripperStatusInfo.type">
-          <el-icon><Scissor /></el-icon>
+          <SvgIcon name="scissor" :size="16" />
           <span>夹爪</span>
           <span class="status-text">{{ globalGripperStatusInfo.text }}</span>
         </div>
         <div class="device-tag" :class="globalHeadStatusInfo.type">
-          <el-icon><Camera /></el-icon>
+          <SvgIcon name="camera" :size="16" />
           <span>头部</span>
           <span class="status-text">{{ globalHeadStatusInfo.text }}</span>
         </div>
         <div class="device-tag" :class="globalLiftStatusInfo.type">
-          <el-icon><DCaret /></el-icon>
+          <SvgIcon name="dcaret" :size="16" />
           <span>升降</span>
           <span class="status-text">{{ globalLiftStatusInfo.text }}</span>
         </div>
         <div class="device-tag" :class="globalChassisStatusInfo.type">
-          <el-icon><Van /></el-icon>
+          <SvgIcon name="van" :size="16" />
           <span>底盘</span>
           <span class="status-text">{{ globalChassisStatusInfo.text }}</span>
         </div>
         <div class="device-tag" :class="globalVrStatusInfo.type">
-          <el-icon><View /></el-icon>
+          <SvgIcon name="view" :size="16" />
           <span>VR</span>
           <span class="status-text">{{ globalVrStatusInfo.text }}</span>
         </div>
@@ -103,7 +103,7 @@
           @click="initializeDevices"
           class="control-btn"
         >
-          <el-icon><Setting /></el-icon>
+          <SvgIcon name="setting" :size="16" />
           初始化设备
         </el-button>
 
@@ -115,7 +115,7 @@
           @click="showStartDialog"
           class="control-btn"
         >
-          <el-icon><VideoPlay /></el-icon>
+          <SvgIcon name="videoplay" :size="16" />
           开始采集
         </el-button>
 
@@ -127,7 +127,7 @@
             @click="stopRecording"
             class="control-btn"
           >
-            <el-icon><VideoPause /></el-icon>
+            <SvgIcon name="videopause" :size="16" />
             停止采集
           </el-button>
         </template>
@@ -141,7 +141,7 @@
             @click="saveAndUpload"
             class="control-btn"
           >
-            <el-icon><Upload /></el-icon>
+            <SvgIcon name="upload" :size="16" />
             保存上传
           </el-button>
           <el-button 
@@ -150,7 +150,7 @@
             @click="discardRecording"
             class="control-btn"
           >
-            <el-icon><Delete /></el-icon>
+            <SvgIcon name="delete" :size="16" />
             丢弃数据
           </el-button>
         </template>
@@ -163,7 +163,7 @@
           @click="resetToIdle"
           class="control-btn secondary"
         >
-          <el-icon><RefreshRight /></el-icon>
+          <SvgIcon name="refreshright" :size="16" />
           重新初始化
         </el-button>
       </div>
@@ -274,14 +274,9 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
-import { 
-  VideoCamera, VideoCameraFilled, VideoPause, VideoPlay,
-  CircleCheckFilled, CircleCloseFilled, MoreFilled, Loading,
-  Cpu, Scissor, Camera, DCaret, Van, View, Setting,
-  Upload, Delete, RefreshRight
-} from '@element-plus/icons-vue'
 import axios from 'axios'
 import CameraView from '@/components/CameraView.vue'
 import { useLayoutStore } from '@/stores/layout'

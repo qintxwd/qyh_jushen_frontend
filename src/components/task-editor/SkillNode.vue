@@ -30,7 +30,7 @@
     
     <!-- 状态指示器 -->
     <div v-if="data.status && data.status !== 'idle'" class="status-indicator" :class="'status-' + data.status">
-      <el-icon v-if="data.status === 'running'" class="loading-icon"><Loading /></el-icon>
+      <SvgIcon v-if="data.status === 'running'" name="loading" :size="16" class="loading-icon" />
       <el-icon v-else-if="data.status === 'success'"><SuccessFilled /></el-icon>
       <el-icon v-else-if="data.status === 'failure'"><CircleCloseFilled /></el-icon>
     </div>
@@ -43,7 +43,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Handle, Position } from '@vue-flow/core'
-import { Loading, SuccessFilled, CircleCloseFilled } from '@element-plus/icons-vue'
 import type { FlowNodeData } from '@/stores/task'
 import { getNodeDefinition } from '@/api/task'
 

@@ -96,8 +96,8 @@
         :disabled="!state.connected"
         style="width: 100%"
       >
-        <el-icon v-if="state.enabled"><VideoPause /></el-icon>
-        <el-icon v-else><VideoPlay /></el-icon>
+        <SvgIcon v-if="state.enabled" name="videopause" :size="16" />
+        <SvgIcon v-else name="videoplay" :size="16" />
         {{ state.enabled ? '下使能' : '上使能' }}
       </el-button>
     </div>
@@ -155,7 +155,7 @@
             :loading="loading.position"
             :disabled="!state.connected || !state.enabled"
           >
-            <el-icon><Position /></el-icon>
+            <SvgIcon name="position" :size="16" />
             GO
           </el-button>
           <el-button
@@ -165,7 +165,7 @@
             :loading="loading.stop"
             :disabled="!state.connected || !state.enabled"
           >
-            <el-icon><VideoPause /></el-icon>
+            <SvgIcon name="videopause" :size="16" />
             STOP
           </el-button>
         </div>
@@ -191,7 +191,8 @@
     <div class="panel-section">
       <h3 class="section-title">
         <span>预设点位</span>
-        <el-button type="primary" size="small" :icon="Plus" @click="handleAddPoint">
+        <el-button type="primary" size="small" @click="handleAddPoint">
+          <SvgIcon name="plus" :size="14" />
           添加
         </el-button>
       </h3>
@@ -210,30 +211,33 @@
         >
           <div class="point-info">
             <div class="point-name">
-              <el-icon v-if="point.is_builtin"><Star /></el-icon>
+              <SvgIcon v-if="point.is_builtin" name="star" :size="14" />
               {{ point.name }}
             </div>
             <div class="point-value">{{ point.height }}mm</div>
             <div v-if="point.description" class="point-desc">{{ point.description }}</div>
           </div>
           <div class="point-actions">
-            <el-button text size="small" :icon="Position" @click.stop="goToPoint(point)">前往</el-button>
+            <el-button text size="small" @click.stop="goToPoint(point)">
+              <SvgIcon name="position" :size="14" />
+              前往
+            </el-button>
             <el-button 
               v-if="!point.is_builtin"
               text 
               size="small" 
-              :icon="Refresh"
               @click.stop="updatePointPosition(point)"
             >
+              <SvgIcon name="refresh" :size="14" />
               更新
             </el-button>
             <el-button 
               v-if="!point.is_builtin"
               text 
               size="small" 
-              :icon="Edit"
               @click.stop="openEditDialog(point)"
             >
+              <SvgIcon name="edit" :size="14" />
               编辑
             </el-button>
             <el-button 
@@ -241,9 +245,9 @@
               text 
               size="small" 
               type="danger"
-              :icon="Delete"
               @click.stop="deletePoint(point)"
             >
+              <SvgIcon name="delete" :size="14" />
               删除
             </el-button>
           </div>
@@ -268,7 +272,7 @@
           @touchend.prevent="stopManualMove"
           :disabled="!state.connected || !state.enabled"
         >
-          <el-icon :size="24"><Top /></el-icon>
+          <SvgIcon name="top" :size="24" />
           <span>上升</span>
         </el-button>
         <el-button
@@ -282,7 +286,7 @@
           @touchend.prevent="stopManualMove"
           :disabled="!state.connected || !state.enabled"
         >
-          <el-icon :size="24"><Bottom /></el-icon>
+          <SvgIcon name="bottom" :size="24" />
           <span>下降</span>
         </el-button>
       </div>
@@ -352,9 +356,9 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Star, Position, Edit, Delete, Plus, Refresh, Top, Bottom } from '@element-plus/icons-vue'
 import axios from 'axios'
 import { getApiV1BaseUrl } from '@/utils/apiUrl'
 

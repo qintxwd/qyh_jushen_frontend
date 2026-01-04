@@ -5,7 +5,7 @@
         <div class="header-content">
           <h2>ROS GUI 控制面板</h2>
           <el-button @click="goBack" size="small">
-            <el-icon><Back /></el-icon>
+            <SvgIcon name="back" :size="16" />
             返回
           </el-button>
         </div>
@@ -36,7 +36,7 @@
               </template>
               
               <div class="gui-description">
-                <el-icon><InfoFilled /></el-icon>
+                <SvgIcon name="infofilled" :size="16" />
                 <div>
                   <p><strong>功能：</strong>双手夹爪实时监控和控制</p>
                   <ul>
@@ -65,7 +65,7 @@
                   >
                     <template #append>
                       <el-button @click="copyCommand(commands.gripper.activate)">
-                        <el-icon><CopyDocument /></el-icon>
+                        <SvgIcon name="copydocument" :size="16" />
                       </el-button>
                     </template>
                   </el-input>
@@ -77,7 +77,7 @@
                   >
                     <template #append>
                       <el-button @click="copyCommand(commands.gripper.move)">
-                        <el-icon><CopyDocument /></el-icon>
+                        <SvgIcon name="copydocument" :size="16" />
                       </el-button>
                     </template>
                   </el-input>
@@ -128,7 +128,7 @@
                   </template>
                   
                   <div class="gui-description">
-                    <el-icon><InfoFilled /></el-icon>
+                    <SvgIcon name="infofilled" :size="16" />
                     <div>
                       <p><strong>功能：</strong>JAKA 双臂完整控制界面</p>
                       <ul>
@@ -151,7 +151,7 @@
                         size="small"
                         @click="sendQuickCommand('power_on')"
                       >
-                        <el-icon><VideoPlay /></el-icon>
+                        <SvgIcon name="videoplay" :size="16" />
                         上电
                       </el-button>
                       <el-button 
@@ -159,7 +159,7 @@
                         size="small"
                         @click="sendQuickCommand('enable')"
                       >
-                        <el-icon><Check /></el-icon>
+                        <SvgIcon name="check" :size="16" />
                         使能
                       </el-button>
                       <el-button 
@@ -167,7 +167,7 @@
                         size="small"
                         @click="sendQuickCommand('disable')"
                       >
-                        <el-icon><Close /></el-icon>
+                        <SvgIcon name="close" :size="16" />
                         去使能
                       </el-button>
                       <el-button 
@@ -175,7 +175,7 @@
                         size="small"
                         @click="sendQuickCommand('power_off')"
                       >
-                        <el-icon><SwitchButton /></el-icon>
+                        <SvgIcon name="switchbutton" :size="16" />
                         下电
                       </el-button>
                     </el-space>
@@ -202,7 +202,7 @@
                     >
                       <template #append>
                         <el-button @click="copyCommand(commands.jaka.startServo)">
-                          <el-icon><CopyDocument /></el-icon>
+                          <SvgIcon name="copydocument" :size="16" />
                         </el-button>
                       </template>
                     </el-input>
@@ -214,7 +214,7 @@
                     >
                       <template #append>
                         <el-button @click="copyCommand(commands.jaka.getState)">
-                          <el-icon><CopyDocument /></el-icon>
+                          <SvgIcon name="copydocument" :size="16" />
                         </el-button>
                       </template>
                     </el-input>
@@ -247,7 +247,7 @@
               </template>
               
               <div class="gui-description">
-                <el-icon><InfoFilled /></el-icon>
+                <SvgIcon name="infofilled" :size="16" />
                 <div>
                   <p><strong>功能：</strong>移动底盘状态监控和控制</p>
                   <ul>
@@ -277,7 +277,7 @@
                   >
                     <template #append>
                       <el-button @click="copyCommand(commands.chassis.cmdVel)">
-                        <el-icon><CopyDocument /></el-icon>
+                        <SvgIcon name="copydocument" :size="16" />
                       </el-button>
                     </template>
                   </el-input>
@@ -289,7 +289,7 @@
                   >
                     <template #append>
                       <el-button @click="copyCommand(commands.chassis.status)">
-                        <el-icon><CopyDocument /></el-icon>
+                        <SvgIcon name="copydocument" :size="16" />
                       </el-button>
                     </template>
                   </el-input>
@@ -326,7 +326,7 @@
                       style="width: 100%"
                       size="large"
                     >
-                      <el-icon><VideoPlay /></el-icon>
+                      <SvgIcon name="videoplay" :size="16" />
                       启动所有 GUI
                     </el-button>
                   </el-col>
@@ -338,7 +338,7 @@
                       style="width: 100%"
                       size="large"
                     >
-                      <el-icon><VideoPause /></el-icon>
+                      <SvgIcon name="videopause" :size="16" />
                       停止所有 GUI
                     </el-button>
                   </el-col>
@@ -371,6 +371,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'

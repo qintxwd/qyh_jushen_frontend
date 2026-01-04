@@ -33,7 +33,7 @@
             class="tab-close"
             @click.stop="closeTab(tab)"
           >
-            <el-icon :size="12"><Close /></el-icon>
+            <SvgIcon name="close" :size="12" />
           </span>
         </div>
       </div>
@@ -55,7 +55,7 @@
         <!-- 最大化按钮 -->
         <el-tooltip content="最大化" placement="bottom">
           <el-button text size="small" @click="layoutStore.maximizeWindow(position)">
-            <el-icon><FullScreen /></el-icon>
+            <SvgIcon name="fullscreen" :size="16" />
           </el-button>
         </el-tooltip>
       </div>
@@ -74,7 +74,7 @@
       
       <!-- 空状态 -->
       <div v-if="tabs.length === 0" class="empty-state">
-        <el-icon :size="48"><FolderOpened /></el-icon>
+        <SvgIcon name="folderopened" :size="48" />
         <p>拖拽 Tab 到此处</p>
         <p class="hint">或从左侧菜单选择面板</p>
       </div>
@@ -83,7 +83,7 @@
     <!-- 拖拽提示覆盖层 -->
     <div v-if="layoutStore.draggingTab && layoutStore.dropTarget === position" class="drop-overlay">
       <div class="drop-hint">
-        <el-icon :size="24"><Plus /></el-icon>
+        <SvgIcon name="plus" :size="24" />
         <span>放置到此窗口</span>
       </div>
     </div>
@@ -96,20 +96,21 @@
       @click="hideContextMenu"
     >
       <div class="context-menu-item" @click="closeCurrentTab">
-        <el-icon><Close /></el-icon>
+        <SvgIcon name="close" :size="16" />
         <span>关闭</span>
       </div>
       <div class="context-menu-item" @click="moveToOtherWindow">
-        <el-icon><component :is="position === 'left' ? 'Right' : 'Left'" /></el-icon>
+        <SvgIcon v-if="position === 'left'" name="back" :size="16" style="transform: rotate(180deg);" />
+        <SvgIcon v-else name="back" :size="16" />
         <span>{{ position === 'left' ? '移到右窗口' : '移到左窗口' }}</span>
       </div>
       <div class="context-menu-divider"></div>
       <div class="context-menu-item" @click="closeOtherTabs">
-        <el-icon><FolderRemove /></el-icon>
+        <SvgIcon name="folderremove" :size="16" />
         <span>关闭其他</span>
       </div>
       <div class="context-menu-item" @click="closeAllTabs">
-        <el-icon><Delete /></el-icon>
+        <SvgIcon name="delete" :size="16" />
         <span>关闭全部</span>
       </div>
     </div>
@@ -117,6 +118,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { reactive, onMounted, onUnmounted, defineAsyncComponent, computed } from 'vue'
 import { useLayoutStore, type OpenTab, type WindowPosition } from '@/stores/layout'
 

@@ -95,8 +95,8 @@
         :disabled="!state.connected"
         style="width: 100%"
       >
-        <el-icon v-if="state.enabled"><VideoPause /></el-icon>
-        <el-icon v-else><VideoPlay /></el-icon>
+        <SvgIcon v-if="state.enabled" name="videopause" :size="16" />
+        <SvgIcon v-else name="videoplay" :size="16" />
         {{ state.enabled ? '下使能' : '上使能' }}
       </el-button>
     </div>
@@ -155,7 +155,7 @@
             :loading="loading.angle"
             :disabled="!state.connected || !state.enabled"
           >
-            <el-icon><Position /></el-icon>
+            <SvgIcon name="position" :size="16" />
             GO
           </el-button>
           <el-button
@@ -165,7 +165,7 @@
             :loading="loading.upright"
             :disabled="!state.connected || !state.enabled"
           >
-            <el-icon><Aim /></el-icon>
+            <SvgIcon name="aim" :size="16" />
             回正
           </el-button>
           <el-button
@@ -175,7 +175,7 @@
             :loading="loading.stop"
             :disabled="!state.connected || !state.enabled"
           >
-            <el-icon><VideoPause /></el-icon>
+            <SvgIcon name="videopause" :size="16" />
             STOP
           </el-button>
         </div>
@@ -212,7 +212,7 @@
           @touchend.prevent="stopManualMove"
           :disabled="!state.connected || !state.enabled"
         >
-          <el-icon :size="24"><Top /></el-icon>
+          <SvgIcon name="top" :size="24" />
           <span>前倾</span>
         </el-button>
         <el-button
@@ -226,7 +226,7 @@
           @touchend.prevent="stopManualMove"
           :disabled="!state.connected || !state.enabled"
         >
-          <el-icon :size="24"><Bottom /></el-icon>
+          <SvgIcon name="bottom" :size="24" />
           <span>后仰</span>
         </el-button>
       </div>
@@ -236,6 +236,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'

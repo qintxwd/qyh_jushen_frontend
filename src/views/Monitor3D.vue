@@ -5,7 +5,7 @@
         <div class="header-content">
           <h2>双臂机器人 3D 监控</h2>
           <el-button @click="goBack" size="small">
-            <el-icon><Back /></el-icon>
+            <SvgIcon name="back" :size="16" />
             返回
           </el-button>
         </div>
@@ -24,7 +24,7 @@
                       {{ connected ? '已连接 ROS2' : '演示模式' }}
                     </el-tag>
                     <el-button size="small" @click="toggleFullscreen">
-                      <el-icon><FullScreen /></el-icon>
+                      <SvgIcon name="fullscreen" :size="16" />
                       全屏
                     </el-button>
                   </el-space>
@@ -110,13 +110,13 @@
                     @click="toggleRecording"
                     style="width: 100%;"
                   >
-                    <el-icon v-if="recording"><VideoPause /></el-icon>
-                    <el-icon v-else><VideoPlay /></el-icon>
+                    <SvgIcon v-if="recording" name="videopause" :size="16" />
+                    <SvgIcon v-else name="videoplay" :size="16" />
                     {{ recording ? '停止录制' : '开始录制' }}
                   </el-button>
                   <div v-if="recording" class="recording-info">
                     <el-text type="danger">
-                      <el-icon><VideoCamera /></el-icon>
+                      <SvgIcon name="videocamera" :size="16" />
                       录制中... {{ recordingTime }}s
                     </el-text>
                   </div>
@@ -131,6 +131,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'

@@ -16,7 +16,7 @@
       <h3 class="section-title">当前位置</h3>
       <div class="head-visual">
         <div class="head-avatar" :style="headStyle">
-          <el-icon :size="40"><Camera /></el-icon>
+          <SvgIcon name="camera" :size="40" />
         </div>
         <div class="head-angles">
           <div class="angle-item">
@@ -69,11 +69,11 @@
       
       <div class="action-buttons">
         <el-button type="primary" @click="executeMove" :loading="loading">
-          <el-icon><Position /></el-icon>
+          <SvgIcon name="position" :size="16" />
           执行
         </el-button>
         <el-button @click="resetHead" :loading="loadingReset">
-          <el-icon><Aim /></el-icon>
+          <SvgIcon name="aim" :size="16" />
           回正
         </el-button>
       </div>
@@ -84,7 +84,7 @@
     <!-- 点位管理 -->
     <div class="panel-section">
       <h3 class="section-title">
-        <el-icon><Star /></el-icon>
+        <SvgIcon name="star" :size="16" />
         保存的点位
       </h3>
       
@@ -99,7 +99,7 @@
         >
           <div class="point-info">
             <div class="point-name">
-              <el-icon v-if="point.is_builtin" class="builtin-icon"><Star /></el-icon>
+              <SvgIcon v-if="point.is_builtin" name="star" :size="14" class="builtin-icon" />
               {{ point.name }}
             </div>
             <div class="point-desc" v-if="point.description">{{ point.description }}</div>
@@ -109,26 +109,26 @@
           </div>
           <div class="point-actions">
             <el-button size="small" text @click.stop="goToPoint(point.id)">
-              <el-icon><Position /></el-icon>
+              <SvgIcon name="position" :size="16" />
             </el-button>
             <el-button size="small" text @click.stop="openEditDialog(point)" v-if="!point.is_builtin">
-              <el-icon><Edit /></el-icon>
+              <SvgIcon name="edit" :size="16" />
             </el-button>
             <el-button size="small" text type="danger" @click.stop="deletePoint(point)" v-if="!point.is_builtin">
-              <el-icon><Delete /></el-icon>
+              <SvgIcon name="delete" :size="16" />
             </el-button>
           </div>
         </div>
       </div>
       <div class="empty-points" v-else>
-        <el-icon><Star /></el-icon>
+        <SvgIcon name="star" :size="16" />
         <span>暂无保存的点位</span>
       </div>
 
       <!-- 点位操作 -->
       <div class="points-actions">
         <el-button type="primary" size="small" @click="handleAddPoint">
-          <el-icon><Plus /></el-icon>
+          <SvgIcon name="plus" :size="16" />
           采集当前位置
         </el-button>
         <el-button 
@@ -137,7 +137,7 @@
           @click="goToSelectedPoint"
           :disabled="!selectedPointId"
         >
-          <el-icon><Position /></el-icon>
+          <SvgIcon name="position" :size="16" />
           前往选中点位
         </el-button>
       </div>
@@ -146,7 +146,7 @@
       <div class="update-point-section" v-if="selectedPointId && !isBuiltinPoint(selectedPointId)">
         <div class="update-label">更新选中点位的位置数据：</div>
         <el-button size="small" @click="updatePointPosition">
-          <el-icon><Refresh /></el-icon>
+          <SvgIcon name="refresh" :size="16" />
           更新为当前位置
         </el-button>
       </div>
@@ -207,9 +207,9 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Star, Position, Edit, Delete, Plus, Refresh } from '@element-plus/icons-vue'
 import axios from 'axios'
 import { getApiV1BaseUrl } from '@/utils/apiUrl'
 

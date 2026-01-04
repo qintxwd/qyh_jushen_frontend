@@ -9,20 +9,20 @@
         :type="showGrid ? 'primary' : 'default'"
         @click="toggleGrid"
       >
-        <el-icon><Grid /></el-icon>
+        <SvgIcon name="grid" :size="16" />
         {{ showGrid ? '隐藏网格' : '显示网格' }}
       </el-button>
     </div>
     
     <!-- 加载状态 -->
     <div v-if="!modelLoaded && !loadError" class="loading-overlay">
-      <el-icon class="loading-icon"><Loading /></el-icon>
+      <SvgIcon name="refresh" :size="16" />
       <span>{{ loadStatus }}</span>
     </div>
     
     <!-- 错误状态 -->
     <div v-if="loadError" class="error-overlay">
-      <el-icon :size="32"><WarningFilled /></el-icon>
+      <SvgIcon name="warningfilled" :size="32" />
       <span>{{ loadError }}</span>
       <el-button size="small" @click="retryLoad">重试</el-button>
     </div>
@@ -35,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, onMounted, onUnmounted, onActivated, onDeactivated, defineExpose } from 'vue'
 import * as THREE from 'three'
 import { sceneManager } from './sceneManager'

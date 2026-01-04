@@ -25,7 +25,7 @@
           :loading="loading.power"
           @click="powerOn"
         >
-          <el-icon><VideoPlay /></el-icon>
+          <SvgIcon name="videoplay" :size="16" />
           上电
         </el-button>
         <el-button 
@@ -34,7 +34,7 @@
           :loading="loading.power"
           @click="powerOff"
         >
-          <el-icon><VideoPause /></el-icon>
+          <SvgIcon name="videopause" :size="16" />
           下电
         </el-button>
       </div>
@@ -50,7 +50,7 @@
           :loading="loading.enable"
           @click="enableArm"
         >
-          <el-icon><Unlock /></el-icon>
+          <SvgIcon name="unlock" :size="16" />
           使能
         </el-button>
         <el-button 
@@ -59,7 +59,7 @@
           :loading="loading.enable"
           @click="disableArm"
         >
-          <el-icon><Lock /></el-icon>
+          <SvgIcon name="lock" :size="16" />
           去使能
         </el-button>
       </div>
@@ -83,7 +83,7 @@
           :loading="loading.servo"
           @click="startServo"
         >
-          <el-icon><CaretRight /></el-icon>
+          <SvgIcon name="caretright" :size="16" />
           启动伺服
         </el-button>
         <el-button 
@@ -92,7 +92,7 @@
           :loading="loading.servo"
           @click="stopServo"
         >
-          <el-icon><SwitchButton /></el-icon>
+          <SvgIcon name="switchbutton" :size="16" />
           停止伺服
         </el-button>
       </div>
@@ -103,7 +103,7 @@
     <!-- 点动控制 (Jog) -->
     <div class="panel-section">
       <h3 class="section-title">
-        <el-icon><Pointer /></el-icon>
+        <SvgIcon name="pointer" :size="16" />
         点动控制 (Jog)
       </h3>
       
@@ -178,7 +178,7 @@
             @touchend.prevent="stopJog"
             :disabled="!armState.enabled"
           >
-            <el-icon><Minus /></el-icon>
+            <SvgIcon name="minus" :size="16" />
           </el-button>
           <div class="axis-value">{{ formatJointValue(jogParams.robotId, i-1) }}</div>
           <el-button 
@@ -192,7 +192,7 @@
             @touchend.prevent="stopJog"
             :disabled="!armState.enabled"
           >
-            <el-icon><Plus /></el-icon>
+            <SvgIcon name="plus" :size="16" />
           </el-button>
         </div>
       </div>
@@ -214,7 +214,7 @@
               @touchend.prevent="stopJog"
               :disabled="!armState.enabled"
             >
-              <el-icon><Minus /></el-icon>
+              <SvgIcon name="minus" :size="16" />
             </el-button>
             <div class="axis-value">{{ formatCartesianValue(jogParams.robotId, idx) }}</div>
             <el-button 
@@ -228,7 +228,7 @@
               @touchend.prevent="stopJog"
               :disabled="!armState.enabled"
             >
-              <el-icon><Plus /></el-icon>
+              <SvgIcon name="plus" :size="16" />
             </el-button>
           </div>
         </div>
@@ -247,7 +247,7 @@
               @touchend.prevent="stopJog"
               :disabled="!armState.enabled"
             >
-              <el-icon><Minus /></el-icon>
+              <SvgIcon name="minus" :size="16" />
             </el-button>
             <div class="axis-value">{{ formatRotationValue(jogParams.robotId, idx) }}</div>
             <el-button 
@@ -261,7 +261,7 @@
               @touchend.prevent="stopJog"
               :disabled="!armState.enabled"
             >
-              <el-icon><Plus /></el-icon>
+              <SvgIcon name="plus" :size="16" />
             </el-button>
           </div>
         </div>
@@ -273,7 +273,7 @@
     <!-- 点位管理 -->
     <div class="panel-section">
       <h3 class="section-title">
-        <el-icon><Location /></el-icon>
+        <SvgIcon name="location" :size="16" />
         点位管理
       </h3>
       
@@ -288,7 +288,7 @@
         >
           <div class="point-info">
             <span class="point-name">
-              <el-icon v-if="point.is_builtin" class="builtin-icon"><Star /></el-icon>
+              <SvgIcon v-if="point.is_builtin" name="star" :size="14" class="builtin-icon" />
               {{ point.name }}
             </span>
             <span class="point-desc" v-if="point.description">{{ point.description }}</span>
@@ -301,7 +301,7 @@
               :disabled="point.id === 'zero'"
               @click.stop="openEditDialog(point)"
             >
-              <el-icon><Edit /></el-icon>
+              <SvgIcon name="edit" :size="16" />
             </el-button>
             <el-button 
               size="small" 
@@ -310,7 +310,7 @@
               :disabled="point.is_builtin"
               @click.stop="deletePoint(point)"
             >
-              <el-icon><Delete /></el-icon>
+              <SvgIcon name="delete" :size="16" />
             </el-button>
           </div>
         </div>
@@ -328,15 +328,15 @@
           :loading="loading.goToPoint"
           @click="goToSelectedPoint"
         >
-          <el-icon><Position /></el-icon>
+          <SvgIcon name="position" :size="16" />
           移动到选中点位
         </el-button>
         
         <el-dropdown trigger="click" @command="handleAddPoint">
           <el-button type="success">
-            <el-icon><Plus /></el-icon>
+            <SvgIcon name="plus" :size="16" />
             采集新点位
-            <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+            <SvgIcon name="arrowdown" :size="16" />
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
@@ -408,7 +408,7 @@
     <!-- 负载管理 -->
     <div class="panel-section">
       <h3 class="section-title">
-        <el-icon><Goods /></el-icon>
+        <SvgIcon name="goods" :size="16" />
         负载管理
       </h3>
       
@@ -557,7 +557,7 @@
           :loading="loading.abort"
           @click="motionAbort"
         >
-          <el-icon><WarningFilled /></el-icon>
+          <SvgIcon name="warningfilled" :size="16" />
           急停
         </el-button>
         <el-button 
@@ -565,7 +565,7 @@
           :loading="loading.clear"
           @click="clearError"
         >
-          <el-icon><RefreshRight /></el-icon>
+          <SvgIcon name="refreshright" :size="16" />
           清除错误
         </el-button>
       </div>
@@ -646,13 +646,9 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { 
-  VideoPlay, VideoPause, Unlock, Lock, 
-  CaretRight, SwitchButton, Aim, WarningFilled, RefreshRight,
-  Position, Location, Star, Edit, Delete, Plus, ArrowDown, Minus, Pointer, Goods
-} from '@element-plus/icons-vue'
 import axios from 'axios'
 import { getApiBaseUrl } from '@/utils/apiUrl'
 

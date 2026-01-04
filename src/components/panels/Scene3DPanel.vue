@@ -6,17 +6,17 @@
         <el-button-group size="small">
           <el-tooltip content="重置视角">
             <el-button @click="resetCamera">
-              <el-icon><Aim /></el-icon>
+              <SvgIcon name="aim" :size="16" />
             </el-button>
           </el-tooltip>
           <el-tooltip content="俯视图">
             <el-button @click="setTopView">
-              <el-icon><Top /></el-icon>
+              <SvgIcon name="top" :size="16" />
             </el-button>
           </el-tooltip>
           <el-tooltip content="前视图">
             <el-button @click="setFrontView">
-              <el-icon><View /></el-icon>
+              <SvgIcon name="view" :size="16" />
             </el-button>
           </el-tooltip>
         </el-button-group>
@@ -29,12 +29,12 @@
             :type="showJointStatus ? 'primary' : 'default'"
             @click="showJointStatus = !showJointStatus"
           >
-            <el-icon><DataLine /></el-icon>
+            <SvgIcon name="dataline" :size="16" />
           </el-button>
         </el-tooltip>
         <el-tooltip content="全屏">
           <el-button size="small" @click="toggleFullscreen">
-            <el-icon><FullScreen /></el-icon>
+            <SvgIcon name="fullscreen" :size="16" />
           </el-button>
         </el-tooltip>
       </div>
@@ -56,6 +56,7 @@
 import { ref } from 'vue'
 import MainScene from '@/components/scene/MainScene.vue'
 import JointStatusOverlay from '@/components/scene/JointStatusOverlay.vue'
+import SvgIcon from '@/components/SvgIcon.vue'
 import { useLayoutStore } from '@/stores/layout'
 
 const layoutStore = useLayoutStore()

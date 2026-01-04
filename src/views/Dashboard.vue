@@ -36,7 +36,7 @@
               </template>
               <div class="button-group">
                 <el-button @click="$router.push('/monitor')" type="primary">
-                  <el-icon><View /></el-icon>
+                  <SvgIcon name="view" :size="16" />
                   3D监控
                 </el-button>
                 <el-button 
@@ -44,7 +44,7 @@
                   @click="$router.push('/task-editor')"
                   type="success"
                 >
-                  <el-icon><Edit /></el-icon>
+                  <SvgIcon name="edit" :size="16" />
                   任务编辑
                 </el-button>
                 <el-button 
@@ -52,7 +52,7 @@
                   @click="$router.push('/ros-gui')"
                   type="info"
                 >
-                  <el-icon><Setting /></el-icon>
+                  <SvgIcon name="setting" :size="16" />
                   ROS GUI控制
                 </el-button>
                 <el-button 
@@ -60,7 +60,7 @@
                   @click="$router.push('/terminal')"
                   type="warning"
                 >
-                  <el-icon><Monitor /></el-icon>
+                  <SvgIcon name="monitor" :size="16" />
                   系统终端
                 </el-button>
                 <el-button 
@@ -68,7 +68,7 @@
                   @click="$router.push('/lift-control')"
                   type="primary"
                 >
-                  <el-icon><Top /></el-icon>
+                  <SvgIcon name="top" :size="16" />
                   升降控制
                 </el-button>
               </div>
@@ -81,6 +81,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 

@@ -53,7 +53,7 @@
     <div class="palette-footer">
       <el-tooltip content="拖拽节点到画布添加" placement="top">
         <span class="hint-text">
-          <el-icon><InfoFilled /></el-icon>
+          <SvgIcon name="infofilled" :size="16" />
           拖拽或点击添加节点
         </span>
       </el-tooltip>
@@ -62,8 +62,8 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, computed } from 'vue'
-import { Search, InfoFilled } from '@element-plus/icons-vue'
 import { 
   NODE_DEFINITIONS, 
   CATEGORY_NAMES, 

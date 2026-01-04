@@ -36,15 +36,15 @@
       <h3 class="section-title">操作</h3>
       <div class="action-buttons">
         <el-button @click="saveSettings" type="primary">
-          <el-icon><Check /></el-icon>
+          <SvgIcon name="check" :size="16" />
           保存设置
         </el-button>
         <el-button @click="resetSettings">
-          <el-icon><Refresh /></el-icon>
+          <SvgIcon name="refresh" :size="16" />
           重置默认
         </el-button>
         <el-button @click="handleLogout" type="danger">
-          <el-icon><SwitchButton /></el-icon>
+          <SvgIcon name="switchbutton" :size="16" />
           退出登录
         </el-button>
       </div>
@@ -57,7 +57,7 @@
       <h3 class="section-title">系统电源</h3>
       <div class="action-buttons">
         <el-button @click="handleShutdown" type="danger" :loading="shuttingDown">
-          <el-icon><SwitchButton /></el-icon>
+          <SvgIcon name="switchbutton" :size="16" />
           系统关机
         </el-button>
       </div>
@@ -76,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'

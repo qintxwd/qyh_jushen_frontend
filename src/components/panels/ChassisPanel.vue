@@ -149,35 +149,35 @@
           <h3 class="section-title">状态标志</h3>
           <div class="flags-grid">
             <div class="flag-item" :class="{ active: status.flags?.is_emergency_stopped }">
-              <el-icon><WarningFilled /></el-icon>
+              <SvgIcon name="warningfilled" :size="16" />
               <span>急停</span>
             </div>
             <div class="flag-item" :class="{ active: status.flags?.is_brake_released }">
-              <el-icon><Unlock /></el-icon>
+              <SvgIcon name="unlock" :size="16" />
               <span>抱闸释放</span>
             </div>
             <div class="flag-item" :class="{ active: status.flags?.is_charging, charging: status.flags?.is_charging }">
-              <el-icon><Lightning /></el-icon>
+              <SvgIcon name="lightning" :size="16" />
               <span>充电中</span>
             </div>
             <div class="flag-item" :class="{ active: status.flags?.is_auto_mode }">
-              <el-icon><Setting /></el-icon>
+              <SvgIcon name="setting" :size="16" />
               <span>自动模式</span>
             </div>
             <div class="flag-item" :class="{ active: status.flags?.is_loaded }">
-              <el-icon><Box /></el-icon>
+              <SvgIcon name="box" :size="16" />
               <span>有载荷</span>
             </div>
             <div class="flag-item" :class="{ active: status.flags?.has_wifi, wifi: status.flags?.has_wifi }">
-              <el-icon><Connection /></el-icon>
+              <SvgIcon name="connection" :size="16" />
               <span>WiFi</span>
             </div>
             <div class="flag-item" :class="{ active: status.flags?.obstacle_slowdown, warning: status.flags?.obstacle_slowdown }">
-              <el-icon><WarnTriangleFilled /></el-icon>
+              <SvgIcon name="warntrianglefilled" :size="16" />
               <span>减速避障</span>
             </div>
             <div class="flag-item" :class="{ active: status.flags?.obstacle_paused, danger: status.flags?.obstacle_paused }">
-              <el-icon><CircleCloseFilled /></el-icon>
+              <SvgIcon name="circleclosefilled" :size="16" />
               <span>障碍暂停</span>
             </div>
           </div>
@@ -248,7 +248,7 @@
               :disabled="status.flags?.is_emergency_stopped"
               @click="emergencyStop"
             >
-              <el-icon><WarningFilled /></el-icon>
+              <SvgIcon name="warningfilled" :size="16" />
               紧急停止
             </el-button>
             <el-button 
@@ -257,7 +257,7 @@
               :disabled="!status.flags?.is_emergency_stopped || !status.flags?.is_emergency_recoverable"
               @click="releaseEmergencyStop"
             >
-              <el-icon><Unlock /></el-icon>
+              <SvgIcon name="unlock" :size="16" />
               解除急停
             </el-button>
           </div>
@@ -270,15 +270,15 @@
           <h3 class="section-title">移动控制</h3>
           <div class="move-buttons">
             <el-button @click="pauseMove" :loading="moveLoading.pause">
-              <el-icon><VideoPause /></el-icon>
+              <SvgIcon name="videopause" :size="16" />
               暂停移动
             </el-button>
             <el-button type="primary" @click="resumeMove" :loading="moveLoading.resume">
-              <el-icon><VideoPlay /></el-icon>
+              <SvgIcon name="videoplay" :size="16" />
               恢复移动
             </el-button>
             <el-button type="danger" @click="stopMove" :loading="moveLoading.stop">
-              <el-icon><SwitchButton /></el-icon>
+              <SvgIcon name="switchbutton" :size="16" />
               停止移动
             </el-button>
           </div>
@@ -296,7 +296,7 @@
               :disabled="status.flags?.is_charging"
               :loading="chargeLoading.start"
             >
-              <el-icon><Lightning /></el-icon>
+              <SvgIcon name="lightning" :size="16" />
               开始充电
             </el-button>
             <el-button 
@@ -305,7 +305,7 @@
               :disabled="!status.flags?.is_charging"
               :loading="chargeLoading.stop"
             >
-              <el-icon><SwitchButton /></el-icon>
+              <SvgIcon name="switchbutton" :size="16" />
               停止充电
             </el-button>
           </div>
@@ -322,7 +322,7 @@
               :disabled="status.flags?.is_low_power_mode"
               :loading="powerLoading.enter"
             >
-              <el-icon><Moon /></el-icon>
+              <SvgIcon name="moon" :size="16" />
               进入低功耗
             </el-button>
             <el-button 
@@ -331,7 +331,7 @@
               :disabled="!status.flags?.is_low_power_mode"
               :loading="powerLoading.exit"
             >
-              <el-icon><Sunny /></el-icon>
+              <SvgIcon name="sunny" :size="16" />
               退出低功耗
             </el-button>
           </div>
@@ -362,7 +362,7 @@
           <h3 class="section-title">系统控制</h3>
           <div class="system-buttons">
             <el-button type="warning" @click="systemReset" :loading="systemLoading">
-              <el-icon><RefreshRight /></el-icon>
+              <SvgIcon name="refreshright" :size="16" />
               系统复位
             </el-button>
             <el-button @click="stopLocalization" :loading="locLoading">
@@ -393,11 +393,11 @@
           </div>
           <div class="nav-buttons">
             <el-button type="primary" @click="navigateToCoord(false)" :loading="navLoading">
-              <el-icon><Position /></el-icon>
+              <SvgIcon name="position" :size="16" />
               导航到目标
             </el-button>
             <el-button @click="navigateToCoord(true)" :loading="localizingLoading">
-              <el-icon><Aim /></el-icon>
+              <SvgIcon name="aim" :size="16" />
               定位到坐标
             </el-button>
           </div>
@@ -423,7 +423,7 @@
             </div>
           </div>
           <el-button type="warning" style="width: 100%; margin-top: 10px" @click="forceLocalize" :loading="forceLocLoading">
-            <el-icon><Aim /></el-icon>
+            <SvgIcon name="aim" :size="16" />
             强制定位
           </el-button>
         </div>
@@ -445,7 +445,7 @@
                   clearable
                 >
                   <template #prefix>
-                    <el-icon><Search /></el-icon>
+                    <SvgIcon name="search" :size="16" />
                   </template>
                 </el-input>
               </div>
@@ -465,13 +465,13 @@
                   :class="{ selected: selectedStationId === station.id }"
                   @click="selectedStationId = station.id"
                 >
-                  <el-icon><LocationFilled /></el-icon>
+                  <SvgIcon name="locationfilled" :size="16" />
                   <span class="station-name">{{ station.name }}</span>
                   <span class="station-id">ID: {{ station.id }}</span>
                   <span class="station-coord">({{ (station.x / 1000).toFixed(2) }}, {{ (station.y / 1000).toFixed(2) }}) m</span>
                 </div>
                 <div v-if="filteredStations.length === 0" class="station-empty">
-                  <el-icon><InfoFilled /></el-icon>
+                  <SvgIcon name="infofilled" :size="16" />
                   <span>{{ stationSearchText ? '未找到匹配的站点' : '暂无站点数据' }}</span>
                 </div>
               </div>
@@ -499,7 +499,7 @@
                 :loading="stationNavLoading"
                 @click="navigateToSelectedStation"
               >
-                <el-icon><Position /></el-icon>
+                <SvgIcon name="position" :size="16" />
                 导航到站点
               </el-button>
             </div>
@@ -567,7 +567,7 @@
               :loading="syncMapsLoading"
               @click="syncMaps"
             >
-              <el-icon><Refresh /></el-icon>
+              <SvgIcon name="refresh" :size="16" />
               刷新地图
             </el-button>
           </div>
@@ -661,7 +661,7 @@
                   @mouseup="stopManualMove('forward')"
                   @mouseleave="stopManualMove('forward')"
                 >
-                  <el-icon><ArrowUp /></el-icon>
+                  <SvgIcon name="arrowup" :size="16" />
                   <span class="key-hint">W</span>
                 </el-button>
                 <div class="pad-empty"></div>
@@ -674,7 +674,7 @@
                   @mouseup="stopManualMove('rotate_left')"
                   @mouseleave="stopManualMove('rotate_left')"
                 >
-                  <el-icon><RefreshLeft /></el-icon>
+                  <SvgIcon name="refreshleft" :size="16" />
                   <span class="key-hint">A</span>
                 </el-button>
                 <el-button 
@@ -684,7 +684,7 @@
                   @mouseup="stopManualMove('backward')"
                   @mouseleave="stopManualMove('backward')"
                 >
-                  <el-icon><ArrowDown /></el-icon>
+                  <SvgIcon name="arrowdown" :size="16" />
                   <span class="key-hint">S</span>
                 </el-button>
                 <el-button 
@@ -694,7 +694,7 @@
                   @mouseup="stopManualMove('rotate_right')"
                   @mouseleave="stopManualMove('rotate_right')"
                 >
-                  <el-icon><RefreshRight /></el-icon>
+                  <SvgIcon name="refreshright" :size="16" />
                   <span class="key-hint">D</span>
                 </el-button>
               </div>
@@ -709,7 +709,7 @@
         <el-divider />
         <div class="panel-section">
           <el-button type="danger" size="large" style="width: 100%" @click="stopChassis">
-            <el-icon><SwitchButton /></el-icon>
+            <SvgIcon name="switchbutton" :size="16" />
             紧急停止
           </el-button>
         </div>
@@ -719,6 +719,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { chassisApi } from '@/api/chassis'

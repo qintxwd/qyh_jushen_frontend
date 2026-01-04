@@ -45,27 +45,27 @@
           text
           @click="addTab"
         >
-          <el-icon><Plus /></el-icon>
+          <SvgIcon name="plus" :size="16" />
         </el-button>
       </div>
 
       <div class="pane-actions">
         <el-dropdown trigger="click" @command="handleCommand">
           <el-button size="small" text>
-            <el-icon><MoreFilled /></el-icon>
+            <SvgIcon name="morefilled" :size="16" />
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="split-h">
-                <el-icon><Grid /></el-icon>
+                <SvgIcon name="grid" :size="16" />
                 左右分屏
               </el-dropdown-item>
               <el-dropdown-item command="split-v">
-                <el-icon><Grid /></el-icon>
+                <SvgIcon name="grid" :size="16" />
                 上下分屏
               </el-dropdown-item>
               <el-dropdown-item divided command="close-pane" v-if="!isRoot">
-                <el-icon><Close /></el-icon>
+                <SvgIcon name="close" :size="16" />
                 关闭面板
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { Close, Plus, MoreFilled, Grid } from '@element-plus/icons-vue'
+import SvgIcon from '@/components/SvgIcon.vue'
 import Terminal from '@/components/Terminal.vue'
 
 interface TerminalTab {

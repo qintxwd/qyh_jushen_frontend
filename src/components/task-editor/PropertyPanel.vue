@@ -8,7 +8,7 @@
         <span>{{ nodeDefinition.name }}</span>
       </div>
       <el-button text size="small" @click="emit('delete')">
-        <el-icon><Delete /></el-icon>
+        <SvgIcon name="delete" :size="16" />
       </el-button>
     </div>
     
@@ -106,7 +106,7 @@
         
         <template v-if="nodeDefinition.params.length === 0">
           <div class="no-params-hint">
-            <el-icon><InfoFilled /></el-icon>
+            <SvgIcon name="infofilled" :size="16" />
             此节点没有可配置参数
           </div>
         </template>
@@ -115,7 +115,7 @@
     
     <div class="panel-footer">
       <el-button type="danger" size="small" @click="emit('delete')">
-        <el-icon><Delete /></el-icon>
+        <SvgIcon name="delete" :size="16" />
         删除节点
       </el-button>
     </div>
@@ -123,15 +123,15 @@
   
   <div class="property-panel empty" v-else>
     <div class="empty-content">
-      <el-icon :size="48"><Setting /></el-icon>
+      <SvgIcon name="setting" :size="48" />
       <p>选择节点以编辑属性</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, computed, watch, reactive, onMounted } from 'vue'
-import { Delete, InfoFilled, Setting } from '@element-plus/icons-vue'
 import type { FlowNode } from '@/stores/task'
 import type { NodeDefinition } from '@/api/task'
 import { listPresets, listTasks, listHeadPoints, listLiftPoints, listWaistPoints } from '@/api/task'

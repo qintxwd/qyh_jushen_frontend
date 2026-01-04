@@ -4,7 +4,7 @@
     <header class="title-bar">
       <div class="title-left">
         <div class="logo" @click="toggleSidebar">
-          <el-icon :size="24"><Cpu /></el-icon>
+          <SvgIcon name="cpu" :size="24" />
         </div>
         <h1 class="app-title">远昌机器人控制平台</h1>
       </div>
@@ -17,7 +17,7 @@
               :type="!layoutStore.splitMode ? 'primary' : 'default'"
               @click="layoutStore.splitMode = false; mergeWindows()"
             >
-              <el-icon><Document /></el-icon>
+              <SvgIcon name="document" :size="16" />
             </el-button>
           </el-tooltip>
           <el-tooltip content="分屏模式">
@@ -25,7 +25,7 @@
               :type="layoutStore.splitMode ? 'primary' : 'default'"
               @click="layoutStore.splitMode = true"
             >
-              <el-icon><Grid /></el-icon>
+              <SvgIcon name="grid" :size="16" />
             </el-button>
           </el-tooltip>
         </el-button-group>
@@ -35,7 +35,7 @@
         <div class="status-indicators">
           <el-tooltip content="ROS2 连接状态" placement="bottom">
             <span class="status-dot" :class="{ active: layoutStore.connectionStatus.ros }">
-              <el-icon><Connection /></el-icon>
+              <SvgIcon name="connection" :size="18" />
             </span>
           </el-tooltip>
           <el-tooltip :content="'双臂: ' + layoutStore.armStatusInfo.text" placement="bottom">
@@ -44,7 +44,7 @@
               warning: layoutStore.armStatus.connected && !layoutStore.armStatus.enabled,
               error: layoutStore.armStatus.error
             }">
-              <el-icon><Cpu /></el-icon>
+              <SvgIcon name="cpu" :size="18" />
             </span>
           </el-tooltip>
         </div>
@@ -56,16 +56,16 @@
             <span class="user-info">
               <el-avatar :size="28" icon="User" />
               <span class="username">{{ authStore.user?.username || '用户' }}</span>
-              <el-icon><ArrowDown /></el-icon>
+              <SvgIcon name="arrowdown" :size="14" />
             </span>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="openPanel('settings')">
-                  <el-icon><Setting /></el-icon>
+                  <SvgIcon name="setting" :size="16" />
                   设置
                 </el-dropdown-item>
                 <el-dropdown-item divided @click="handleLogout">
-                  <el-icon><SwitchButton /></el-icon>
+                  <SvgIcon name="switchbutton" :size="16" />
                   退出登录
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -120,7 +120,7 @@
             <div class="nav-item" @click="openPanel('settings')">
               <el-tooltip content="设置" placement="right" :disabled="!layoutStore.sidebarCollapsed">
                 <div class="nav-item-inner">
-                  <el-icon :size="22"><Setting /></el-icon>
+                  <SvgIcon name="setting" :size="22" />
                   <span class="nav-label" v-show="!layoutStore.sidebarCollapsed">设置</span>
                 </div>
               </el-tooltip>
@@ -180,7 +180,7 @@
       <div class="status-row">
         <!-- ROS 连接 -->
         <span class="status-item" :class="layoutStore.connectionStatus.ros ? 'status-success' : 'status-danger'">
-          <el-icon><Connection /></el-icon>
+          <SvgIcon name="connection" :size="16" />
           <span class="status-label">ROS</span>
           <span class="status-value">{{ layoutStore.connectionStatus.ros ? '已连接' : '未连接' }}</span>
         </span>
@@ -193,7 +193,7 @@
           :class="'status-' + layoutStore.armStatusInfo.type"
           @click="openPanel('arm-control')"
         >
-          <el-icon><Cpu /></el-icon>
+          <SvgIcon name="cpu" :size="16" />
           <span class="status-label">双臂</span>
           <span class="status-value">{{ layoutStore.armStatusInfo.text }}</span>
         </span>
@@ -205,7 +205,7 @@
           class="status-item" 
           :class="'status-' + layoutStore.cameraStatusInfo.type"
         >
-          <el-icon><VideoCamera /></el-icon>
+          <SvgIcon name="videocamera" :size="16" />
           <span class="status-label">相机</span>
           <span class="status-value">{{ layoutStore.cameraStatusInfo.text }}</span>
         </span>
@@ -218,7 +218,7 @@
           :class="'status-' + layoutStore.gripperStatusInfo.type"
           @click="openPanel('gripper')"
         >
-          <el-icon><Scissor /></el-icon>
+          <SvgIcon name="scissor" :size="16" />
           <span class="status-label">夹爪</span>
           <span class="status-value">{{ layoutStore.gripperStatusInfo.text }}</span>
         </span>
@@ -231,7 +231,7 @@
           :class="'status-' + layoutStore.headStatusInfo.type"
           @click="openPanel('head')"
         >
-          <el-icon><Camera /></el-icon>
+          <SvgIcon name="camera" :size="16" />
           <span class="status-label">头部</span>
           <span class="status-value">{{ layoutStore.headStatusInfo.text }}</span>
         </span>
@@ -244,7 +244,7 @@
           :class="'status-' + layoutStore.liftStatusInfo.type"
           @click="openPanel('lift')"
         >
-          <el-icon><DCaret /></el-icon>
+          <SvgIcon name="dcaret" :size="16" />
           <span class="status-label">升降</span>
           <span class="status-value">{{ layoutStore.liftStatusInfo.text }}</span>
         </span>
@@ -257,7 +257,7 @@
           :class="'status-' + layoutStore.chassisStatusInfo.type"
           @click="openPanel('chassis')"
         >
-          <el-icon><Van /></el-icon>
+          <SvgIcon name="van" :size="16" />
           <span class="status-label">底盘</span>
           <span class="status-value">{{ layoutStore.chassisStatusInfo.text }}</span>
         </span>
@@ -270,7 +270,7 @@
           :class="'status-' + layoutStore.waistStatusInfo.type"
           @click="openPanel('waist')"
         >
-          <el-icon><Refresh /></el-icon>
+          <SvgIcon name="refresh" :size="16" />
           <span class="status-label">腰部</span>
           <span class="status-value">{{ layoutStore.waistStatusInfo.text }}</span>
         </span>
@@ -283,7 +283,7 @@
           :class="'status-' + layoutStore.vrStatusInfo.type"
           @click="openPanel('vr-teleoperation')"
         >
-          <el-icon><View /></el-icon>
+          <SvgIcon name="view" :size="16" />
           <span class="status-label">VR</span>
           <span class="status-value">{{ layoutStore.vrStatusInfo.text }}</span>
         </span>
@@ -291,7 +291,7 @@
         <!-- 右侧时间 -->
         <span class="status-spacer"></span>
         <span class="status-item status-time">
-          <el-icon><Clock /></el-icon>
+          <SvgIcon name="clock" :size="16" />
           {{ currentTime }}
         </span>
       </div>
@@ -306,6 +306,7 @@ import axios from 'axios'
 import { useLayoutStore, PANEL_DEFINITIONS } from '@/stores/layout'
 import { useAuthStore } from '@/stores/auth'
 import TabWindow from '@/components/layout/TabWindow.vue'
+import SvgIcon from '@/components/SvgIcon.vue'
 import { getApiV1BaseUrl } from '@/utils/apiUrl'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { chassisApi } from '@/api/chassis'

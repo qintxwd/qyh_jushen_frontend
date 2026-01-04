@@ -2,7 +2,7 @@
   <div class="overview-panel">
     <div class="panel-section">
       <h3 class="section-title">
-        <el-icon><Connection /></el-icon>
+        <SvgIcon name="connection" :size="16" />
         系统状态
       </h3>
       <div class="status-grid">
@@ -18,7 +18,7 @@
         
         <div class="status-card" :class="{ online: status.leftArm }">
           <div class="status-icon">
-            <el-icon :size="28"><Cpu /></el-icon>
+            <SvgIcon name="cpu" :size="28" />
           </div>
           <div class="status-info">
             <span class="status-label">左臂</span>
@@ -28,7 +28,7 @@
         
         <div class="status-card" :class="{ online: status.rightArm }">
           <div class="status-icon">
-            <el-icon :size="28"><Cpu /></el-icon>
+            <SvgIcon name="cpu" :size="28" />
           </div>
           <div class="status-info">
             <span class="status-label">右臂</span>
@@ -38,7 +38,7 @@
         
         <div class="status-card" :class="{ online: status.gripper }">
           <div class="status-icon">
-            <el-icon :size="28"><Scissor /></el-icon>
+            <SvgIcon name="scissor" :size="28" />
           </div>
           <div class="status-info">
             <span class="status-label">夹爪</span>
@@ -52,7 +52,7 @@
 
     <div class="panel-section">
       <h3 class="section-title">
-        <el-icon><Odometer /></el-icon>
+        <SvgIcon name="odometer" :size="16" />
         实时数据
       </h3>
       <div class="data-list">
@@ -79,20 +79,20 @@
 
     <div class="panel-section">
       <h3 class="section-title">
-        <el-icon><Lightning /></el-icon>
+        <SvgIcon name="lightning" :size="16" />
         快捷操作
       </h3>
       <div class="quick-actions">
         <el-button type="primary" @click="goToHome" :loading="loading">
-          <el-icon><Aim /></el-icon>
+          <SvgIcon name="aim" :size="16" />
           回零位
         </el-button>
         <el-button type="warning" @click="emergencyStop">
-          <el-icon><WarningFilled /></el-icon>
+          <SvgIcon name="warningfilled" :size="16" />
           急停
         </el-button>
         <el-button @click="refreshStatus">
-          <el-icon><Refresh /></el-icon>
+          <SvgIcon name="refresh" :size="16" />
           刷新
         </el-button>
       </div>
@@ -102,7 +102,7 @@
 
     <div class="panel-section">
       <h3 class="section-title">
-        <el-icon><Tickets /></el-icon>
+        <SvgIcon name="tickets" :size="16" />
         最近任务
       </h3>
       <div class="task-list">
@@ -126,6 +126,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useLayoutStore } from '@/stores/layout'
 import { ElMessage } from 'element-plus'

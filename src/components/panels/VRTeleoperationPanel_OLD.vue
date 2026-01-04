@@ -4,7 +4,7 @@
     <div class="vr-status-bar">
       <div class="status-badge" :class="vrStatus.connected ? 'online' : 'offline'">
         <div class="badge-icon">
-          <el-icon><VideoCamera /></el-icon>
+          <SvgIcon name="videocamera" :size="16" />
         </div>
         <div class="badge-content">
           <span class="badge-title">{{ vrStatus.connected ? 'VR已连接' : 'VR未连接' }}</span>
@@ -198,11 +198,11 @@
     <!-- 操作提示 -->
     <div class="tips-bar">
       <div class="tip">
-        <el-icon><InfoFilled /></el-icon>
+        <SvgIcon name="infofilled" :size="16" />
         <span>Grip ≥ 80% → Clutch 接合（轴编辑）</span>
       </div>
       <div class="tip">
-        <el-icon><InfoFilled /></el-icon>
+        <SvgIcon name="infofilled" :size="16" />
         <span>Grip ≤ 20% → Clutch 释放（顺应）</span>
       </div>
     </div>
@@ -210,6 +210,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { reactive, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 

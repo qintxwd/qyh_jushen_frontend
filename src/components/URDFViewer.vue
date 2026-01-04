@@ -3,23 +3,23 @@
     <div class="viewer-toolbar">
       <el-button-group size="small">
         <el-button @click="resetView">
-          <el-icon><Refresh /></el-icon>
+          <SvgIcon name="refresh" :size="16" />
           重置视角
         </el-button>
         <el-button @click="toggleGrid">
-          <el-icon><Grid /></el-icon>
+          <SvgIcon name="grid" :size="16" />
           {{ showGrid ? '隐藏' : '显示' }}网格
         </el-button>
         <el-button @click="toggleAxes">
-          <el-icon><Aim /></el-icon>
+          <SvgIcon name="aim" :size="16" />
           {{ showAxes ? '隐藏' : '显示' }}坐标轴
         </el-button>
         <el-button @click="toggleWireframe">
-          <el-icon><View /></el-icon>
+          <SvgIcon name="view" :size="16" />
           {{ wireframe ? '实体' : '线框' }}
         </el-button>
         <el-button @click="toggleMap" :type="showMap ? 'primary' : 'default'">
-          <el-icon><MapLocation /></el-icon>
+          <SvgIcon name="maplocation" :size="16" />
           {{ showMap ? '隐藏' : '显示' }}地图
         </el-button>
       </el-button-group>
@@ -84,6 +84,7 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'

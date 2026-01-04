@@ -4,19 +4,19 @@
     <div class="toolbar-left">
       <el-button-group>
         <el-button size="small" @click="onNew">
-          <el-icon><Plus /></el-icon>
+          <SvgIcon name="plus" :size="16" />
           新建
         </el-button>
         <el-button size="small" @click="onOpenTemplate">
-          <el-icon><Files /></el-icon>
+          <SvgIcon name="files" :size="16" />
           模板
         </el-button>
         <el-button size="small" @click="onOpen">
-          <el-icon><FolderOpened /></el-icon>
+          <SvgIcon name="folderopened" :size="16" />
           打开
         </el-button>
         <el-button size="small" :disabled="!isDirty" @click="onSave">
-          <el-icon><DocumentChecked /></el-icon>
+          <SvgIcon name="documentchecked" :size="16" />
           保存
         </el-button>
       </el-button-group>
@@ -46,7 +46,7 @@
             :disabled="!canExecute"
             @click="onExecute"
           >
-            <el-icon><VideoPlay /></el-icon>
+            <SvgIcon name="videoplay" :size="16" />
             运行
           </el-button>
         </el-tooltip>
@@ -58,7 +58,7 @@
             :disabled="!canPause"
             @click="onPause"
           >
-            <el-icon><VideoPause /></el-icon>
+            <SvgIcon name="videopause" :size="16" />
           </el-button>
         </el-tooltip>
         
@@ -69,7 +69,7 @@
             :disabled="!canResume"
             @click="onResume"
           >
-            <el-icon><CaretRight /></el-icon>
+            <SvgIcon name="caretright" :size="16" />
           </el-button>
         </el-tooltip>
         
@@ -80,14 +80,14 @@
             :disabled="!canCancel"
             @click="onCancel"
           >
-            <el-icon><CloseBold /></el-icon>
+            <SvgIcon name="closebold" :size="16" />
           </el-button>
         </el-tooltip>
       </el-button-group>
       
       <!-- 执行状态 -->
       <div v-if="executionState" class="execution-status" :class="'status-' + executionState.status">
-        <el-icon v-if="executionState.status === 'running'" class="loading"><Loading /></el-icon>
+        <SvgIcon v-if="executionState.status === 'running'" name="loading" :size="16" class="loading" />
         <span>{{ statusText }}</span>
         <span v-if="executionState.progress > 0" class="progress">
           {{ Math.round(executionState.progress * 100) }}%
@@ -103,7 +103,7 @@
           :type="nodePaletteVisible ? 'primary' : 'default'"
           @click="toggleNodePalette"
         >
-          <el-icon><Menu /></el-icon>
+          <SvgIcon name="menu" :size="16" />
         </el-button>
       </el-tooltip>
       
@@ -113,7 +113,7 @@
           :type="propertyPanelVisible ? 'primary' : 'default'"
           @click="togglePropertyPanel"
         >
-          <el-icon><Setting /></el-icon>
+          <SvgIcon name="setting" :size="16" />
         </el-button>
       </el-tooltip>
       
@@ -122,17 +122,17 @@
       <!-- 导入 -->
       <el-dropdown trigger="click" @command="onImport">
         <el-button size="small">
-          <el-icon><Upload /></el-icon>
+          <SvgIcon name="upload" :size="16" />
           导入
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="file">
-              <el-icon><Document /></el-icon>
+              <SvgIcon name="document" :size="16" />
               从文件导入
             </el-dropdown-item>
             <el-dropdown-item command="clipboard">
-              <el-icon><DocumentCopy /></el-icon>
+              <SvgIcon name="documentcopy" :size="16" />
               从剪贴板导入
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -141,17 +141,17 @@
       
       <el-dropdown trigger="click" @command="onExport">
         <el-button size="small">
-          <el-icon><Download /></el-icon>
+          <SvgIcon name="download" :size="16" />
           导出
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item command="json">
-              <el-icon><Document /></el-icon>
+              <SvgIcon name="document" :size="16" />
               导出 JSON
             </el-dropdown-item>
             <el-dropdown-item command="clipboard">
-              <el-icon><CopyDocument /></el-icon>
+              <SvgIcon name="copydocument" :size="16" />
               复制到剪贴板
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -171,26 +171,9 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { 
-  Plus, 
-  FolderOpened, 
-  DocumentChecked, 
-  VideoPlay, 
-  VideoPause, 
-  CaretRight, 
-  CloseBold, 
-  Loading, 
-  Menu, 
-  Setting, 
-  Download, 
-  Upload,
-  Document, 
-  CopyDocument,
-  DocumentCopy,
-  Files
-} from '@element-plus/icons-vue'
 import { useTaskEditorStore } from '@/stores/task'
 import { executeTaskTree, pauseTask, resumeTask, cancelTask, createTask, updateTask } from '@/api/task'
 

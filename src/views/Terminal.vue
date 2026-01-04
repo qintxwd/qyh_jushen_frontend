@@ -3,13 +3,13 @@
     <el-page-header @back="$router.back()" title="返回">
       <template #content>
         <span class="page-title">
-          <el-icon><Monitor /></el-icon>
+          <SvgIcon name="monitor" :size="16" />
           系统终端
         </span>
       </template>
       <template #extra>
         <el-button @click="reconnect" size="small">
-          <el-icon><RefreshRight /></el-icon>
+          <SvgIcon name="refreshright" :size="16" />
           重新连接
         </el-button>
       </template>
@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref } from 'vue'
-import { Monitor, RefreshRight } from '@element-plus/icons-vue'
 import Terminal from '@/components/Terminal.vue'
 
 const terminalKey = ref(0)

@@ -8,7 +8,7 @@
           :class="{ active: selectedGripper === 'left' }"
           @click="selectedGripper = 'left'"
         >
-          <el-icon><Scissor /></el-icon>
+          <SvgIcon name="scissor" :size="16" />
           左夹爪
         </div>
         <div 
@@ -16,7 +16,7 @@
           :class="{ active: selectedGripper === 'right' }"
           @click="selectedGripper = 'right'"
         >
-          <el-icon><Scissor /></el-icon>
+          <SvgIcon name="scissor" :size="16" />
           右夹爪
         </div>
       </div>
@@ -81,7 +81,7 @@
         :loading="activating"
         :disabled="currentGripperState.is_activated"
       >
-        <el-icon><CircleCheck /></el-icon>
+        <SvgIcon name="circlecheck" :size="16" />
         {{ currentGripperState.is_activated ? '已激活' : '激活夹爪' }}
       </el-button>
     </div>
@@ -98,7 +98,7 @@
           :loading="loading"
           :disabled="!currentGripperState.is_activated"
         >
-          <el-icon><Expand /></el-icon>
+          <SvgIcon name="expand" :size="16" />
           全开
         </el-button>
         <el-button 
@@ -107,7 +107,7 @@
           :loading="loading"
           :disabled="!currentGripperState.is_activated"
         >
-          <el-icon><Fold /></el-icon>
+          <SvgIcon name="fold" :size="16" />
           全闭
         </el-button>
         <el-button 
@@ -124,7 +124,7 @@
           :loading="loading"
           :disabled="!currentGripperState.is_activated"
         >
-          <el-icon><Orange /></el-icon>
+          <SvgIcon name="orange" :size="16" />
           轻抓
         </el-button>
       </div>
@@ -188,9 +188,9 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Scissor, Expand, Fold, Orange, CircleCheck } from '@element-plus/icons-vue'
 import axios from 'axios'
 
 interface GripperState {

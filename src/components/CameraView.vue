@@ -1,7 +1,7 @@
 <template>
   <div class="camera-view" :class="{ 'no-signal': !hasSignal }">
     <div class="camera-header">
-      <el-icon><VideoCamera /></el-icon>
+      <SvgIcon name="videocamera" :size="16" />
       <span>{{ title }}</span>
       <div class="camera-status" :class="{ online: hasSignal }">
         {{ hasSignal ? '在线' : '离线' }}
@@ -24,9 +24,8 @@
 </template>
 
 <script setup lang="ts">
+import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { VideoCamera } from '@element-plus/icons-vue'
-
 const props = defineProps<{
   title: string
   cameraId: string  // 'head', 'left_hand', 'right_hand'
