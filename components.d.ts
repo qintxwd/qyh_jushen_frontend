@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ArmControlPanel: typeof import('./src/components/panels/ArmControlPanel.vue')['default']
+    AuthGuard: typeof import('./src/components/AuthGuard.vue')['default']
     CameraView: typeof import('./src/components/CameraView.vue')['default']
     ChassisPanel: typeof import('./src/components/panels/ChassisPanel.vue')['default']
     ControlNode: typeof import('./src/components/task-editor/ControlNode.vue')['default']
