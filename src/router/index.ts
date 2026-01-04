@@ -60,15 +60,38 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
 
-  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
-    next('/login')
-  } else if (to.meta.requiresOperator && !authStore.isOperator) {
-    next('/')
-  } else if (to.meta.requiresAdmin && !authStore.isAdmin) {
-    next('/')
-  } else {
-    next()
+  // 检查是否需要认证
+  if (to.meta.requiresAuth) {
+    if (!authStore.isLoggedIn) {
+      // 未登录，跳转到登录页
+      next('/login')
+      return
+    }
+    
+    // 检查权限
+    if (to.meta.requiresAdmin && !authStore.isAdmin) {
+      next('/')
+      return
+    }
+    
+    if (to.meta.requiresOperator && !authStore.isOperator) {
+      next('/')
+      return
+    }
+    
+    // 如果已登录但心跳未启动，启动心跳
+    if (!authStore.heartbeatTimer) {
+      authStore.startHeartbeat()
+    }
   }
+  
+  // 如果已登录用户访问登录页，重定向到首页
+  if (to.path === '/login' && authStore.isLoggedIn) {
+    next('/')
+    return
+  }
+  
+  next()
 })
 
 export default router

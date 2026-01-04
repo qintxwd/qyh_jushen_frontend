@@ -1,9 +1,15 @@
 <template>
   <router-view />
+  <AuthGuard v-if="isLoggedIn" />
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import AuthGuard from '@/components/AuthGuard.vue'
+
+const authStore = useAuthStore()
+const isLoggedIn = computed(() => authStore.isLoggedIn)
 
 // 初始化时应用主题
 onMounted(() => {

@@ -17,6 +17,18 @@ interface LoginResponse {
   }
 }
 
+interface HeartbeatResponse {
+  alive: boolean
+  refreshed: boolean
+  access_token?: string
+  token_type?: string
+  expires_in?: number
+  user: {
+    username: string
+    role: string
+  }
+}
+
 export const login = (data: LoginRequest): Promise<LoginResponse> => {
   return apiClient.post('/api/auth/login', data)
 }
@@ -27,4 +39,12 @@ export const logout = (): Promise<void> => {
 
 export const getCurrentUser = (): Promise<any> => {
   return apiClient.get('/api/auth/me')
+}
+
+export const heartbeat = (): Promise<HeartbeatResponse> => {
+  return apiClient.post('/api/auth/heartbeat')
+}
+
+export const refreshToken = (): Promise<any> => {
+  return apiClient.post('/api/auth/refresh')
 }

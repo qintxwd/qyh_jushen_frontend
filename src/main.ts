@@ -6,6 +6,7 @@ import './styles/element-theme.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import router from './router'
 import App from './App.vue'
+import { useAuthStore } from './stores/auth'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -20,3 +21,10 @@ app.use(router)
 app.use(ElementPlus)
 
 app.mount('#app')
+
+// 应用挂载后，如果用户已登录，启动心跳
+const authStore = useAuthStore()
+if (authStore.isLoggedIn) {
+  authStore.startHeartbeat()
+  console.log('🚀 应用启动，心跳已恢复')
+}
