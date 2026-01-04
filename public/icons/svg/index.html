@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG图标库 - 70个图标</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #f59e0b;
+            margin-bottom: 10px;
+            font-size: 36px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+        
+        .search-bar {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 16px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            color: #e2e8f0;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .search-bar input:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+        
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .icon-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .icon-item:hover {
+            transform: translateY(-4px);
+            background: rgba(30, 41, 59, 0.8);
+            border-color: #f59e0b;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
+        }
+        
+        .icon-item img {
+            width: 48px;
+            height: 48px;
+            filter: brightness(0) saturate(100%) invert(68%) sepia(67%) saturate(457%) hue-rotate(359deg) brightness(101%) contrast(93%);
+            margin-bottom: 12px;
+        }
+        
+        .icon-item:hover img {
+            filter: brightness(0) saturate(100%) invert(68%) sepia(67%) saturate(457%) hue-rotate(359deg) brightness(120%) contrast(93%);
+        }
+        
+        .icon-name {
+            font-size: 13px;
+            color: #cbd5e1;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .icon-filename {
+            font-size: 11px;
+            color: #64748b;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s;
+            pointer-events: none;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .stats {
+            text-align: center;
+            color: #94a3b8;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 SVG图标库</h1>
+    <div class="subtitle">Material Design Icons - 70个纯SVG图标</div>
+    
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="搜索图标...">
+    </div>
+    
+    <div class="icon-grid" id="iconGrid">
+        <div class="icon-item" data-name="document" onclick="copyPath('document.svg')">
+            <img src="document.svg" alt="Document">
+            <div class="icon-name">Document</div>
+            <div class="icon-filename">document.svg</div>
+        </div>
+        <div class="icon-item" data-name="grid" onclick="copyPath('grid.svg')">
+            <img src="grid.svg" alt="Grid">
+            <div class="icon-name">Grid</div>
+            <div class="icon-filename">grid.svg</div>
+        </div>
+        <div class="icon-item" data-name="connection" onclick="copyPath('connection.svg')">
+            <img src="connection.svg" alt="Connection">
+            <div class="icon-name">Connection</div>
+            <div class="icon-filename">connection.svg</div>
+        </div>
+        <div class="icon-item" data-name="cpu" onclick="copyPath('cpu.svg')">
+            <img src="cpu.svg" alt="Cpu">
+            <div class="icon-name">Cpu</div>
+            <div class="icon-filename">cpu.svg</div>
+        </div>
+        <div class="icon-item" data-name="arrowdown" onclick="copyPath('arrowdown.svg')">
+            <img src="arrowdown.svg" alt="ArrowDown">
+            <div class="icon-name">ArrowDown</div>
+            <div class="icon-filename">arrowdown.svg</div>
+        </div>
+        <div class="icon-item" data-name="setting" onclick="copyPath('setting.svg')">
+            <img src="setting.svg" alt="Setting">
+            <div class="icon-name">Setting</div>
+            <div class="icon-filename">setting.svg</div>
+        </div>
+        <div class="icon-item" data-name="switchbutton" onclick="copyPath('switchbutton.svg')">
+            <img src="switchbutton.svg" alt="SwitchButton">
+            <div class="icon-name">SwitchButton</div>
+            <div class="icon-filename">switchbutton.svg</div>
+        </div>
+        <div class="icon-item" data-name="videocamera" onclick="copyPath('videocamera.svg')">
+            <img src="videocamera.svg" alt="VideoCamera">
+            <div class="icon-name">VideoCamera</div>
+            <div class="icon-filename">videocamera.svg</div>
+        </div>
+        <div class="icon-item" data-name="scissor" onclick="copyPath('scissor.svg')">
+            <img src="scissor.svg" alt="Scissor">
+            <div class="icon-name">Scissor</div>
+            <div class="icon-filename">scissor.svg</div>
+        </div>
+        <div class="icon-item" data-name="camera" onclick="copyPath('camera.svg')">
+            <img src="camera.svg" alt="Camera">
+            <div class="icon-name">Camera</div>
+            <div class="icon-filename">camera.svg</div>
+        </div>
+        <div class="icon-item" data-name="dcaret" onclick="copyPath('dcaret.svg')">
+            <img src="dcaret.svg" alt="DCaret">
+            <div class="icon-name">DCaret</div>
+            <div class="icon-filename">dcaret.svg</div>
+        </div>
+        <div class="icon-item" data-name="van" onclick="copyPath('van.svg')">
+            <img src="van.svg" alt="Van">
+            <div class="icon-name">Van</div>
+            <div class="icon-filename">van.svg</div>
+        </div>
+        <div class="icon-item" data-name="refresh" onclick="copyPath('refresh.svg')">
+            <img src="refresh.svg" alt="Refresh">
+            <div class="icon-name">Refresh</div>
+            <div class="icon-filename">refresh.svg</div>
+        </div>
+        <div class="icon-item" data-name="view" onclick="copyPath('view.svg')">
+            <img src="view.svg" alt="View">
+            <div class="icon-name">View</div>
+            <div class="icon-filename">view.svg</div>
+        </div>
+        <div class="icon-item" data-name="clock" onclick="copyPath('clock.svg')">
+            <img src="clock.svg" alt="Clock">
+            <div class="icon-name">Clock</div>
+            <div class="icon-filename">clock.svg</div>
+        </div>
+        <div class="icon-item" data-name="fullscreen" onclick="copyPath('fullscreen.svg')">
+            <img src="fullscreen.svg" alt="FullScreen">
+            <div class="icon-name">FullScreen</div>
+            <div class="icon-filename">fullscreen.svg</div>
+        </div>
+        <div class="icon-item" data-name="close" onclick="copyPath('close.svg')">
+            <img src="close.svg" alt="Close">
+            <div class="icon-name">Close</div>
+            <div class="icon-filename">close.svg</div>
+        </div>
+        <div class="icon-item" data-name="folderremove" onclick="copyPath('folderremove.svg')">
+            <img src="folderremove.svg" alt="FolderRemove">
+            <div class="icon-name">FolderRemove</div>
+            <div class="icon-filename">folderremove.svg</div>
+        </div>
+        <div class="icon-item" data-name="delete" onclick="copyPath('delete.svg')">
+            <img src="delete.svg" alt="Delete">
+            <div class="icon-name">Delete</div>
+            <div class="icon-filename">delete.svg</div>
+        </div>
+        <div class="icon-item" data-name="aim" onclick="copyPath('aim.svg')">
+            <img src="aim.svg" alt="Aim">
+            <div class="icon-name">Aim</div>
+            <div class="icon-filename">aim.svg</div>
+        </div>
+        <div class="icon-item" data-name="maplocation" onclick="copyPath('maplocation.svg')">
+            <img src="maplocation.svg" alt="MapLocation">
+            <div class="icon-name">MapLocation</div>
+            <div class="icon-filename">maplocation.svg</div>
+        </div>
+        <div class="icon-item" data-name="position" onclick="copyPath('position.svg')">
+            <img src="position.svg" alt="Position">
+            <div class="icon-name">Position</div>
+            <div class="icon-filename">position.svg</div>
+        </div>
+        <div class="icon-item" data-name="edit" onclick="copyPath('edit.svg')">
+            <img src="edit.svg" alt="Edit">
+            <div class="icon-name">Edit</div>
+            <div class="icon-filename">edit.svg</div>
+        </div>
+        <div class="icon-item" data-name="star" onclick="copyPath('star.svg')">
+            <img src="star.svg" alt="Star">
+            <div class="icon-name">Star</div>
+            <div class="icon-filename">star.svg</div>
+        </div>
+        <div class="icon-item" data-name="plus" onclick="copyPath('plus.svg')">
+            <img src="plus.svg" alt="Plus">
+            <div class="icon-name">Plus</div>
+            <div class="icon-filename">plus.svg</div>
+        </div>
+        <div class="icon-item" data-name="circlecheck" onclick="copyPath('circlecheck.svg')">
+            <img src="circlecheck.svg" alt="CircleCheck">
+            <div class="icon-name">CircleCheck</div>
+            <div class="icon-filename">circlecheck.svg</div>
+        </div>
+        <div class="icon-item" data-name="expand" onclick="copyPath('expand.svg')">
+            <img src="expand.svg" alt="Expand">
+            <div class="icon-name">Expand</div>
+            <div class="icon-filename">expand.svg</div>
+        </div>
+        <div class="icon-item" data-name="fold" onclick="copyPath('fold.svg')">
+            <img src="fold.svg" alt="Fold">
+            <div class="icon-name">Fold</div>
+            <div class="icon-filename">fold.svg</div>
+        </div>
+        <div class="icon-item" data-name="orange" onclick="copyPath('orange.svg')">
+            <img src="orange.svg" alt="Orange">
+            <div class="icon-name">Orange</div>
+            <div class="icon-filename">orange.svg</div>
+        </div>
+        <div class="icon-item" data-name="warningfilled" onclick="copyPath('warningfilled.svg')">
+            <img src="warningfilled.svg" alt="WarningFilled">
+            <div class="icon-name">WarningFilled</div>
+            <div class="icon-filename">warningfilled.svg</div>
+        </div>
+        <div class="icon-item" data-name="unlock" onclick="copyPath('unlock.svg')">
+            <img src="unlock.svg" alt="Unlock">
+            <div class="icon-name">Unlock</div>
+            <div class="icon-filename">unlock.svg</div>
+        </div>
+        <div class="icon-item" data-name="lightning" onclick="copyPath('lightning.svg')">
+            <img src="lightning.svg" alt="Lightning">
+            <div class="icon-name">Lightning</div>
+            <div class="icon-filename">lightning.svg</div>
+        </div>
+        <div class="icon-item" data-name="box" onclick="copyPath('box.svg')">
+            <img src="box.svg" alt="Box">
+            <div class="icon-name">Box</div>
+            <div class="icon-filename">box.svg</div>
+        </div>
+        <div class="icon-item" data-name="warntrianglefilled" onclick="copyPath('warntrianglefilled.svg')">
+            <img src="warntrianglefilled.svg" alt="WarnTriangleFilled">
+            <div class="icon-name">WarnTriangleFilled</div>
+            <div class="icon-filename">warntrianglefilled.svg</div>
+        </div>
+        <div class="icon-item" data-name="circleclosefilled" onclick="copyPath('circleclosefilled.svg')">
+            <img src="circleclosefilled.svg" alt="CircleCloseFilled">
+            <div class="icon-name">CircleCloseFilled</div>
+            <div class="icon-filename">circleclosefilled.svg</div>
+        </div>
+        <div class="icon-item" data-name="videopause" onclick="copyPath('videopause.svg')">
+            <img src="videopause.svg" alt="VideoPause">
+            <div class="icon-name">VideoPause</div>
+            <div class="icon-filename">videopause.svg</div>
+        </div>
+        <div class="icon-item" data-name="videoplay" onclick="copyPath('videoplay.svg')">
+            <img src="videoplay.svg" alt="VideoPlay">
+            <div class="icon-name">VideoPlay</div>
+            <div class="icon-filename">videoplay.svg</div>
+        </div>
+        <div class="icon-item" data-name="moon" onclick="copyPath('moon.svg')">
+            <img src="moon.svg" alt="Moon">
+            <div class="icon-name">Moon</div>
+            <div class="icon-filename">moon.svg</div>
+        </div>
+        <div class="icon-item" data-name="sunny" onclick="copyPath('sunny.svg')">
+            <img src="sunny.svg" alt="Sunny">
+            <div class="icon-name">Sunny</div>
+            <div class="icon-filename">sunny.svg</div>
+        </div>
+        <div class="icon-item" data-name="refreshright" onclick="copyPath('refreshright.svg')">
+            <img src="refreshright.svg" alt="RefreshRight">
+            <div class="icon-name">RefreshRight</div>
+            <div class="icon-filename">refreshright.svg</div>
+        </div>
+        <div class="icon-item" data-name="search" onclick="copyPath('search.svg')">
+            <img src="search.svg" alt="Search">
+            <div class="icon-name">Search</div>
+            <div class="icon-filename">search.svg</div>
+        </div>
+        <div class="icon-item" data-name="locationfilled" onclick="copyPath('locationfilled.svg')">
+            <img src="locationfilled.svg" alt="LocationFilled">
+            <div class="icon-name">LocationFilled</div>
+            <div class="icon-filename">locationfilled.svg</div>
+        </div>
+        <div class="icon-item" data-name="infofilled" onclick="copyPath('infofilled.svg')">
+            <img src="infofilled.svg" alt="InfoFilled">
+            <div class="icon-name">InfoFilled</div>
+            <div class="icon-filename">infofilled.svg</div>
+        </div>
+        <div class="icon-item" data-name="arrowup" onclick="copyPath('arrowup.svg')">
+            <img src="arrowup.svg" alt="ArrowUp">
+            <div class="icon-name">ArrowUp</div>
+            <div class="icon-filename">arrowup.svg</div>
+        </div>
+        <div class="icon-item" data-name="refreshleft" onclick="copyPath('refreshleft.svg')">
+            <img src="refreshleft.svg" alt="RefreshLeft">
+            <div class="icon-name">RefreshLeft</div>
+            <div class="icon-filename">refreshleft.svg</div>
+        </div>
+        <div class="icon-item" data-name="lock" onclick="copyPath('lock.svg')">
+            <img src="lock.svg" alt="Lock">
+            <div class="icon-name">Lock</div>
+            <div class="icon-filename">lock.svg</div>
+        </div>
+        <div class="icon-item" data-name="caretright" onclick="copyPath('caretright.svg')">
+            <img src="caretright.svg" alt="CaretRight">
+            <div class="icon-name">CaretRight</div>
+            <div class="icon-filename">caretright.svg</div>
+        </div>
+        <div class="icon-item" data-name="pointer" onclick="copyPath('pointer.svg')">
+            <img src="pointer.svg" alt="Pointer">
+            <div class="icon-name">Pointer</div>
+            <div class="icon-filename">pointer.svg</div>
+        </div>
+        <div class="icon-item" data-name="minus" onclick="copyPath('minus.svg')">
+            <img src="minus.svg" alt="Minus">
+            <div class="icon-name">Minus</div>
+            <div class="icon-filename">minus.svg</div>
+        </div>
+        <div class="icon-item" data-name="location" onclick="copyPath('location.svg')">
+            <img src="location.svg" alt="Location">
+            <div class="icon-name">Location</div>
+            <div class="icon-filename">location.svg</div>
+        </div>
+        <div class="icon-item" data-name="goods" onclick="copyPath('goods.svg')">
+            <img src="goods.svg" alt="Goods">
+            <div class="icon-name">Goods</div>
+            <div class="icon-filename">goods.svg</div>
+        </div>
+        <div class="icon-item" data-name="files" onclick="copyPath('files.svg')">
+            <img src="files.svg" alt="Files">
+            <div class="icon-name">Files</div>
+            <div class="icon-filename">files.svg</div>
+        </div>
+        <div class="icon-item" data-name="folderopened" onclick="copyPath('folderopened.svg')">
+            <img src="folderopened.svg" alt="FolderOpened">
+            <div class="icon-name">FolderOpened</div>
+            <div class="icon-filename">folderopened.svg</div>
+        </div>
+        <div class="icon-item" data-name="documentchecked" onclick="copyPath('documentchecked.svg')">
+            <img src="documentchecked.svg" alt="DocumentChecked">
+            <div class="icon-name">DocumentChecked</div>
+            <div class="icon-filename">documentchecked.svg</div>
+        </div>
+        <div class="icon-item" data-name="closebold" onclick="copyPath('closebold.svg')">
+            <img src="closebold.svg" alt="CloseBold">
+            <div class="icon-name">CloseBold</div>
+            <div class="icon-filename">closebold.svg</div>
+        </div>
+        <div class="icon-item" data-name="menu" onclick="copyPath('menu.svg')">
+            <img src="menu.svg" alt="Menu">
+            <div class="icon-name">Menu</div>
+            <div class="icon-filename">menu.svg</div>
+        </div>
+        <div class="icon-item" data-name="upload" onclick="copyPath('upload.svg')">
+            <img src="upload.svg" alt="Upload">
+            <div class="icon-name">Upload</div>
+            <div class="icon-filename">upload.svg</div>
+        </div>
+        <div class="icon-item" data-name="documentcopy" onclick="copyPath('documentcopy.svg')">
+            <img src="documentcopy.svg" alt="DocumentCopy">
+            <div class="icon-name">DocumentCopy</div>
+            <div class="icon-filename">documentcopy.svg</div>
+        </div>
+        <div class="icon-item" data-name="download" onclick="copyPath('download.svg')">
+            <img src="download.svg" alt="Download">
+            <div class="icon-name">Download</div>
+            <div class="icon-filename">download.svg</div>
+        </div>
+        <div class="icon-item" data-name="copydocument" onclick="copyPath('copydocument.svg')">
+            <img src="copydocument.svg" alt="CopyDocument">
+            <div class="icon-name">CopyDocument</div>
+            <div class="icon-filename">copydocument.svg</div>
+        </div>
+        <div class="icon-item" data-name="zoomin" onclick="copyPath('zoomin.svg')">
+            <img src="zoomin.svg" alt="ZoomIn">
+            <div class="icon-name">ZoomIn</div>
+            <div class="icon-filename">zoomin.svg</div>
+        </div>
+        <div class="icon-item" data-name="top" onclick="copyPath('top.svg')">
+            <img src="top.svg" alt="Top">
+            <div class="icon-name">Top</div>
+            <div class="icon-filename">top.svg</div>
+        </div>
+        <div class="icon-item" data-name="bottom" onclick="copyPath('bottom.svg')">
+            <img src="bottom.svg" alt="Bottom">
+            <div class="icon-name">Bottom</div>
+            <div class="icon-filename">bottom.svg</div>
+        </div>
+        <div class="icon-item" data-name="monitor" onclick="copyPath('monitor.svg')">
+            <img src="monitor.svg" alt="Monitor">
+            <div class="icon-name">Monitor</div>
+            <div class="icon-filename">monitor.svg</div>
+        </div>
+        <div class="icon-item" data-name="back" onclick="copyPath('back.svg')">
+            <img src="back.svg" alt="Back">
+            <div class="icon-name">Back</div>
+            <div class="icon-filename">back.svg</div>
+        </div>
+        <div class="icon-item" data-name="check" onclick="copyPath('check.svg')">
+            <img src="check.svg" alt="Check">
+            <div class="icon-name">Check</div>
+            <div class="icon-filename">check.svg</div>
+        </div>
+        <div class="icon-item" data-name="morefilled" onclick="copyPath('morefilled.svg')">
+            <img src="morefilled.svg" alt="MoreFilled">
+            <div class="icon-name">MoreFilled</div>
+            <div class="icon-filename">morefilled.svg</div>
+        </div>
+        <div class="icon-item" data-name="odometer" onclick="copyPath('odometer.svg')">
+            <img src="odometer.svg" alt="Odometer">
+            <div class="icon-name">Odometer</div>
+            <div class="icon-filename">odometer.svg</div>
+        </div>
+        <div class="icon-item" data-name="tickets" onclick="copyPath('tickets.svg')">
+            <img src="tickets.svg" alt="Tickets">
+            <div class="icon-name">Tickets</div>
+            <div class="icon-filename">tickets.svg</div>
+        </div>
+        <div class="icon-item" data-name="dataline" onclick="copyPath('dataline.svg')">
+            <img src="dataline.svg" alt="DataLine">
+            <div class="icon-name">DataLine</div>
+            <div class="icon-filename">dataline.svg</div>
+        </div>
+    </div>
+    
+    <div class="stats">
+        共 70 个图标 | 点击图标复制文件路径
+    </div>
+    
+    <div class="toast" id="toast">已复制到剪贴板</div>
+    
+    <script>
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.icon-item');
+            
+            items.forEach(item => {
+                const name = item.getAttribute('data-name');
+                if (name.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        // 复制路径功能
+        function copyPath(filename) {
+            const path = '/icons/svg/' + filename;
+            navigator.clipboard.writeText(path).then(() => {
+                showToast('已复制: ' + path);
+            });
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
