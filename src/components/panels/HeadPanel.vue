@@ -69,11 +69,11 @@
       
       <div class="action-buttons">
         <el-button type="primary" @click="executeMove" :loading="loading">
-          <SvgIcon name="position" :size="16" />
+          <SvgIcon name="execute-move" :size="16" />
           执行
         </el-button>
         <el-button @click="resetHead" :loading="loadingReset">
-          <SvgIcon name="aim" :size="16" />
+          <SvgIcon name="home-position" :size="16" />
           回正
         </el-button>
       </div>

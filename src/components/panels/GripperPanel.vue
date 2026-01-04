@@ -8,7 +8,7 @@
           :class="{ active: selectedGripper === 'left' }"
           @click="selectedGripper = 'left'"
         >
-          <SvgIcon name="scissor" :size="16" />
+          <SvgIcon name="gripper" :size="16" />
           左夹爪
         </div>
         <div 
@@ -16,7 +16,7 @@
           :class="{ active: selectedGripper === 'right' }"
           @click="selectedGripper = 'right'"
         >
-          <SvgIcon name="scissor" :size="16" />
+          <SvgIcon name="gripper" :size="16" />
           右夹爪
         </div>
       </div>
@@ -98,7 +98,7 @@
           :loading="loading"
           :disabled="!currentGripperState.is_activated"
         >
-          <SvgIcon name="expand" :size="16" />
+          <SvgIcon name="gripper-open" :size="16" />
           全开
         </el-button>
         <el-button 
@@ -107,7 +107,7 @@
           :loading="loading"
           :disabled="!currentGripperState.is_activated"
         >
-          <SvgIcon name="fold" :size="16" />
+          <SvgIcon name="gripper-close" :size="16" />
           全闭
         </el-button>
         <el-button 
@@ -181,6 +181,7 @@
         :loading="loading"
         :disabled="!currentGripperState.is_activated"
       >
+        <SvgIcon name="execute-move" :size="16" />
         执行移动
       </el-button>
     </div>

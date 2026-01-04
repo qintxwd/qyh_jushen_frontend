@@ -17,7 +17,7 @@
               :type="!layoutStore.splitMode ? 'primary' : 'default'"
               @click="layoutStore.splitMode = false; mergeWindows()"
             >
-              <SvgIcon name="document" :size="16" />
+              <SvgIcon name="window-single" :size="16" />
             </el-button>
           </el-tooltip>
           <el-tooltip content="分屏模式">
@@ -25,7 +25,7 @@
               :type="layoutStore.splitMode ? 'primary' : 'default'"
               @click="layoutStore.splitMode = true"
             >
-              <SvgIcon name="grid" :size="16" />
+              <SvgIcon name="window-split" :size="16" />
             </el-button>
           </el-tooltip>
         </el-button-group>
@@ -99,9 +99,7 @@
                 :disabled="!layoutStore.sidebarCollapsed"
               >
                 <div class="nav-item-inner">
-                  <el-icon :size="22">
-                    <component :is="item.icon" />
-                  </el-icon>
+                  <SvgIcon :name="item.icon" :size="22" />
                   <span class="nav-label" v-show="!layoutStore.sidebarCollapsed">
                     {{ item.name }}
                   </span>

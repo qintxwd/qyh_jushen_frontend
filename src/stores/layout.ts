@@ -29,7 +29,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'scene3d',
     name: '3D场景',
-    icon: 'View',
+    icon: 'scene-3d',
     component: 'Scene3DPanel',
     closable: true,
     minWidth: 400,
@@ -38,7 +38,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'arm-control',
     name: '机械臂',
-    icon: 'Cpu',
+    icon: 'robot-arm-dual',
     component: 'ArmControlPanel',
     closable: true,
     minWidth: 320,
@@ -47,7 +47,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'gripper',
     name: '夹爪',
-    icon: 'Scissor',
+    icon: 'gripper',
     component: 'GripperPanel',
     closable: true,
     minWidth: 280,
@@ -56,7 +56,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'chassis',
     name: '底盘',
-    icon: 'Van',
+    icon: 'chassis',
     component: 'ChassisPanel',
     closable: true,
     minWidth: 300,
@@ -65,7 +65,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'head',
     name: '头部',
-    icon: 'Camera',
+    icon: 'head',
     component: 'HeadPanel',
     closable: true,
     minWidth: 280,
@@ -74,7 +74,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'lift',
     name: '升降',
-    icon: 'DCaret',
+    icon: 'lift',
     component: 'LiftPanel',
     closable: true,
     minWidth: 300,
@@ -83,7 +83,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'waist',
     name: '腰部',
-    icon: 'Refresh',
+    icon: 'waist',
     component: 'WaistPanel',
     closable: true,
     minWidth: 300,
@@ -92,7 +92,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'task',
     name: '任务',
-    icon: 'List',
+    icon: 'task',
     component: 'TaskPanel',
     closable: true,
     minWidth: 400,
@@ -101,7 +101,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'settings',
     name: '设置',
-    icon: 'Setting',
+    icon: 'setting',
     component: 'SettingsPanel',
     closable: true,
     minWidth: 350,
@@ -110,7 +110,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'vr-teleoperation',
     name: 'VR遥操作',
-    icon: 'VideoCamera',
+    icon: 'vr',
     component: 'VRTeleoperationPanel',
     closable: true,
     minWidth: 320,
@@ -119,7 +119,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'data-collection',
     name: '数据采集',
-    icon: 'DataLine',
+    icon: 'data-collection',
     component: 'DataCollectionPanel',
     closable: true,
     minWidth: 400,
@@ -128,7 +128,7 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
   {
     id: 'terminal',
     name: '终端',
-    icon: 'Monitor',
+    icon: 'monitor',
     component: 'TerminalPanel',
     closable: true,
     minWidth: 400,

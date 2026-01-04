@@ -155,7 +155,7 @@
             :loading="loading.angle"
             :disabled="!state.connected || !state.enabled"
           >
-            <SvgIcon name="position" :size="16" />
+            <SvgIcon name="execute-move" :size="16" />
             GO
           </el-button>
           <el-button
@@ -165,7 +165,7 @@
             :loading="loading.upright"
             :disabled="!state.connected || !state.enabled"
           >
-            <SvgIcon name="aim" :size="16" />
+            <SvgIcon name="home-position" :size="16" />
             回正
           </el-button>
           <el-button

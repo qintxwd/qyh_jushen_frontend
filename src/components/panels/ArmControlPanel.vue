@@ -25,7 +25,7 @@
           :loading="loading.power"
           @click="powerOn"
         >
-          <SvgIcon name="videoplay" :size="16" />
+          <SvgIcon name="power-on" :size="16" />
           上电
         </el-button>
         <el-button 
@@ -34,7 +34,7 @@
           :loading="loading.power"
           @click="powerOff"
         >
-          <SvgIcon name="videopause" :size="16" />
+          <SvgIcon name="power-off" :size="16" />
           下电
         </el-button>
       </div>
@@ -50,7 +50,7 @@
           :loading="loading.enable"
           @click="enableArm"
         >
-          <SvgIcon name="unlock" :size="16" />
+          <SvgIcon name="enable" :size="16" />
           使能
         </el-button>
         <el-button 
@@ -59,7 +59,7 @@
           :loading="loading.enable"
           @click="disableArm"
         >
-          <SvgIcon name="lock" :size="16" />
+          <SvgIcon name="disable" :size="16" />
           去使能
         </el-button>
       </div>

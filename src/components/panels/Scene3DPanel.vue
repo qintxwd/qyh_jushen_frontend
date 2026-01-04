@@ -6,17 +6,17 @@
         <el-button-group size="small">
           <el-tooltip content="重置视角">
             <el-button @click="resetCamera">
-              <SvgIcon name="aim" :size="16" />
+              <SvgIcon name="view-reset" :size="16" />
             </el-button>
           </el-tooltip>
           <el-tooltip content="俯视图">
             <el-button @click="setTopView">
-              <SvgIcon name="top" :size="16" />
+              <SvgIcon name="view-top" :size="16" />
             </el-button>
           </el-tooltip>
           <el-tooltip content="前视图">
             <el-button @click="setFrontView">
-              <SvgIcon name="view" :size="16" />
+              <SvgIcon name="view-front" :size="16" />
             </el-button>
           </el-tooltip>
         </el-button-group>

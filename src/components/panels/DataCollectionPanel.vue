@@ -103,7 +103,7 @@
           @click="initializeDevices"
           class="control-btn"
         >
-          <SvgIcon name="setting" :size="16" />
+          <SvgIcon name="initializing" :size="16" />
           初始化设备
         </el-button>
 

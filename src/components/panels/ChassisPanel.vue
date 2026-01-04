@@ -149,7 +149,7 @@
           <h3 class="section-title">状态标志</h3>
           <div class="flags-grid">
             <div class="flag-item" :class="{ active: status.flags?.is_emergency_stopped }">
-              <SvgIcon name="warningfilled" :size="16" />
+              <SvgIcon name="emergency-stop" :size="16" />
               <span>急停</span>
             </div>
             <div class="flag-item" :class="{ active: status.flags?.is_brake_released }">
@@ -173,11 +173,11 @@
               <span>WiFi</span>
             </div>
             <div class="flag-item" :class="{ active: status.flags?.obstacle_slowdown, warning: status.flags?.obstacle_slowdown }">
-              <SvgIcon name="warntrianglefilled" :size="16" />
+              <SvgIcon name="slow-obstacle" :size="16" />
               <span>减速避障</span>
             </div>
             <div class="flag-item" :class="{ active: status.flags?.obstacle_paused, danger: status.flags?.obstacle_paused }">
-              <SvgIcon name="circleclosefilled" :size="16" />
+              <SvgIcon name="pause-obstacle" :size="16" />
               <span>障碍暂停</span>
             </div>
           </div>
@@ -248,7 +248,7 @@
               :disabled="status.flags?.is_emergency_stopped"
               @click="emergencyStop"
             >
-              <SvgIcon name="warningfilled" :size="16" />
+              <SvgIcon name="emergency-stop" :size="16" />
               紧急停止
             </el-button>
             <el-button 
@@ -393,7 +393,7 @@
           </div>
           <div class="nav-buttons">
             <el-button type="primary" @click="navigateToCoord(false)" :loading="navLoading">
-              <SvgIcon name="position" :size="16" />
+              <SvgIcon name="navigate-target" :size="16" />
               导航到目标
             </el-button>
             <el-button @click="navigateToCoord(true)" :loading="localizingLoading">
@@ -709,7 +709,7 @@
         <el-divider />
         <div class="panel-section">
           <el-button type="danger" size="large" style="width: 100%" @click="stopChassis">
-            <SvgIcon name="switchbutton" :size="16" />
+            <SvgIcon name="emergency-stop" :size="16" />
             紧急停止
           </el-button>
         </div>
