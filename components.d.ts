@@ -75,6 +75,7 @@ declare module 'vue' {
     TerminalPanel: typeof import('./src/components/panels/TerminalPanel.vue')['default']
     URDFViewer: typeof import('./src/components/URDFViewer.vue')['default']
     VRTeleoperationPanel: typeof import('./src/components/panels/VRTeleoperationPanel.vue')['default']
+    VRTeleoperationPanel_OLD: typeof import('./src/components/panels/VRTeleoperationPanel_OLD.vue')['default']
     WaistPanel: typeof import('./src/components/panels/WaistPanel.vue')['default']
   }
 }

@@ -847,10 +847,12 @@ onUnmounted(() => {
 .sidebar {
   display: flex;
   flex-direction: column;
-  background-color: #252526;
-  border-right: 1px solid #3c3c3c;
-  transition: width 0.2s ease;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(248, 250, 252, 0.1);
+  transition: all 0.3s ease;
   flex-shrink: 0;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar.collapsed {
@@ -861,19 +863,20 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 8px;
+  padding: 12px 8px;
+  font-family: var(--font-body);
 }
 
 .nav-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .nav-bottom {
   margin-top: auto;
-  padding-top: 8px;
-  border-top: 1px solid #3c3c3c;
+  padding-top: 12px;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .nav-item {
@@ -884,19 +887,25 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
-  border-radius: 6px;
-  transition: all 0.2s;
+  padding: 12px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
   position: relative;
+  color: #CBD5E1;
+  font-weight: 500;
 }
 
 .nav-item:hover .nav-item-inner {
-  background-color: #2a2d2e;
+  background: rgba(245, 158, 11, 0.1);
+  color: #F8FAFC;
+  transform: translateX(4px);
 }
 
 .nav-item.active .nav-item-inner {
-  background-color: #37373d;
-  color: #fff;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%);
+  color: #F59E0B;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
 }
 
 .nav-item.active .nav-item-inner::before {
@@ -940,7 +949,25 @@ onUnmounted(() => {
   flex: 1;
   display: flex;
   overflow: hidden;
-  background-color: #1a1a1a;
+  background: transparent;
+  position: relative;
+}
+
+.workspace-container::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+  top: 20%;
+  right: 10%;
+  pointer-events: none;
+  animation: float 10s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, 30px); }
 }
 
 .single-window {
@@ -957,57 +984,67 @@ onUnmounted(() => {
 .resize-handle {
   width: 6px;
   cursor: col-resize;
-  background-color: #2d2d2d;
+  background: rgba(30, 41, 59, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
 .resize-handle:hover {
-  background-color: #404040;
+  background: rgba(245, 158, 11, 0.2);
 }
 
 .resize-line {
   width: 2px;
   height: 40px;
-  background-color: #555;
-  border-radius: 1px;
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 2px;
+  transition: all 0.3s ease;
 }
 
 .resize-handle:hover .resize-line {
-  background-color: #409eff;
+  background: #F59E0B;
+  height: 60px;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
 }
 
 /* 底部状态栏 */
 .status-bar {
   display: flex;
   flex-direction: column;
-  min-height: 24px;
-  padding: 0 8px;
-  background-color: #007acc;
-  color: #fff;
-  font-size: 11px;
+  min-height: 28px;
+  padding: 0 12px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(245, 158, 11, 0.2);
+  color: #CBD5E1;
+  font-size: 12px;
   flex-shrink: 0;
+  font-family: var(--font-body);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .status-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 2px;
-  padding: 2px 0;
+  gap: 4px;
+  padding: 4px 0;
 }
 
 .status-item {
   display: flex;
   align-items: center;
-  gap: 3px;
-  padding: 2px 6px;
-  border-radius: 3px;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
   white-space: nowrap;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 .status-item .el-icon {
@@ -1047,27 +1084,37 @@ onUnmounted(() => {
 
 /* 状态类型样式 */
 .status-success {
-  color: #fff;
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #6EE7B7;
 }
 
 .status-warning {
-  background-color: rgba(230, 162, 60, 0.9);
-  color: #fff;
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #FCD34D;
 }
 
 .status-danger {
-  background-color: rgba(245, 108, 108, 0.9);
-  color: #fff;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #FCA5A5;
+}
+
+.status-item.clickable:hover {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.5);
+  transform: translateY(-1px);
 }
 
 /* 危险状态闪烁效果（仅用于严重问题） */
 .status-danger.blink {
-  animation: status-blink 1s ease-in-out infinite;
+  animation: status-blink 1.5s ease-in-out infinite;
 }
 
 @keyframes status-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 rgba(239, 68, 68, 0); }
+  50% { opacity: 0.7; box-shadow: 0 0 12px rgba(239, 68, 68, 0.6); }
 }
 
 /* 响应式：在窄屏幕上隐藏标签文字 */

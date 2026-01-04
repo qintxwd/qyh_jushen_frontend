@@ -277,7 +277,8 @@ onUnmounted(() => {
   height: 100%;
   overflow: hidden;
   position: relative;
-  background-color: #1e1e1e;
+  background: transparent;
+  font-family: var(--font-body);
 }
 
 .tab-window.dragging {
@@ -285,18 +286,21 @@ onUnmounted(() => {
 }
 
 .tab-window.drop-target {
-  outline: 2px dashed #409eff;
+  outline: 2px dashed #F59E0B;
   outline-offset: -2px;
+  background: rgba(245, 158, 11, 0.05);
 }
 
 /* Tab 标签栏 */
 .tabs-header {
   display: flex;
   align-items: center;
-  height: 35px;
-  background-color: #2d2d2d;
-  border-bottom: 1px solid #3c3c3c;
+  height: 38px;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .tabs-scroll {
@@ -318,25 +322,44 @@ onUnmounted(() => {
 .tab-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 12px;
-  height: 34px;
-  border-right: 1px solid #3c3c3c;
+  gap: 8px;
+  padding: 0 16px;
+  height: 38px;
+  border-right: 1px solid rgba(148, 163, 184, 0.1);
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
   flex-shrink: 0;
   user-select: none;
+  position: relative;
+  background: transparent;
+  color: #CBD5E1;
+}
+
+.tab-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  transition: all 0.3s ease;
 }
 
 .tab-item:hover {
-  background-color: #37373d;
+  background: rgba(30, 41, 59, 0.5);
+  color: #F8FAFC;
 }
 
 .tab-item.active {
-  background-color: #1e1e1e;
-  border-bottom: 1px solid #1e1e1e;
-  margin-bottom: -1px;
+  background: rgba(30, 41, 59, 0.7);
+  color: #F59E0B;
+}
+
+.tab-item.active::after {
+  background: linear-gradient(90deg, #F59E0B 0%, #F97316 100%);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
 }
 
 .tab-item[draggable="true"] {
@@ -345,18 +368,19 @@ onUnmounted(() => {
 
 .tab-item[draggable="true"]:active {
   cursor: grabbing;
+  opacity: 0.7;
 }
 
 .tab-title {
   font-size: 13px;
-  color: #ccc;
-  max-width: 100px;
+  font-weight: 500;
+  max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .tab-item.active .tab-title {
-  color: #fff;
+  font-weight: 600;
 }
 
 .tab-close {
@@ -365,19 +389,20 @@ onUnmounted(() => {
   justify-content: center;
   width: 18px;
   height: 18px;
-  border-radius: 3px;
+  border-radius: 4px;
   margin-left: 4px;
   opacity: 0;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  color: #94A3B8;
 }
 
 .tab-item:hover .tab-close {
-  opacity: 0.7;
+  opacity: 1;
 }
 
 .tab-close:hover {
-  opacity: 1;
-  background-color: #555;
+  background: rgba(245, 158, 11, 0.2);
+  color: #F59E0B;
 }
 
 .tabs-actions {
@@ -397,7 +422,24 @@ onUnmounted(() => {
 .tab-panel {
   height: 100%;
   overflow-y: auto;
-  background-color: #1e1e1e;
+  background: transparent;
+}
+
+.tab-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tab-panel::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.3);
+}
+
+.tab-panel::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+}
+
+.tab-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.5);
 }
 
 /* 空状态 */
@@ -407,22 +449,25 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #666;
+  color: #64748B;
 }
 
 .empty-state .el-icon {
   margin-bottom: 16px;
-  color: #444;
+  color: #475569;
+  font-size: 48px;
 }
 
 .empty-state p {
-  margin: 4px 0;
-  font-size: 14px;
+  margin: 6px 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #94A3B8;
 }
 
 .empty-state .hint {
-  font-size: 12px;
-  color: #555;
+  font-size: 13px;
+  color: #64748B;
 }
 
 /* 拖拽覆盖层 */
@@ -432,7 +477,8 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(64, 158, 255, 0.1);
+  background: rgba(245, 158, 11, 0.1);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -444,50 +490,55 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 24px;
-  background-color: rgba(64, 158, 255, 0.2);
-  border: 2px dashed #409eff;
-  border-radius: 12px;
-  color: #409eff;
-  font-size: 14px;
+  gap: 12px;
+  padding: 32px;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(20px);
+  border: 2px dashed #F59E0B;
+  border-radius: 16px;
+  color: #F59E0B;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
 }
 
 /* 右键菜单 */
 .context-menu {
   position: fixed;
   z-index: 1000;
-  background-color: #2d2d2d;
-  border: 1px solid #454545;
-  border-radius: 6px;
-  padding: 4px 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  min-width: 160px;
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  padding: 6px 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  min-width: 180px;
 }
 
 .context-menu-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 10px;
+  padding: 10px 16px;
   cursor: pointer;
-  color: #ccc;
+  color: #CBD5E1;
   font-size: 13px;
-  transition: background-color 0.15s;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .context-menu-item:hover {
-  background-color: #094771;
-  color: #fff;
+  background: rgba(245, 158, 11, 0.15);
+  color: #F59E0B;
 }
 
 .context-menu-item .el-icon {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .context-menu-divider {
   height: 1px;
-  background-color: #3c3c3c;
-  margin: 4px 0;
+  background: rgba(148, 163, 184, 0.2);
+  margin: 6px 0;
 }
 </style>
