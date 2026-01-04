@@ -1,0 +1,377 @@
+/* 全局组件样式 - 统一禁用状态的视觉表现 (Dark Mode) */
+
+/* ==================== 按钮 ==================== */
+
+/* 基础按钮禁用状态 - 统一为灰色低透明度 */
+.el-button.is-disabled,
+.el-button.is-disabled:hover,
+.el-button.is-disabled:focus {
+  background-color: #3c3c3c !important;
+  border-color: #555 !important;
+  color: #666 !important;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Primary 按钮禁用 */
+.el-button--primary.is-disabled,
+.el-button--primary.is-disabled:hover,
+.el-button--primary.is-disabled:focus {
+  background-color: #3c3c3c !important;
+  border-color: #555 !important;
+  color: #666 !important;
+}
+
+/* Success 按钮禁用 */
+.el-button--success.is-disabled,
+.el-button--success.is-disabled:hover,
+.el-button--success.is-disabled:focus {
+  background-color: #3c3c3c !important;
+  border-color: #555 !important;
+  color: #666 !important;
+}
+
+/* Warning 按钮禁用 */
+.el-button--warning.is-disabled,
+.el-button--warning.is-disabled:hover,
+.el-button--warning.is-disabled:focus {
+  background-color: #3c3c3c !important;
+  border-color: #555 !important;
+  color: #666 !important;
+}
+
+/* Danger 按钮禁用 */
+.el-button--danger.is-disabled,
+.el-button--danger.is-disabled:hover,
+.el-button--danger.is-disabled:focus {
+  background-color: #3c3c3c !important;
+  border-color: #555 !important;
+  color: #666 !important;
+}
+
+/* Info 按钮禁用 */
+.el-button--info.is-disabled,
+.el-button--info.is-disabled:hover,
+.el-button--info.is-disabled:focus {
+  background-color: #3c3c3c !important;
+  border-color: #555 !important;
+  color: #666 !important;
+}
+
+/* Text 按钮禁用 */
+.el-button--text.is-disabled,
+.el-button--text.is-disabled:hover,
+.el-button--text.is-disabled:focus {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: #666 !important;
+}
+
+/* 确保禁用按钮的图标也是灰色 */
+.el-button.is-disabled .el-icon {
+  color: #666 !important;
+}
+
+/* Loading 状态保持原有颜色 */
+.el-button.is-loading {
+  opacity: 1;
+}
+
+/* ==================== 输入框 ==================== */
+
+/* Input 禁用状态 */
+.el-input.is-disabled .el-input__wrapper,
+.el-input.is-disabled .el-input__inner {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+.el-input.is-disabled .el-input__inner::placeholder {
+  color: #555 !important;
+}
+
+/* InputNumber 禁用状态 */
+.el-input-number.is-disabled .el-input__wrapper,
+.el-input-number.is-disabled .el-input__inner {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+.el-input-number.is-disabled .el-input-number__decrease,
+.el-input-number.is-disabled .el-input-number__increase {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  color: #555 !important;
+  cursor: not-allowed;
+}
+
+/* Textarea 禁用状态 */
+.el-textarea.is-disabled .el-textarea__inner {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+/* ==================== 选择器 ==================== */
+
+/* Select 禁用状态 */
+.el-select.is-disabled .el-input__wrapper {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  cursor: not-allowed;
+}
+
+.el-select.is-disabled .el-input__inner {
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+.el-select.is-disabled .el-select__caret {
+  color: #555 !important;
+  cursor: not-allowed;
+}
+
+/* ==================== 滑块 ==================== */
+
+/* Slider 禁用状态 */
+.el-slider.is-disabled .el-slider__runway {
+  background-color: #3c3c3c !important;
+  cursor: not-allowed;
+}
+
+.el-slider.is-disabled .el-slider__bar {
+  background-color: #555 !important;
+}
+
+.el-slider.is-disabled .el-slider__button {
+  background-color: #555 !important;
+  border-color: #555 !important;
+  cursor: not-allowed;
+}
+
+.el-slider.is-disabled .el-slider__button-wrapper {
+  cursor: not-allowed;
+}
+
+/* ==================== 开关 ==================== */
+
+/* Switch 禁用状态 */
+.el-switch.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.el-switch.is-disabled .el-switch__core {
+  background-color: #3c3c3c !important;
+  border-color: #555 !important;
+  cursor: not-allowed;
+}
+
+.el-switch.is-disabled.is-checked .el-switch__core {
+  background-color: #555 !important;
+  border-color: #555 !important;
+}
+
+/* ==================== 单选框 & 复选框 ==================== */
+
+/* Radio 禁用状态 */
+.el-radio.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.el-radio.is-disabled .el-radio__inner {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  cursor: not-allowed;
+}
+
+.el-radio.is-disabled .el-radio__label {
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+.el-radio.is-disabled.is-checked .el-radio__inner {
+  background-color: #555 !important;
+  border-color: #555 !important;
+}
+
+.el-radio.is-disabled.is-checked .el-radio__inner::after {
+  background-color: #888 !important;
+}
+
+/* Radio Button 禁用状态 */
+.el-radio-button.is-disabled .el-radio-button__inner {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+/* Checkbox 禁用状态 */
+.el-checkbox.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.el-checkbox.is-disabled .el-checkbox__inner {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  cursor: not-allowed;
+}
+
+.el-checkbox.is-disabled .el-checkbox__label {
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+.el-checkbox.is-disabled.is-checked .el-checkbox__inner {
+  background-color: #555 !important;
+  border-color: #555 !important;
+}
+
+.el-checkbox.is-disabled.is-checked .el-checkbox__inner::after {
+  border-color: #888 !important;
+}
+
+/* ==================== 日期时间选择器 ==================== */
+
+/* DatePicker / TimePicker 禁用状态 */
+.el-date-editor.is-disabled .el-input__wrapper,
+.el-date-editor.is-disabled .el-input__inner {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+.el-date-editor.is-disabled .el-input__prefix,
+.el-date-editor.is-disabled .el-input__suffix {
+  color: #555 !important;
+}
+
+/* ==================== 其他组件 ==================== */
+
+/* Upload 禁用状态 */
+.el-upload.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Cascader 禁用状态 */
+.el-cascader.is-disabled .el-input__wrapper {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  cursor: not-allowed;
+}
+
+.el-cascader.is-disabled .el-input__inner {
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+/* Rate 禁用状态 */
+.el-rate.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ColorPicker 禁用状态 */
+.el-color-picker.is-disabled .el-color-picker__trigger {
+  background-color: #2d2d2d !important;
+  border-color: #555 !important;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ==================== Light 模式支持 ==================== */
+
+/* 通过 html.light class 切换为明亮模式 */
+html.light .el-button.is-disabled,
+html.light .el-button.is-disabled:hover,
+html.light .el-button.is-disabled:focus,
+html.light .el-button--primary.is-disabled,
+html.light .el-button--primary.is-disabled:hover,
+html.light .el-button--primary.is-disabled:focus,
+html.light .el-button--success.is-disabled,
+html.light .el-button--success.is-disabled:hover,
+html.light .el-button--success.is-disabled:focus,
+html.light .el-button--warning.is-disabled,
+html.light .el-button--warning.is-disabled:hover,
+html.light .el-button--warning.is-disabled:focus,
+html.light .el-button--danger.is-disabled,
+html.light .el-button--danger.is-disabled:hover,
+html.light .el-button--danger.is-disabled:focus,
+html.light .el-button--info.is-disabled,
+html.light .el-button--info.is-disabled:hover,
+html.light .el-button--info.is-disabled:focus {
+  background-color: #f5f5f5 !important;
+  border-color: #d9d9d9 !important;
+  color: #c0c0c0 !important;
+}
+
+html.light .el-button.is-disabled .el-icon {
+  color: #c0c0c0 !important;
+}
+
+/* 输入框禁用 */
+html.light .el-input.is-disabled .el-input__wrapper,
+html.light .el-input.is-disabled .el-input__inner,
+html.light .el-input-number.is-disabled .el-input__wrapper,
+html.light .el-input-number.is-disabled .el-input__inner,
+html.light .el-textarea.is-disabled .el-textarea__inner,
+html.light .el-select.is-disabled .el-input__wrapper,
+html.light .el-date-editor.is-disabled .el-input__wrapper,
+html.light .el-cascader.is-disabled .el-input__wrapper {
+  background-color: #f5f5f5 !important;
+  border-color: #d9d9d9 !important;
+  color: #c0c0c0 !important;
+}
+
+/* 滑块禁用 */
+html.light .el-slider.is-disabled .el-slider__runway {
+  background-color: #e0e0e0 !important;
+}
+
+html.light .el-slider.is-disabled .el-slider__bar {
+  background-color: #c0c0c0 !important;
+}
+
+html.light .el-slider.is-disabled .el-slider__button {
+  background-color: #c0c0c0 !important;
+  border-color: #c0c0c0 !important;
+}
+
+/* 开关禁用 */
+html.light .el-switch.is-disabled .el-switch__core {
+  background-color: #e0e0e0 !important;
+  border-color: #d9d9d9 !important;
+}
+
+html.light .el-switch.is-disabled.is-checked .el-switch__core {
+  background-color: #c0c0c0 !important;
+}
+
+/* 单选框 & 复选框禁用 */
+html.light .el-radio.is-disabled .el-radio__inner,
+html.light .el-checkbox.is-disabled .el-checkbox__inner {
+  background-color: #f5f5f5 !important;
+  border-color: #d9d9d9 !important;
+}
+
+html.light .el-radio.is-disabled .el-radio__label,
+html.light .el-checkbox.is-disabled .el-checkbox__label {
+  color: #c0c0c0 !important;
+}
+
+html.light .el-radio-button.is-disabled .el-radio-button__inner {
+  background-color: #f5f5f5 !important;
+  border-color: #d9d9d9 !important;
+  color: #c0c0c0 !important;
+}
+

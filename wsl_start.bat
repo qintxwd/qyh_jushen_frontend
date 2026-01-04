@@ -1,0 +1,1 @@
+wsl -d Ubuntu-22.04 -- bash -c "cd ~/qyh_jushen_ws/qyh_jushen_web/frontend && npm run dev -- --host 0.0.0.0"
