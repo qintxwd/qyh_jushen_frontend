@@ -495,32 +495,43 @@ onUnmounted(() => {
 
 <style scoped>
 .waist-panel {
-  padding: 16px;
+  padding: var(--spacing-lg);
 }
 
 .panel-section {
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-sm);
 }
 
 .section-title {
-  margin: 0 0 12px 0;
+  margin: 0 0 var(--spacing-md) 0;
   font-size: 13px;
-  font-weight: 500;
-  color: #909399;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 /* 状态可视化 */
 .status-visual {
   display: flex;
-  gap: 16px;
-  padding: 12px;
-  background-color: #2d2d2d;
-  border-radius: 8px;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-lg);
+  transition: all 0.3s var(--transition-smooth);
+}
+
+.status-visual:hover {
+  background: rgba(30, 41, 59, 0.6);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .angle-column {
   display: flex;
-  gap: 6px;
+  gap: var(--spacing-xs);
 }
 
 .angle-visual {
@@ -530,15 +541,20 @@ onUnmounted(() => {
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  background: rgba(15, 23, 42, 0.3);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 .body-base {
   position: absolute;
-  bottom: 0;
+  bottom: 5px;
   width: 40px;
   height: 20px;
-  background: #555;
-  border-radius: 4px;
+  background: rgba(148, 163, 184, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .body-torso {
@@ -556,8 +572,9 @@ onUnmounted(() => {
   left: 0;
   width: 4px;
   height: 50px;
-  background: linear-gradient(to top, #409eff, #69c0ff);
-  border-radius: 2px;
+  background: linear-gradient(to top, var(--color-primary), #fbbf24);
+  border-radius: var(--radius-xs);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
 }
 
 .torso-head {
@@ -567,8 +584,10 @@ onUnmounted(() => {
   transform: translateX(-50%);
   width: 16px;
   height: 16px;
-  background: #69c0ff;
+  background: linear-gradient(135deg, var(--color-primary), #fbbf24);
   border-radius: 50%;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .angle-label {
@@ -577,11 +596,13 @@ onUnmounted(() => {
   left: 50%;
   transform: translateX(-50%);
   font-size: 10px;
-  font-weight: 600;
-  color: #409eff;
-  background: #2d2d2d;
-  padding: 2px 4px;
-  border-radius: 2px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-xs) var(--spacing-xs);
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .angle-scale {
@@ -589,7 +610,7 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: space-between;
   font-size: 9px;
-  color: #666;
+  color: var(--color-text-tertiary);
   height: 100px;
   padding: 2px 0;
 }
@@ -598,75 +619,90 @@ onUnmounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--spacing-xs);
 }
 
 .info-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 8px;
-  background-color: #1e1e1e;
-  border-radius: 4px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: var(--radius-sm);
 }
 
 .info-label {
   font-size: 11px;
-  color: #909399;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .info-value {
   font-size: 12px;
   font-family: 'Consolas', monospace;
-  color: #67c23a;
+  color: #10b981;
+  font-weight: 700;
 }
 
 /* 速度控制 */
 .speed-control {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 /* 角度控制 */
 .angle-control {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--spacing-md);
 }
 
 .angle-input {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .angle-buttons {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .unit {
   font-size: 12px;
-  color: #909399;
+  color: var(--color-text-tertiary);
   min-width: 20px;
 }
 
 .quick-angles {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: var(--spacing-xs);
 }
 
 .quick-angles .el-button {
-  padding: 4px 10px;
+  padding: var(--spacing-xs) var(--spacing-sm);
   font-size: 12px;
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  transition: all 0.3s var(--transition-smooth);
+}
+
+.quick-angles .el-button:hover {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
 }
 
 /* 手动控制 */
 .manual-controls {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-md);
   justify-content: center;
 }
 
@@ -677,27 +713,28 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .jog-btn span {
   font-size: 12px;
+  font-weight: 600;
 }
 
 .jog-hint {
   text-align: center;
   font-size: 11px;
-  color: #666;
-  margin: 8px 0 0 0;
+  color: var(--color-text-tertiary);
+  margin: var(--spacing-sm) 0 0 0;
 }
 
 :deep(.el-divider) {
-  margin: 12px 0;
-  border-color: #3c3c3c;
+  margin: var(--spacing-lg) 0;
+  border-color: rgba(148, 163, 184, 0.2);
 }
 
 :deep(.el-alert) {
-  padding: 8px 12px;
+  padding: var(--spacing-sm) var(--spacing-md);
 }
 
 :deep(.el-alert .el-alert__title) {
@@ -709,6 +746,19 @@ onUnmounted(() => {
 }
 
 :deep(.el-slider) {
-  --el-slider-main-bg-color: #409eff;
+  --el-slider-main-bg-color: var(--color-primary);
+  --el-slider-runway-bg-color: rgba(15, 23, 42, 0.6);
+  --el-slider-button-wrapper-size: 36px;
+  --el-slider-button-size: 16px;
+}
+
+:deep(.el-slider__bar) {
+  background: linear-gradient(90deg, var(--color-primary), #fbbf24);
+}
+
+:deep(.el-slider__button) {
+  border: 2px solid var(--color-primary);
+  background: rgba(15, 23, 42, 0.9);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
 }
 </style>

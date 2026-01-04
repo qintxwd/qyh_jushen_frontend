@@ -356,13 +356,15 @@ defineExpose({
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #1a1a1a;
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(20px);
 }
 
 .editor-body {
   display: flex;
   flex: 1;
   overflow: hidden;
+  gap: var(--spacing-xs);
 }
 
 /* 节点面板容器 */
@@ -370,7 +372,7 @@ defineExpose({
   position: relative;
   width: 260px;
   min-width: 260px;
-  transition: width 0.2s ease, min-width 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .node-palette-container.collapsed {
@@ -383,7 +385,7 @@ defineExpose({
   position: relative;
   width: 280px;
   min-width: 280px;
-  transition: width 0.2s ease, min-width 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .property-panel-container.collapsed {
@@ -395,6 +397,7 @@ defineExpose({
 .canvas-container {
   flex: 1;
   overflow: hidden;
+  border-radius: var(--radius-lg);
 }
 
 /* 折叠按钮 */
@@ -402,32 +405,36 @@ defineExpose({
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px;
-  height: 40px;
+  width: 24px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #333;
-  border: 1px solid #444;
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
   cursor: pointer;
   z-index: 10;
-  transition: background-color 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--color-text-secondary);
 }
 
 .collapse-button:hover {
-  background-color: #409eff;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-text-primary);
+  transform: translateY(-50%) translateY(-2px);
+  box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
 }
 
 .collapse-button.left {
-  right: -20px;
-  border-radius: 0 4px 4px 0;
+  right: -24px;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
   border-left: none;
 }
 
 .collapse-button.right {
-  left: -20px;
-  border-radius: 4px 0 0 4px;
+  left: -24px;
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
   border-right: none;
 }
 
@@ -435,6 +442,25 @@ defineExpose({
 .task-list-dialog {
   max-height: 400px;
   overflow-y: auto;
+  padding: var(--spacing-xs);
+}
+
+.task-list-dialog::-webkit-scrollbar {
+  width: 8px;
+}
+
+.task-list-dialog::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.3);
+  border-radius: var(--radius-sm);
+}
+
+.task-list-dialog::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: var(--radius-sm);
+}
+
+.task-list-dialog::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
 }
 
 .empty-list {
@@ -442,71 +468,113 @@ defineExpose({
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
-  color: #999;
+  padding: var(--spacing-2xl);
+  color: var(--color-text-tertiary);
 }
 
 .empty-list p {
-  margin: 12px 0 0 0;
+  margin: var(--spacing-md) 0 0 0;
+  font-size: 14px;
 }
 
 .task-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .task-list-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all 0.2s;
-  border: 2px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .task-list-item:hover {
-  background-color: #e8f4ff;
+  background: rgba(30, 41, 59, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  border-color: rgba(148, 163, 184, 0.3);
 }
 
 .task-list-item.selected {
-  background-color: #e8f4ff;
-  border-color: #409eff;
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .task-icon {
-  color: #409eff;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .task-info {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .task-name {
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .task-desc {
   font-size: 12px;
-  color: #999;
+  color: var(--color-text-tertiary);
 }
 
 .task-time {
   font-size: 11px;
-  color: #bbb;
+  color: var(--color-text-tertiary);
+  opacity: 0.7;
+}
+
+.task-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+/* 对话框样式覆盖 */
+:deep(.el-dialog) {
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-xl);
+}
+
+:deep(.el-dialog__header) {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding: var(--spacing-lg);
+}
+
+:deep(.el-dialog__title) {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+:deep(.el-dialog__body) {
+  padding: var(--spacing-lg);
+}
+
+:deep(.el-dialog__footer) {
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
+  padding: var(--spacing-lg);
 }
 </style>

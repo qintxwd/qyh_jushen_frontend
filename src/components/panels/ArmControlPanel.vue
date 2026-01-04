@@ -1384,13 +1384,14 @@ onUnmounted(() => {
 
 <style scoped>
 .arm-control-panel {
-  padding: 16px;
+  padding: var(--spacing-lg);
 }
 
 /* 全局深色主题 tabs 样式 */
 .arm-control-panel :deep(.el-tabs__header) {
-  background-color: #252526;
-  border-bottom: 1px solid #3c3c3c;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .arm-control-panel :deep(.el-tabs__nav) {
@@ -1398,74 +1399,93 @@ onUnmounted(() => {
 }
 
 .arm-control-panel :deep(.el-tabs__item) {
-  color: #909399;
+  color: rgba(148, 163, 184, 0.8);
   border: none;
   background-color: transparent;
-  transition: all 0.2s;
+  transition: all 0.3s var(--transition-smooth);
 }
 
 .arm-control-panel :deep(.el-tabs__item:hover) {
-  color: #c0c4cc;
+  color: var(--color-text-primary);
 }
 
 .arm-control-panel :deep(.el-tabs__item.is-active) {
-  color: #409eff;
-  background-color: #2d2d2d;
+  color: var(--color-primary);
+  background: rgba(245, 158, 11, 0.1);
+  border-bottom: 2px solid var(--color-primary);
 }
 
 .panel-section {
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .section-title {
-  margin: 0 0 12px 0;
+  margin: 0 0 var(--spacing-md) 0;
   font-size: 13px;
-  font-weight: 500;
-  color: #909399;
+  font-weight: 600;
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .section-title .el-icon {
   font-size: 14px;
-  color: #409eff;
+  color: var(--color-primary);
 }
 
-/* 状态卡片 */
+/* 状态卡片 - Glassmorphism */
 .status-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
-  border: 1px solid #3c3c3c;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  transition: all 0.3s var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
 }
 
-.status-card.connected {
-  background: linear-gradient(135deg, #1a3a4a, #1a2a3a);
-  border-color: #409eff;
+.status-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: rgba(148, 163, 184, 0.3);
+  transition: all 0.3s var(--transition-smooth);
 }
 
-.status-card.powered {
-  background: linear-gradient(135deg, #2a3a2a, #1a2a1a);
-  border-color: #67c23a;
+.status-card.connected::before {
+  background: linear-gradient(180deg, #3b82f6, #60a5fa);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
 }
 
-.status-card.enabled {
-  background: linear-gradient(135deg, #2a4a3a, #1a3a2a);
-  border-color: #4caf50;
+.status-card.powered::before {
+  background: linear-gradient(180deg, #10b981, #34d399);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
 }
 
-.status-card.servo {
-  background: linear-gradient(135deg, #3a3a2a, #2a2a1a);
-  border-color: #e6a23c;
+.status-card.enabled::before {
+  background: linear-gradient(180deg, #059669, #10b981);
+  box-shadow: 0 0 12px rgba(5, 150, 105, 0.5);
 }
 
-.status-card.error {
-  background: linear-gradient(135deg, #4a2a2a, #3a1a1a);
-  border-color: #f56c6c;
+.status-card.servo::before {
+  background: linear-gradient(180deg, var(--color-primary), #fbbf24);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+}
+
+.status-card.error::before {
+  background: linear-gradient(180deg, #ef4444, #f87171);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .status-indicator {
@@ -1475,74 +1495,92 @@ onUnmounted(() => {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.1);
+  background: rgba(148, 163, 184, 0.1);
+  transition: all 0.3s var(--transition-smooth);
 }
 
 .status-card.error .status-indicator {
-  color: #f56c6c;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
 }
 
 .status-card.servo .status-indicator {
-  color: #e6a23c;
+  color: var(--color-primary);
+  background: rgba(245, 158, 11, 0.15);
 }
 
 .status-card.enabled .status-indicator,
 .status-card.powered .status-indicator {
-  color: #67c23a;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
 }
 
 .status-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .status-label {
   font-size: 12px;
-  color: #909399;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .status-value {
   font-size: 18px;
-  font-weight: 600;
-  color: #fff;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-family: var(--font-heading);
 }
 
 /* 控制按钮行 */
 .control-row {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .control-row .el-button {
   flex: 1;
+  font-weight: 600;
+  transition: all 0.3s var(--transition-smooth);
+}
+
+.control-row .el-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 /* 伺服状态 */
 .servo-status {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-  padding: 8px 12px;
-  background-color: #2d2d2d;
-  border-radius: 6px;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-md);
 }
 
 .servo-mode {
   font-size: 13px;
-  color: #909399;
+  color: var(--color-text-secondary);
+  font-weight: 500;
 }
 
 .servo-mode.active {
-  color: #e6a23c;
-  font-weight: 500;
+  color: var(--color-primary);
+  font-weight: 600;
 }
 
 .servo-rate {
   font-size: 12px;
   font-family: 'Consolas', monospace;
-  color: #67c23a;
+  color: #10b981;
+  font-weight: 600;
 }
 
 /* 目标选择 */
@@ -1599,19 +1637,22 @@ onUnmounted(() => {
 .points-list {
   max-height: 200px;
   overflow-y: auto;
-  border: 1px solid #3c3c3c;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(10px);
 }
 
 .point-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: var(--spacing-sm) var(--spacing-md);
   cursor: pointer;
-  transition: all 0.2s;
-  border-bottom: 1px solid #3c3c3c;
+  transition: all 0.3s var(--transition-smooth);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  position: relative;
 }
 
 .point-item:last-child {
@@ -1619,16 +1660,17 @@ onUnmounted(() => {
 }
 
 .point-item:hover {
-  background-color: #2d2d2d;
+  background: rgba(30, 41, 59, 0.5);
+  transform: translateX(4px);
 }
 
 .point-item.selected {
-  background-color: #1a3a4a;
-  border-color: #409eff;
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 3px solid var(--color-primary);
 }
 
 .point-item.builtin .point-name {
-  color: #67c23a;
+  color: #10b981;
 }
 
 .point-info {
@@ -1875,23 +1917,26 @@ onUnmounted(() => {
 .jog-config {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
-  padding: 12px;
-  background: #2a2a2a;
-  border-radius: 8px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-lg);
 }
 
 .config-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .config-label {
   min-width: 55px;
-  color: #aaa;
+  color: var(--color-text-secondary);
   font-size: 13px;
+  font-weight: 600;
 }
 
 .config-row :deep(.el-radio-group) {
@@ -1901,51 +1946,64 @@ onUnmounted(() => {
 .config-row :deep(.el-radio-button__inner) {
   padding: 6px 12px;
   font-size: 12px;
+  transition: all 0.3s var(--transition-smooth);
 }
 
 .jog-speed-config {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 12px;
-  background: #252525;
-  border-radius: 8px;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: var(--radius-lg);
 }
 
 .speed-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .speed-label {
   min-width: 45px;
-  color: #aaa;
+  color: var(--color-text-secondary);
   font-size: 13px;
+  font-weight: 600;
 }
 
 .speed-value {
   min-width: 80px;
   text-align: right;
-  color: #67c23a;
+  color: #10b981;
   font-family: 'Consolas', monospace;
   font-size: 12px;
+  font-weight: 700;
 }
 
 .jog-controls {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .jog-axis-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: #2a2a2a;
-  padding: 8px 12px;
-  border-radius: 6px;
+  gap: var(--spacing-sm);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(10px);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  transition: all 0.3s var(--transition-smooth);
+}
+
+.jog-axis-row:hover {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(148, 163, 184, 0.2);
 }
 
 .axis-label {
@@ -2038,17 +2096,21 @@ onUnmounted(() => {
 /* 负载管理样式 */
 .payload-config,
 .payload-object {
-  background: #2a2a2a;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
 }
 
 .config-title {
-  color: #aaa;
+  color: var(--color-text-secondary);
   font-size: 12px;
-  margin-bottom: 10px;
-  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .payload-row {

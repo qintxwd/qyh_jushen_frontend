@@ -1569,8 +1569,9 @@ function handleKeyUp(e: KeyboardEvent) {
 
 .chassis-tabs :deep(.el-tabs__header) {
   margin: 0;
-  background-color: #252526;
-  border-bottom: 1px solid #3c3c3c;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .chassis-tabs :deep(.el-tabs__nav) {
@@ -1578,61 +1579,75 @@ function handleKeyUp(e: KeyboardEvent) {
 }
 
 .chassis-tabs :deep(.el-tabs__item) {
-  color: #909399;
+  color: rgba(148, 163, 184, 0.8);
   border: none;
   background-color: transparent;
-  transition: all 0.2s;
+  transition: all 0.3s var(--transition-smooth);
 }
 
 .chassis-tabs :deep(.el-tabs__item:hover) {
-  color: #c0c4cc;
+  color: var(--color-text-primary);
 }
 
 .chassis-tabs :deep(.el-tabs__item.is-active) {
-  color: #409eff;
-  background-color: #2d2d2d;
+  color: var(--color-primary);
+  background: rgba(245, 158, 11, 0.1);
+  border-bottom: 2px solid var(--color-primary);
 }
 
 .chassis-tabs :deep(.el-tabs__content) {
-  padding: 12px;
+  padding: var(--spacing-md);
   height: calc(100% - 40px);
   overflow-y: auto;
 }
 
 .panel-section {
-  margin-bottom: 12px;
+  margin-bottom: var(--spacing-md);
 }
 
 .section-title {
-  margin: 0 0 10px 0;
+  margin: 0 0 var(--spacing-sm) 0;
   font-size: 13px;
-  font-weight: 500;
-  color: #909399;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .danger-title {
-  color: #f56c6c;
+  color: #ef4444;
 }
 
-/* ==================== 状态显示 ==================== */
+/* ====================  状态显示 ==================== */
 .status-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .status-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
-  background: #2d2d2d;
-  border-radius: 6px;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: var(--radius-md);
+  transition: all 0.3s var(--transition-smooth);
+}
+
+.status-item:hover {
+  background: rgba(30, 41, 59, 0.6);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .status-label {
   font-size: 12px;
-  color: #909399;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 /* ==================== 位姿信息 ==================== */
@@ -1687,23 +1702,26 @@ function handleKeyUp(e: KeyboardEvent) {
 .battery-main {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
 }
 
 .battery-visual {
   flex: 1;
-  height: 24px;
-  background: #2d2d2d;
-  border-radius: 4px;
+  height: 28px;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-sm);
   position: relative;
   overflow: hidden;
 }
 
 .battery-bar {
   height: 100%;
-  background: linear-gradient(90deg, #67c23a, #85ce61);
-  transition: width 0.3s;
+  background: linear-gradient(90deg, #10b981, #34d399);
+  transition: width 0.5s var(--transition-smooth);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
 }
 
 .battery-text {
@@ -1712,41 +1730,47 @@ function handleKeyUp(e: KeyboardEvent) {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 12px;
-  font-weight: 600;
-  text-shadow: 0 0 2px rgba(0,0,0,0.5);
+  font-weight: 700;
+  text-shadow: 0 0 3px rgba(0,0,0,0.8);
+  color: var(--color-text-primary);
 }
 
-.battery-high { color: #67c23a; }
-.battery-mid { color: #e6a23c; }
-.battery-low { color: #f56c6c; }
+.battery-high { color: #10b981; }
+.battery-mid { color: var(--color-primary); }
+.battery-low { color: #ef4444; }
 
 .battery-details {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
+  gap: var(--spacing-xs);
 }
 
 .battery-item {
   display: flex;
   flex-direction: column;
-  padding: 6px 8px;
-  background: #2d2d2d;
-  border-radius: 4px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: var(--radius-sm);
 }
 
 .bat-label {
   font-size: 10px;
-  color: #909399;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
 }
 
 .bat-value {
   font-size: 12px;
   font-family: 'Consolas', monospace;
+  font-weight: 600;
+  color: var(--color-text-secondary);
 }
 
-.bat-value.charging { color: #67c23a; }
-.temp-high { color: #f56c6c; }
-.temp-mid { color: #e6a23c; }
+.bat-value.charging { color: #10b981; }
+.temp-high { color: #ef4444; }
+.temp-mid { color: var(--color-primary); }
 
 /* ==================== 统计信息 ==================== */
 .stats-grid {
@@ -1780,49 +1804,58 @@ function handleKeyUp(e: KeyboardEvent) {
 .flags-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  gap: var(--spacing-xs);
 }
 
 .flag-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px 4px;
-  background: #2d2d2d;
-  border-radius: 6px;
+  padding: var(--spacing-sm) var(--spacing-xs);
+  background: rgba(30, 41, 59, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: var(--radius-md);
   font-size: 10px;
-  color: #606266;
-  transition: all 0.2s;
+  color: rgba(148, 163, 184, 0.6);
+  transition: all 0.3s var(--transition-smooth);
 }
 
 .flag-item.active {
-  background: #3d5a40;
-  color: #67c23a;
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
 }
 
 .flag-item.charging {
-  background: #3a5441;
-  color: #67c23a;
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
 }
 
 .flag-item.wifi {
-  background: #354561;
-  color: #409eff;
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #3b82f6;
 }
 
 .flag-item.warning {
-  background: #584a35;
-  color: #e6a23c;
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: var(--color-primary);
 }
 
 .flag-item.danger {
-  background: #5a3535;
-  color: #f56c6c;
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .flag-item .el-icon {
   font-size: 16px;
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-xs);
 }
 
 /* ==================== 障碍传感器 ==================== */

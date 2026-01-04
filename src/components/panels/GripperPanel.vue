@@ -366,23 +366,25 @@ onUnmounted(() => {
 
 <style scoped>
 .gripper-panel {
-  padding: 16px;
+  padding: var(--spacing-lg);
 }
 
 .panel-section {
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-sm);
 }
 
 .section-title {
-  margin: 0 0 12px 0;
+  margin: 0 0 var(--spacing-md) 0;
   font-size: 13px;
-  font-weight: 500;
-  color: #909399;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .gripper-tabs {
   display: flex;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .gripper-tab {
@@ -390,30 +392,38 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px;
-  background-color: #2d2d2d;
-  border-radius: 8px;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s var(--transition-smooth);
 }
 
 .gripper-tab:hover {
-  background-color: #3c3c3c;
+  background: rgba(30, 41, 59, 0.6);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .gripper-tab.active {
-  background-color: #094771;
-  color: #fff;
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
 }
 
 .status-display {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px;
-  background-color: #2d2d2d;
-  border-radius: 8px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-lg);
 }
 
 .status-row {
@@ -424,62 +434,71 @@ onUnmounted(() => {
 
 .status-label {
   font-size: 12px;
-  color: #909399;
+  color: var(--color-text-tertiary);
   min-width: 60px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .status-value {
   font-size: 14px;
   font-family: 'Consolas', monospace;
-  color: #67c23a;
+  color: #10b981;
+  font-weight: 700;
 }
 
 .status-value.force {
-  color: #e6a23c;
+  color: var(--color-primary);
 }
 
 .quick-buttons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .control-sliders {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-lg);
 }
 
 .control-item {
-  background-color: #2d2d2d;
-  padding: 12px;
-  border-radius: 6px;
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
 }
 
 .control-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-sm);
 }
 
 .control-label {
   font-size: 12px;
-  color: #909399;
+  color: var(--color-text-secondary);
+  font-weight: 600;
 }
 
 .control-value {
   font-size: 12px;
   font-family: 'Consolas', monospace;
-  color: #409eff;
+  color: var(--color-primary);
+  font-weight: 700;
 }
 
 .settings-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px;
-  background-color: #2d2d2d;
-  border-radius: 8px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-lg);
 }
 
 .setting-item {
@@ -487,19 +506,19 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  color: #ccc;
+  color: var(--color-text-primary);
 }
 
 :deep(.el-divider) {
-  margin: 16px 0;
-  border-color: #3c3c3c;
+  margin: var(--spacing-lg) 0;
+  border-color: rgba(148, 163, 184, 0.2);
 }
 
 :deep(.el-progress-bar__outer) {
-  background-color: #404040;
+  background: rgba(15, 23, 42, 0.6);
 }
 
 :deep(.el-progress-bar__inner) {
-  background-color: #67c23a;
+  background: linear-gradient(90deg, #10b981, #34d399);
 }
 </style>
