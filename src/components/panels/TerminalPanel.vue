@@ -38,12 +38,13 @@ const rootPane = ref<Pane>({
   id: nextPaneId++,
   type: 'leaf',
   tabs: [
-    { id: nextTabId++, title: '终端 1', key: 0 }
+    { id: 1, title: '终端 1', key: Date.now() }
   ],
   activeTabId: 1
 })
+nextTabId = 2 // 下一个终端从2开始
 
-// 分割面板
+// 分割面板（只支持左右分屏）
 function handleSplit(paneId: number, direction: 'horizontal' | 'vertical') {
   splitPane(rootPane.value, paneId, direction)
 }
@@ -51,7 +52,12 @@ function handleSplit(paneId: number, direction: 'horizontal' | 'vertical') {
 function splitPane(pane: Pane, targetId: number, direction: 'horizontal' | 'vertical'): boolean {
   if (pane.id === targetId && pane.type === 'leaf') {
     // 将当前叶子节点转换为分割节点
-    const newTab = { id: nextTabId++, title: `终端 ${nextTabId}`, key: Date.now() }
+    const newTabId = nextTabId++
+    const newTab = { id: newTabId, title: `终端 ${newTabId}`, key: Date.now() }
+    
+    // 保存原有的 tabs 和 activeTabId
+    const originalTabs = pane.tabs
+    const originalActiveTabId = pane.activeTabId
     
     pane.type = 'split'
     pane.direction = direction
@@ -59,8 +65,8 @@ function splitPane(pane: Pane, targetId: number, direction: 'horizontal' | 'vert
       {
         id: pane.id,
         type: 'leaf',
-        tabs: pane.tabs,
-        activeTabId: pane.activeTabId
+        tabs: originalTabs, // 保留原有的 tabs，不会重新创建终端
+        activeTabId: originalActiveTabId
       },
       {
         id: nextPaneId++,
@@ -94,7 +100,8 @@ function handleAddTab(paneId: number) {
 
 function addTab(pane: Pane, targetId: number): boolean {
   if (pane.id === targetId && pane.type === 'leaf' && pane.tabs) {
-    const newTab = { id: nextTabId++, title: `终端 ${nextTabId}`, key: Date.now() }
+    const newTabId = nextTabId++
+    const newTab = { id: newTabId, title: `终端 ${newTabId}`, key: Date.now() }
     pane.tabs.push(newTab)
     pane.activeTabId = newTab.id
     return true

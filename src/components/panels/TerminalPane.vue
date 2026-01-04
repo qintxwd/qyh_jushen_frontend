@@ -5,16 +5,24 @@
     class="split-container"
     :class="pane.direction"
   >
-    <TerminalPane
-      v-for="(child, index) in pane.children"
-      :key="child.id"
-      :pane="child"
-      :is-root="false"
-      @split="$emit('split', $event, arguments[1])"
-      @add-tab="$emit('add-tab', $event)"
-      @close-tab="$emit('close-tab', $event, arguments[1])"
-      @close-pane="$emit('close-pane', $event)"
-    />
+    <template v-for="(child, index) in pane.children" :key="child.id">
+      <TerminalPane
+        :pane="child"
+        :is-root="false"
+        @split="$emit('split', $event, arguments[1])"
+        @add-tab="$emit('add-tab', $event)"
+        @close-tab="$emit('close-tab', $event, arguments[1])"
+        @close-pane="$emit('close-pane', $event)"
+        :style="{ flex: child.flex || 1 }"
+      />
+      <!-- 可调整大小的分割线 -->
+      <div 
+        v-if="index < pane.children.length - 1"
+        class="split-resizer"
+        :class="pane.direction"
+        @mousedown="startResize($event, index)"
+      ></div>
+    </template>
   </div>
 
   <!-- 叶子节点（包含标签页的终端） -->
@@ -57,14 +65,10 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="split-h">
-                <SvgIcon name="grid" :size="16" />
+                <SvgIcon name="window-split" :size="16" />
                 左右分屏
               </el-dropdown-item>
-              <el-dropdown-item command="split-v">
-                <SvgIcon name="grid" :size="16" />
-                上下分屏
-              </el-dropdown-item>
-              <el-dropdown-item divided command="close-pane" v-if="!isRoot">
+              <el-dropdown-item command="close-pane" v-if="!isRoot">
                 <SvgIcon name="close" :size="16" />
                 关闭面板
               </el-dropdown-item>
@@ -89,6 +93,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import SvgIcon from '@/components/SvgIcon.vue'
 import Terminal from '@/components/Terminal.vue'
 
@@ -105,6 +110,7 @@ interface Pane {
   tabs?: TerminalTab[]
   activeTabId?: number
   children?: Pane[]
+  flex?: number
 }
 
 const props = defineProps<{
@@ -118,6 +124,55 @@ const emit = defineEmits<{
   closeTab: [paneId: number, tabId: number]
   closePane: [paneId: number]
 }>()
+
+// 分割线拖动
+let resizing = false
+let resizeIndex = -1
+let startPos = 0
+let startFlexes: number[] = []
+
+function startResize(event: MouseEvent, index: number) {
+  if (props.pane.type !== 'split' || !props.pane.children) return
+  
+  resizing = true
+  resizeIndex = index
+  startPos = props.pane.direction === 'horizontal' ? event.clientX : event.clientY
+  
+  // 保存当前的 flex 值
+  startFlexes = props.pane.children.map(child => child.flex || 1)
+  
+  document.addEventListener('mousemove', handleResize)
+  document.addEventListener('mouseup', stopResize)
+  event.preventDefault()
+}
+
+function handleResize(event: MouseEvent) {
+  if (!resizing || props.pane.type !== 'split' || !props.pane.children) return
+  
+  const currentPos = props.pane.direction === 'horizontal' ? event.clientX : event.clientY
+  const delta = currentPos - startPos
+  
+  // 计算容器总大小
+  const container = event.target as HTMLElement
+  const parent = container.closest('.split-container') as HTMLElement
+  if (!parent) return
+  
+  const totalSize = props.pane.direction === 'horizontal' ? parent.clientWidth : parent.clientHeight
+  const deltaFlex = (delta / totalSize) * (startFlexes[resizeIndex] + startFlexes[resizeIndex + 1])
+  
+  // 更新 flex 值
+  const newFlex1 = Math.max(0.1, startFlexes[resizeIndex] + deltaFlex)
+  const newFlex2 = Math.max(0.1, startFlexes[resizeIndex + 1] - deltaFlex)
+  
+  props.pane.children[resizeIndex].flex = newFlex1
+  props.pane.children[resizeIndex + 1].flex = newFlex2
+}
+
+function stopResize() {
+  resizing = false
+  document.removeEventListener('mousemove', handleResize)
+  document.removeEventListener('mouseup', stopResize)
+}
 
 function activateTab(tabId: number) {
   if (props.pane.type === 'leaf') {
@@ -136,8 +191,6 @@ function closeTab(tabId: number) {
 function handleCommand(command: string) {
   if (command === 'split-h') {
     emit('split', props.pane.id, 'horizontal')
-  } else if (command === 'split-v') {
-    emit('split', props.pane.id, 'vertical')
   } else if (command === 'close-pane') {
     emit('close-pane', props.pane.id)
   }
@@ -150,8 +203,7 @@ function handleCommand(command: string) {
   display: flex;
   height: 100%;
   width: 100%;
-  gap: 1px;
-  background-color: #3c3c3c;
+  background-color: #1e1e1e;
 }
 
 .split-container.horizontal {
@@ -162,10 +214,32 @@ function handleCommand(command: string) {
   flex-direction: column;
 }
 
-.split-container > * {
-  flex: 1;
-  min-width: 200px;
-  min-height: 100px;
+/* 可调整大小的分割线 */
+.split-resizer {
+  background-color: #3c3c3c;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.split-resizer.horizontal {
+  width: 4px;
+  cursor: col-resize;
+  margin: 0 2px;
+}
+
+.split-resizer.vertical {
+  height: 4px;
+  cursor: row-resize;
+  margin: 2px 0;
+}
+
+.split-resizer:hover {
+  background-color: #409eff;
+}
+
+.split-resizer:active {
+  background-color: #66b1ff;
 }
 
 /* 终端面板 */
