@@ -19,6 +19,8 @@ declare module 'vue' {
     CameraView: typeof import('./src/components/CameraView.vue')['default']
     CaretRight: typeof import('./src/components/icons/CaretRight.vue')['default']
     ChassisPanel: typeof import('./src/components/panels/ChassisPanel.vue')['default']
+    ChassisPanel_backup_old: typeof import('./src/components/panels/ChassisPanel_backup_old.vue')['default']
+    ChassisPanel_new: typeof import('./src/components/panels/ChassisPanel_new.vue')['default']
     Check: typeof import('./src/components/icons/Check.vue')['default']
     CircleCheck: typeof import('./src/components/icons/CircleCheck.vue')['default']
     CircleCloseFilled: typeof import('./src/components/icons/CircleCloseFilled.vue')['default']

@@ -1,296 +1,223 @@
 <template>
   <div class="lift-panel">
-    <!-- 连接状态提示 -->
-    <div v-if="!state.connected" class="panel-section">
-      <el-alert
-        title="PLC 未连接"
-        type="error"
-        description="无法与升降电机通信"
-        show-icon
-        :closable="false"
-      />
-    </div>
-
     <!-- 报警提示 -->
-    <div v-if="state.alarm" class="panel-section">
-      <el-alert
-        title="电机报警"
-        type="error"
-        show-icon
-        :closable="false"
-      >
+    <div v-if="state.alarm" class="alert-compact">
+      <el-alert title="电机报警" type="error" show-icon :closable="false">
         <template #default>
-          <el-button type="danger" size="small" @click="resetAlarm" :loading="loading.reset">
-            复位报警
-          </el-button>
+          <el-button type="danger" size="small" @click="resetAlarm" :loading="loading.reset">复位</el-button>
         </template>
       </el-alert>
     </div>
 
-    <!-- 当前状态 -->
-    <div class="panel-section">
-      <h3 class="section-title">当前状态</h3>
-      <div class="status-visual">
-        <!-- 高度可视化 -->
-        <div class="height-column">
-          <div class="height-track">
-            <div 
-              class="height-fill" 
-              :style="{ height: heightPercentage + '%' }"
-            ></div>
-            <div 
-              class="height-indicator" 
-              :style="{ bottom: heightPercentage + '%' }"
-            >
-              <span class="height-label">{{ state.currentPosition.toFixed(1) }}</span>
+    <div class="panel-layout">
+      <!-- 状态 + 控制区 -->
+      <div class="top-section">
+        <!-- 紧凑状态栏 -->
+        <div class="status-compact">
+          <div class="status-header">
+            <h3>升降状态</h3>
+            <div class="status-tags">
+              <el-tag :type="state.connected ? 'success' : 'danger'" size="small">
+                {{ state.connected ? '已连接' : '断开' }}
+              </el-tag>
+              <el-tag :type="state.enabled ? 'success' : 'info'" size="small">
+                {{ state.enabled ? '使能' : '未使能' }}
+              </el-tag>
             </div>
           </div>
-          <div class="height-scale">
-            <span>{{ maxHeight }}</span>
-            <span>{{ maxHeight / 2 }}</span>
-            <span>0</span>
+          
+          <div class="status-display">
+            <div class="height-visual">
+              <div class="height-track-mini">
+                <div class="height-fill" :style="{ height: heightPercentage + '%' }"></div>
+                <div class="height-indicator" :style="{ bottom: heightPercentage + '%' }">
+                  <span>{{ state.currentPosition.toFixed(0) }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="status-values">
+              <div class="value-item">
+                <span class="label">高度</span>
+                <span class="value">{{ state.currentPosition.toFixed(1) }} mm</span>
+              </div>
+              <div class="value-item">
+                <span class="label">速度</span>
+                <span class="value">{{ state.currentSpeed.toFixed(0) }} mm/s</span>
+              </div>
+              <div class="value-item">
+                <span class="label">状态</span>
+                <el-tag :type="state.positionReached ? 'success' : 'warning'" size="small">
+                  {{ state.positionReached ? '到位' : '运动中' }}
+                </el-tag>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- 状态信息 -->
-        <div class="status-info">
-          <div class="info-row">
-            <span class="info-label">连接</span>
-            <el-tag :type="state.connected ? 'success' : 'danger'" size="small">
-              {{ state.connected ? '已连接' : '断开' }}
-            </el-tag>
+        <!-- 控制区 -->
+        <div class="control-section">
+          <div class="control-row">
+            <el-button
+              :type="state.enabled ? 'danger' : 'primary'"
+              @click="toggleEnable"
+              :loading="loading.enable"
+              :disabled="!state.connected"
+              size="small"
+            >
+              <SvgIcon v-if="state.enabled" name="disable" :size="14" />
+              <SvgIcon v-else name="enable" :size="14" />
+              {{ state.enabled ? '下使能' : '上使能' }}
+            </el-button>
+            <div class="speed-mini">
+              <el-input-number
+                v-model="inputSpeed"
+                :min="1"
+                :max="100"
+                :step="5"
+                size="small"
+                :disabled="!state.connected || !state.enabled"
+                style="width: 80px"
+              />
+              <span class="unit">mm/s</span>
+              <el-button
+                type="primary"
+                size="small"
+                @click="setSpeed"
+                :loading="loading.speed"
+                :disabled="!state.connected || !state.enabled"
+              >设置</el-button>
+            </div>
           </div>
-          <div class="info-row">
-            <span class="info-label">使能</span>
-            <el-tag :type="state.enabled ? 'success' : 'info'" size="small">
-              {{ state.enabled ? '已使能' : '未使能' }}
-            </el-tag>
+
+          <div class="position-compact">
+            <div class="position-input-row">
+              <el-input-number
+                v-model="inputPosition"
+                :min="0"
+                :max="maxHeight"
+                :step="10"
+                :precision="1"
+                size="small"
+                :disabled="!state.connected || !state.enabled"
+                style="width: 90px"
+              />
+              <span class="unit">mm</span>
+              <el-button
+                type="success"
+                size="small"
+                @click="goToPosition"
+                :loading="loading.position"
+                :disabled="!state.connected || !state.enabled"
+              >
+                <SvgIcon name="execute-move" :size="14" />
+                GO
+              </el-button>
+              <el-button
+                type="danger"
+                size="small"
+                @click="stopMove"
+                :loading="loading.stop"
+                :disabled="!state.connected || !state.enabled"
+              >
+                STOP
+              </el-button>
+            </div>
+            
+            <div class="quick-positions-mini">
+              <el-button
+                v-for="pos in quickPositions"
+                :key="pos.value"
+                size="small"
+                @click="setQuickPosition(pos.value)"
+                :disabled="!state.connected || !state.enabled"
+              >
+                {{ pos.label }}
+              </el-button>
+            </div>
           </div>
-          <div class="info-row">
-            <span class="info-label">高度</span>
-            <span class="info-value">{{ state.currentPosition.toFixed(1) }} mm</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">速度</span>
-            <span class="info-value">{{ state.currentSpeed.toFixed(0) }} mm/s</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">状态</span>
-            <el-tag :type="state.positionReached ? 'success' : 'warning'" size="small">
-              {{ state.positionReached ? '已到位' : '运动中' }}
-            </el-tag>
+
+          <!-- 手动控制 -->
+          <div class="manual-compact">
+            <el-button
+              type="success"
+              size="small"
+              class="jog-btn-mini"
+              @mousedown="startManualMove('up')"
+              @mouseup="stopManualMove"
+              @mouseleave="stopManualMove"
+              :disabled="!state.connected || !state.enabled"
+            >
+              <SvgIcon name="top" :size="16" />
+              上升
+            </el-button>
+            <el-button
+              type="warning"
+              size="small"
+              class="jog-btn-mini"
+              @mousedown="startManualMove('down')"
+              @mouseup="stopManualMove"
+              @mouseleave="stopManualMove"
+              :disabled="!state.connected || !state.enabled"
+            >
+              <SvgIcon name="bottom" :size="16" />
+              下降
+            </el-button>
           </div>
         </div>
       </div>
-    </div>
 
-    <el-divider />
-
-    <!-- 使能控制 -->
-    <div class="panel-section">
-      <h3 class="section-title">电机使能</h3>
-      <el-button
-        :type="state.enabled ? 'danger' : 'primary'"
-        @click="toggleEnable"
-        :loading="loading.enable"
-        :disabled="!state.connected"
-        style="width: 100%"
-      >
-        <SvgIcon v-if="state.enabled" name="videopause" :size="16" />
-        <SvgIcon v-else name="videoplay" :size="16" />
-        {{ state.enabled ? '下使能' : '上使能' }}
-      </el-button>
-    </div>
-
-    <el-divider />
-
-    <!-- 速度设置 -->
-    <div class="panel-section">
-      <h3 class="section-title">速度设置</h3>
-      <div class="speed-control">
-        <el-input-number
-          v-model="inputSpeed"
-          :min="1"
-          :max="100"
-          :step="5"
-          size="small"
-          :disabled="!state.connected || !state.enabled"
-          style="width: 120px"
-        />
-        <span class="unit">mm/s</span>
-        <el-button
-          type="primary"
-          size="small"
-          @click="setSpeed"
-          :loading="loading.speed"
-          :disabled="!state.connected || !state.enabled"
-        >
-          设置
-        </el-button>
-      </div>
-    </div>
-
-    <el-divider />
-
-    <!-- 目标位置 -->
-    <div class="panel-section">
-      <h3 class="section-title">目标位置</h3>
-      <div class="position-control">
-        <div class="position-input">
-          <el-input-number
-            v-model="inputPosition"
-            :min="0"
-            :max="maxHeight"
-            :step="10"
-            :precision="1"
-            size="small"
-            :disabled="!state.connected || !state.enabled"
-            style="width: 120px"
-          />
-          <span class="unit">mm</span>
-          <el-button
-            type="success"
-            size="small"
-            @click="goToPosition"
-            :loading="loading.position"
-            :disabled="!state.connected || !state.enabled"
-          >
-            <SvgIcon name="position" :size="16" />
-            GO
-          </el-button>
-          <el-button
-            type="danger"
-            size="small"
-            @click="stopMove"
-            :loading="loading.stop"
-            :disabled="!state.connected || !state.enabled"
-          >
-            <SvgIcon name="videopause" :size="16" />
-            STOP
+      <!-- 预设点位 -->
+      <div class="bottom-section">
+        <div class="points-header">
+          <h3>预设点位</h3>
+          <el-button type="primary" size="small" @click="handleAddPoint">
+            <SvgIcon name="plus" :size="12" />
+            添加点位
           </el-button>
         </div>
         
-        <!-- 快捷位置 -->
-        <div class="quick-positions">
-          <el-button
-            v-for="pos in quickPositions"
-            :key="pos.value"
-            size="small"
-            @click="setQuickPosition(pos.value)"
-            :disabled="!state.connected || !state.enabled"
+        <div class="point-grid">
+          <div v-if="liftPoints.length === 0" class="empty-hint">暂无点位</div>
+          
+          <div 
+            v-for="point in liftPoints" 
+            :key="point.id"
+            class="point-card"
+            :class="{ builtin: point.is_builtin, selected: selectedPointId === point.id }"
+            @click="selectedPointId = point.id"
           >
-            {{ pos.label }}
-          </el-button>
-        </div>
-      </div>
-    </div>
-
-    <el-divider />
-
-    <!-- 点位管理 -->
-    <div class="panel-section">
-      <h3 class="section-title">
-        <span>预设点位</span>
-        <el-button type="primary" size="small" @click="handleAddPoint">
-          <SvgIcon name="plus" :size="14" />
-          添加
-        </el-button>
-      </h3>
-      
-      <div class="point-list">
-        <div v-if="liftPoints.length === 0" class="empty-hint">
-          暂无点位
-        </div>
-        
-        <div 
-          v-for="point in liftPoints" 
-          :key="point.id"
-          class="point-item"
-          :class="{ builtin: point.is_builtin, selected: selectedPointId === point.id }"
-          @click="selectedPointId = point.id"
-        >
-          <div class="point-info">
-            <div class="point-name">
-              <SvgIcon v-if="point.is_builtin" name="star" :size="14" />
-              {{ point.name }}
+            <div class="point-header">
+              <div class="point-name">
+                <SvgIcon v-if="point.is_builtin" name="star" :size="14" />
+                {{ point.name }}
+              </div>
+              <div class="point-value">{{ point.height }}mm</div>
             </div>
-            <div class="point-value">{{ point.height }}mm</div>
-            <div v-if="point.description" class="point-desc">{{ point.description }}</div>
-          </div>
-          <div class="point-actions">
-            <el-button text size="small" @click.stop="goToPoint(point)">
-              <SvgIcon name="position" :size="14" />
-              前往
-            </el-button>
-            <el-button 
-              v-if="!point.is_builtin"
-              text 
-              size="small" 
-              @click.stop="updatePointPosition(point)"
-            >
-              <SvgIcon name="refresh" :size="14" />
-              更新
-            </el-button>
-            <el-button 
-              v-if="!point.is_builtin"
-              text 
-              size="small" 
-              @click.stop="openEditDialog(point)"
-            >
-              <SvgIcon name="edit" :size="14" />
-              编辑
-            </el-button>
-            <el-button 
-              v-if="!point.is_builtin"
-              text 
-              size="small" 
-              type="danger"
-              @click.stop="deletePoint(point)"
-            >
-              <SvgIcon name="delete" :size="14" />
-              删除
-            </el-button>
+            <div class="point-footer">
+              <el-button 
+                type="success"
+                size="small" 
+                class="point-go-btn"
+                @click.stop="goToPoint(point)"
+              >
+                <SvgIcon name="navigate-target" :size="14" />
+                GO
+              </el-button>
+              <div class="point-actions" v-if="!point.is_builtin">
+                <el-button text size="small" @click.stop="updatePointPosition(point)">
+                  <SvgIcon name="refresh" :size="12" />
+                </el-button>
+                <el-button text size="small" @click.stop="openEditDialog(point)">
+                  <SvgIcon name="edit" :size="12" />
+                </el-button>
+                <el-button text size="small" type="danger" @click.stop="deletePoint(point)">
+                  <SvgIcon name="delete" :size="12" />
+                </el-button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <el-divider />
-
-    <!-- 手动控制 -->
-    <div class="panel-section">
-      <h3 class="section-title">手动控制</h3>
-      <div class="manual-controls">
-        <el-button
-          type="success"
-          size="large"
-          class="jog-btn"
-          @mousedown="startManualMove('up')"
-          @mouseup="stopManualMove"
-          @mouseleave="stopManualMove"
-          @touchstart.prevent="startManualMove('up')"
-          @touchend.prevent="stopManualMove"
-          :disabled="!state.connected || !state.enabled"
-        >
-          <SvgIcon name="top" :size="24" />
-          <span>上升</span>
-        </el-button>
-        <el-button
-          type="warning"
-          size="large"
-          class="jog-btn"
-          @mousedown="startManualMove('down')"
-          @mouseup="stopManualMove"
-          @mouseleave="stopManualMove"
-          @touchstart.prevent="startManualMove('down')"
-          @touchend.prevent="stopManualMove"
-          :disabled="!state.connected || !state.enabled"
-        >
-          <SvgIcon name="bottom" :size="24" />
-          <span>下降</span>
-        </el-button>
-      </div>
-      <p class="jog-hint">按住按钮持续运动，松开停止</p>
     </div>
     
     <!-- 添加点位对话框 -->
@@ -771,54 +698,82 @@ onUnmounted(() => {
 
 <style scoped>
 .lift-panel {
-  padding: var(--spacing-lg);
+  padding: 12px;
+  height: 100%;
+  overflow: hidden;
 }
 
-.panel-section {
-  margin-bottom: var(--spacing-sm);
+.alert-compact {
+  margin-bottom: 8px;
 }
 
-.section-title {
-  margin: 0 0 var(--spacing-md) 0;
-  font-size: 13px;
+.alert-compact :deep(.el-alert) {
+  padding: 8px 12px;
+}
+
+.panel-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: calc(100% - 50px);
+}
+
+.top-section {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+}
+
+.bottom-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* 紧凑状态栏 */
+.status-compact {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.status-header h3 {
+  font-size: 12px;
   font-weight: 600;
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: #e0e0e0;
+  margin: 0;
+}
+
+.status-tags {
+  display: flex;
+  gap: 4px;
+}
+
+.status-display {
+  display: flex;
+  gap: 12px;
+}
+
+.height-visual {
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
-/* 状态可视化 */
-.status-visual {
-  display: flex;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-md);
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: var(--radius-lg);
-  transition: all 0.3s var(--transition-smooth);
-}
-
-.status-visual:hover {
-  background: rgba(30, 41, 59, 0.6);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.height-column {
-  display: flex;
-  gap: var(--spacing-xs);
-}
-
-.height-track {
-  width: 24px;
-  height: 100px;
+.height-track-mini {
+  width: 20px;
+  height: 80px;
   background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(10px);
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
   position: relative;
   border: 1px solid rgba(148, 163, 184, 0.2);
   overflow: hidden;
@@ -831,145 +786,122 @@ onUnmounted(() => {
   right: 0;
   background: linear-gradient(to top, var(--color-primary), #fbbf24);
   transition: height 0.2s ease;
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
 }
 
 .height-indicator {
   position: absolute;
-  left: -4px;
-  right: -4px;
-  height: 16px;
+  left: -3px;
+  right: -3px;
+  height: 14px;
   background: linear-gradient(135deg, var(--color-primary), #fbbf24);
-  border-radius: var(--radius-xs);
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: bottom 0.2s ease;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.5);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
   transform: translateY(50%);
 }
 
-.height-label {
-  font-size: 9px;
+.height-indicator span {
+  font-size: 8px;
   font-weight: 700;
   color: #fff;
 }
 
-.height-scale {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  font-size: 9px;
-  color: var(--color-text-tertiary);
-  height: 100px;
-  padding: 2px 0;
-}
-
-.status-info {
+.status-values {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
+  gap: 6px;
 }
 
-.info-row {
+.value-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: 4px 8px;
   background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(10px);
+  border-radius: 4px;
   border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: var(--radius-sm);
 }
 
-.info-label {
+.value-item .label {
+  font-size: 10px;
+  color: #888;
+}
+
+.value-item .value {
   font-size: 11px;
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.info-value {
-  font-size: 12px;
   font-family: 'Consolas', monospace;
   color: #10b981;
-  font-weight: 700;
-}
-
-/* 速度控制 */
-.speed-control {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.unit {
-  font-size: 12px;
-  color: var(--color-text-tertiary);
-}
-
-/* 位置控制 */
-.position-control {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.position-input {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.quick-positions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs);
-}
-
-.quick-positions .el-button {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: 12px;
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  transition: all 0.3s var(--transition-smooth);
-}
-
-.quick-positions .el-button:hover {
-  background: rgba(30, 41, 59, 0.6);
-  border-color: var(--color-primary);
-  transform: translateY(-2px);
-}
-
-/* 手动控制 */
-.manual-controls {
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: center;
-}
-
-.jog-btn {
-  width: 100px;
-  height: 70px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xs);
-}
-
-.jog-btn span {
-  font-size: 12px;
   font-weight: 600;
 }
 
-.jog-hint {
-  text-align: center;
+/* 控制区 */
+.control-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.speed-mini {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex: 1;
+}
+
+.unit {
   font-size: 11px;
-  color: var(--color-text-tertiary);
-  margin: var(--spacing-sm) 0 0 0;
+  color: #888;
+}
+
+.position-compact {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.position-input-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.quick-positions-mini {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.quick-positions-mini .el-button {
+  padding: 4px;
+  font-size: 11px;
+}
+
+.manual-compact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.jog-btn-mini {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 32px;
 }
 
 :deep(.el-divider) {
@@ -989,91 +921,151 @@ onUnmounted(() => {
   width: auto;
 }
 
-/* 点位列表 */
-.point-list {
-  max-height: 300px;
+/* 点位网格 */
+.points-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.points-header h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e0e0e0;
+  margin: 0;
+}
+
+.point-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
   overflow-y: auto;
+  padding: 4px;
+}
+
+.point-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.point-grid::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 3px;
+}
+
+.point-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(30, 41, 59, 0.4));
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 10px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 90px;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  justify-content: space-between;
 }
 
-.empty-hint {
-  text-align: center;
-  padding: var(--spacing-xl);
-  color: var(--color-text-tertiary);
-  font-size: 12px;
+.point-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.15), transparent);
+  transition: left 0.6s ease;
 }
 
-.point-item {
-  padding: var(--spacing-sm) var(--spacing-md);
-  margin-bottom: 0;
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all 0.3s var(--transition-smooth);
-}
-
-.point-item:hover {
-  background: rgba(30, 41, 59, 0.6);
+.point-card:hover {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.6));
   border-color: var(--color-primary);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
 }
 
-.point-item.selected {
-  background: rgba(245, 158, 11, 0.15);
+.point-card:hover::before {
+  left: 100%;
+}
+
+.point-card.selected {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(245, 158, 11, 0.15));
   border-color: var(--color-primary);
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.4), inset 0 0 30px rgba(245, 158, 11, 0.1);
 }
 
-.point-item.builtin {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: rgba(59, 130, 246, 0.3);
+.point-card.builtin {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
+  border-color: rgba(59, 130, 246, 0.5);
 }
 
-.point-info {
-  margin-bottom: var(--spacing-xs);
+.point-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .point-name {
   font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text-primary);
+  font-weight: 700;
+  color: #f0f0f0;
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
-  margin-bottom: var(--spacing-xs);
-}
-
-.point-name .el-icon {
-  color: var(--color-primary);
+  gap: 5px;
 }
 
 .point-value {
-  font-size: 12px;
+  font-size: 13px;
   color: #10b981;
   font-family: 'Consolas', monospace;
   font-weight: 700;
+  background: rgba(16, 185, 129, 0.15);
+  padding: 3px 8px;
+  border-radius: 5px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
-.point-desc {
-  font-size: 11px;
-  color: var(--color-text-tertiary);
-  margin-top: var(--spacing-xs);
+.point-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.point-go-btn {
+  flex: 1;
+  padding: 6px 12px !important;
+  height: 30px;
+  font-weight: 700;
+  font-size: 12px;
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border: none !important;
+  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.4);
+}
+
+.point-go-btn:hover {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.6);
+  transform: translateY(-2px);
 }
 
 .point-actions {
   display: flex;
-  gap: var(--spacing-xs);
-  flex-wrap: wrap;
+  gap: 2px;
 }
 
 .point-actions .el-button {
-  padding: var(--spacing-xs) var(--spacing-xs);
-  font-size: 11px;
+  padding: 4px 6px;
+  min-height: auto;
+  opacity: 0.7;
+}
+
+.point-actions .el-button:hover {
+  opacity: 1;
 }
 </style>
 
