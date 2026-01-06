@@ -21,7 +21,7 @@
       <div class="control-row">
         <el-button 
           type="success" 
-          :disabled="armState.powered_on"
+          :disabled="!armState.connected || armState.powered_on"
           :loading="loading.power"
           @click="powerOn"
         >
@@ -30,7 +30,7 @@
         </el-button>
         <el-button 
           type="warning" 
-          :disabled="!armState.powered_on || armState.enabled"
+          :disabled="!armState.connected || !armState.powered_on || armState.enabled"
           :loading="loading.power"
           @click="powerOff"
         >
@@ -46,7 +46,7 @@
       <div class="control-row">
         <el-button 
           type="primary" 
-          :disabled="!armState.powered_on || armState.enabled"
+          :disabled="!armState.connected || !armState.powered_on || armState.enabled"
           :loading="loading.enable"
           @click="enableArm"
         >
@@ -55,7 +55,7 @@
         </el-button>
         <el-button 
           type="info" 
-          :disabled="!armState.enabled"
+          :disabled="!armState.connected || !armState.enabled"
           :loading="loading.enable"
           @click="disableArm"
         >
@@ -79,7 +79,7 @@
       <div class="control-row">
         <el-button 
           type="success"
-          :disabled="!armState.enabled || isServoRunning"
+          :disabled="!armState.connected || !armState.enabled || isServoRunning"
           :loading="loading.servo"
           @click="startServo"
         >
@@ -88,7 +88,7 @@
         </el-button>
         <el-button 
           type="warning"
-          :disabled="!isServoRunning"
+          :disabled="!armState.connected || !isServoRunning"
           :loading="loading.servo"
           @click="stopServo"
         >
@@ -554,6 +554,7 @@
         <el-button 
           type="danger" 
           size="large"
+          :disabled="!armState.connected"
           :loading="loading.abort"
           @click="motionAbort"
         >
@@ -562,6 +563,7 @@
         </el-button>
         <el-button 
           type="warning"
+          :disabled="!armState.connected"
           :loading="loading.clear"
           @click="clearError"
         >
@@ -996,9 +998,27 @@ async function deletePoint(point: ArmPoint) {
 async function fetchArmState() {
   try {
     const response = await api.get('/api/v1/arm/state')
-    Object.assign(armState, response.data)
+    const data = response.data || {}
+    // Validate connected flag is boolean
+    if (typeof data.connected !== 'boolean') data.connected = false
+    // Ensure other expected boolean flags are present
+    if (typeof data.powered_on !== 'boolean') data.powered_on = !!data.powered_on
+    if (typeof data.enabled !== 'boolean') data.enabled = !!data.enabled
+    if (typeof data.in_estop !== 'boolean') data.in_estop = !!data.in_estop
+    if (typeof data.in_error !== 'boolean') data.in_error = !!data.in_error
+    if (typeof data.servo_mode_enabled !== 'boolean') data.servo_mode_enabled = !!data.servo_mode_enabled
+    Object.assign(armState, data)
   } catch (error) {
     console.warn('获取机械臂状态失败:', error)
+    // Mark as disconnected / not powered when fetch fails to avoid stale "connected" UI
+    Object.assign(armState, {
+      connected: false,
+      powered_on: false,
+      enabled: false,
+      in_estop: false,
+      in_error: false,
+      servo_mode_enabled: false
+    })
   }
 }
 
