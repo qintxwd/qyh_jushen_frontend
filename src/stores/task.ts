@@ -231,13 +231,19 @@ export const useTaskEditorStore = defineStore('taskEditor', () => {
   
   /** 根据 current_node_id 更新节点运行状态 */
   function updateCurrentRunningNode(currentNodeId: string, taskStatus: string) {
-    // 如果任务已完成/失败/取消，清除所有 running 状态
-    if (taskStatus === 'success' || taskStatus === 'failure' || taskStatus === 'cancelled' || taskStatus === 'idle') {
+    // 如果任务已完成/失败/取消/idle，清除所有 running 状态
+    if (['success', 'failure', 'cancelled', 'idle', 'completed', 'failed'].includes(taskStatus)) {
       for (const node of nodes.value) {
         if (node.data && node.data.status === 'running') {
-          // 任务成功时，之前运行的节点应该是成功的
-          node.data.status = taskStatus === 'success' ? 'success' : 
-                            taskStatus === 'failure' ? 'failure' : 'idle'
+          // 任务成功/完成时，之前运行的节点应该是成功的
+          if (taskStatus === 'success' || taskStatus === 'completed') {
+            node.data.status = 'success'
+          } else if (taskStatus === 'failure' || taskStatus === 'failed') {
+            node.data.status = 'failure'
+          } else {
+            // cancelled 或 idle 时重置为 idle
+            node.data.status = 'idle'
+          }
         }
       }
       return
@@ -245,9 +251,11 @@ export const useTaskEditorStore = defineStore('taskEditor', () => {
     
     // 更新节点状态 - 注意：并行执行时不要将其他running节点改为success
     // 只更新当前节点为running
-    for (const node of nodes.value) {
-      if (node.data && node.id === currentNodeId) {
-        node.data.status = 'running'
+    if (currentNodeId) {
+      for (const node of nodes.value) {
+        if (node.data && node.id === currentNodeId) {
+          node.data.status = 'running'
+        }
       }
     }
   }

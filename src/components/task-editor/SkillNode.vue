@@ -65,6 +65,11 @@ function formatValue(value: any): string {
   return String(value).slice(0, 15)
 }
 
+// 状态样式类
+const statusClass = computed(() => {
+  return props.data.status ? `status-${props.data.status}` : ''
+})
+
 // 获取显示参数，特殊处理task_id
 const displayParams = computed(() => {
   if (!nodeDef.value) return []

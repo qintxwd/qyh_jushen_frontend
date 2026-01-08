@@ -166,10 +166,16 @@ export function useTaskWebSocket() {
       } else if (data.current_node_id) {
         // 如果只有 current_node_id，根据它来更新节点状态
         console.log('⚠️  只使用current_node_id更新（node_statuses为空）')
-        // 先将之前的 running 节点标记为其他状态
         taskStore.updateCurrentRunningNode(data.current_node_id, data.status)
       } else {
-        console.warn('⚠️  没有节点状态信息！')
+        // 没有节点状态信息，检查是否是结束状态
+        if (['completed', 'cancelled', 'failed'].includes(data.status)) {
+          console.log('📋 任务结束，清理节点状态')
+          // 任务结束时，把所有 running 的节点标记为最终状态
+          taskStore.updateCurrentRunningNode('', data.status === 'completed' ? 'success' : data.status)
+        } else {
+          console.warn('⚠️  没有节点状态信息！')
+        }
       }
       
       // 更新执行标志
