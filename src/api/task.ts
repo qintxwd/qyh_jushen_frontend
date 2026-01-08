@@ -260,7 +260,7 @@ export const NODE_DEFINITIONS: NodeDefinition[] = [
     icon: 'View',
     color: '#909399',
     params: [
-      { name: 'point_id', type: 'preset', label: '预设点位', presetType: 'head_point' },
+      { name: 'position_name', type: 'preset', label: '预设点位', presetType: 'head_point' },
       { name: 'pan', type: 'number', label: '水平角', default: 0, min: -1, max: 1, step: 0.1 },
       { name: 'tilt', type: 'number', label: '俯仰角', default: 0, min: -1, max: 1, step: 0.1 }
     ]
@@ -322,7 +322,7 @@ export const NODE_DEFINITIONS: NodeDefinition[] = [
     icon: 'DCaret',
     color: '#3498DB',
     params: [
-      { name: 'point_id', type: 'preset', label: '预设高度', presetType: 'lift_point' },
+      { name: 'height_name', type: 'preset', label: '预设高度', presetType: 'lift_point' },
       { name: 'height', type: 'number', label: '高度 (mm)', min: 0, max: 500, step: 10 },
       { name: 'speed', type: 'number', label: '速度', default: 50, min: 10, max: 100 },
       { name: 'timeout', type: 'number', label: '超时 (s)', default: 30 }
@@ -347,7 +347,7 @@ export const NODE_DEFINITIONS: NodeDefinition[] = [
     icon: 'SemiSelect',
     color: '#E67E22',
     params: [
-      { name: 'point_id', type: 'preset', label: '预设角度', presetType: 'waist_point' },
+      { name: 'angle_name', type: 'preset', label: '预设角度', presetType: 'waist_point' },
       { name: 'angle', type: 'number', label: '角度 (度)', min: 0, max: 45, step: 1 },
       { name: 'speed', type: 'number', label: '速度', default: 1000, min: 100, max: 5000 },
       { name: 'timeout', type: 'number', label: '超时 (s)', default: 30 }

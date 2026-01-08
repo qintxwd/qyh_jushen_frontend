@@ -70,13 +70,22 @@ const statusClass = computed(() => {
   return props.data.status ? `status-${props.data.status}` : ''
 })
 
-// 获取显示参数，特殊处理task_id
+// 获取显示参数，过滤掉内部ID参数
 const displayParams = computed(() => {
   if (!nodeDef.value) return []
   
   const params = props.data.params || {}
+  
+  // 跳过这些内部预设ID参数，只显示实际数值
+  const skipParams = ['height_name', 'position_name', 'angle_name', 'point_id', 'task_id_name']
+  
   return nodeDef.value.params
-    .filter(p => params[p.name] !== undefined && params[p.name] !== '')
+    .filter(p => {
+      // 跳过内部ID参数
+      if (skipParams.includes(p.name)) return false
+      // 只显示有值的参数
+      return params[p.name] !== undefined && params[p.name] !== ''
+    })
     .slice(0, 3) // 最多显示 3 个参数
     .map(p => {
       let displayValue = params[p.name]

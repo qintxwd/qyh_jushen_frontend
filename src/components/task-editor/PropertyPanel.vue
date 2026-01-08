@@ -54,21 +54,26 @@
             </el-select>
             
             <!-- 预设选择器 -->
-            <el-select
-              v-else-if="param.type === 'preset'"
-              v-model="formData[param.name]"
-              :placeholder="`选择${param.label}`"
-              filterable
-              clearable
-              @change="(value) => onPresetChange(param.name, value, param.presetType)"
-            >
-              <el-option
-                v-for="preset in getPresets(param.presetType!)"
-                :key="preset.id"
-                :label="preset.name"
-                :value="preset.id"
-              />
-            </el-select>
+            <div v-else-if="param.type === 'preset'">
+              <el-select
+                v-model="formData[param.name]"
+                :placeholder="`选择${param.label}`"
+                filterable
+                clearable
+                @change="(value) => onPresetChange(param.name, value, param.presetType)"
+              >
+                <el-option
+                  v-for="preset in getPresets(param.presetType!)"
+                  :key="preset.id"
+                  :label="preset.name"
+                  :value="preset.id"
+                />
+              </el-select>
+              <!-- 显示选中的预设名称 -->
+              <div v-if="formData[param.name]" class="preset-display">
+                已选择: {{ getPresetName(param.presetType!, formData[param.name]) }}
+              </div>
+            </div>
             
             <!-- 数字输入 -->
             <el-input-number
@@ -163,6 +168,32 @@ watch(
       // 清空并重新填充
       Object.keys(formData).forEach(key => delete formData[key])
       Object.assign(formData, { ...node.data.params })
+
+      // 检查并在没有具体值时加载预设详情
+      if (props.nodeDefinition) {
+        for (const param of props.nodeDefinition.params) {
+          if (param.type === 'preset' && formData[param.name]) {
+            // head_point: position_name -> pan, tilt
+            if (param.presetType === 'head_point' && param.name === 'position_name') {
+              if (formData['pan'] === undefined || formData['tilt'] === undefined) {
+                loadHeadPointDetails(formData[param.name])
+              }
+            }
+            // lift_point: height_name -> height
+            else if (param.presetType === 'lift_point' && param.name === 'height_name') {
+              if (formData['height'] === undefined) {
+                loadLiftPointDetails(formData[param.name])
+              }
+            }
+            // waist_point: angle_name -> angle
+            else if (param.presetType === 'waist_point' && param.name === 'angle_name') {
+              if (formData['angle'] === undefined) {
+                loadWaistPointDetails(formData[param.name])
+              }
+            }
+          }
+        }
+      }
     }
   },
   { immediate: true, deep: true }
@@ -249,6 +280,13 @@ function getPrecision(step?: number): number {
 // 获取预设列表
 function getPresets(presetType: string): any[] {
   return presetsCache.value[presetType] || []
+}
+
+// 获取预设名称（用于显示）
+function getPresetName(presetType: string, presetId: string): string {
+  const presets = presetsCache.value[presetType] || []
+  const preset = presets.find(p => p.id === presetId)
+  return preset ? preset.name : presetId
 }
 
 // 加载预设
@@ -386,6 +424,15 @@ watch(
   font-size: 11px;
   color: #888;
   margin-top: 4px;
+}
+
+.preset-display {
+  font-size: 11px;
+  color: #67c23a;
+  margin-top: 4px;
+  padding: 4px 8px;
+  background-color: rgba(103, 194, 58, 0.1);
+  border-radius: 4px;
 }
 
 /* Element Plus 样式覆盖 */
