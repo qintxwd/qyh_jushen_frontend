@@ -14,9 +14,6 @@
           <el-tag :type="getLocationStatusType(status.location_status)" size="small">
             {{ status.location_status_text }}
           </el-tag>
-          <span class="status-value" style="margin-left: 4px; font-size: 11px; color: #888;">
-            ({{ ((status.pose?.confidence ?? 0) * 100).toFixed(0) }}%)
-          </span>
         </div>
         <div class="status-item">
           <span class="status-label">运动</span>
@@ -203,7 +200,7 @@
             >
               <SvgIcon name="locationfilled" :size="14" />
               <span class="station-name">{{ station.name }}</span>
-              <span class="station-coord">({{ station.x.toFixed(1) }}, {{ station.y.toFixed(1) }})</span>
+              <span class="station-coord">({{ (station.x / 1000).toFixed(1) }}, {{ (station.y / 1000).toFixed(1) }})</span>
             </div>
             <div v-if="filteredStations.length === 0" class="station-empty">
               <span>{{ stationSearchText ? '未找到匹配的站点' : '暂无站点数据' }}</span>
@@ -384,17 +381,16 @@ interface ChassisStatus {
 }
 
 interface Station {
-  id: number
+  id: string
   name: string
   x: number
   y: number
-  yaw: number
 }
 
 // ==================== 响应式数据 ====================
 const status = ref<ChassisStatus>({})
 const stations = ref<Station[]>([])
-const selectedStationId = ref<number | null>(null)
+const selectedStationId = ref<string>('')
 const stationSearchText = ref('')
 
 // 导航参数
@@ -434,7 +430,7 @@ const filteredStations = computed(() => {
   const search = stationSearchText.value.toLowerCase()
   return stations.value.filter(s => 
     s.name.toLowerCase().includes(search) || 
-    s.id.toString().includes(search)
+    s.id.toLowerCase().includes(search)
   )
 })
 
@@ -585,7 +581,7 @@ async function syncMaps() {
 async function loadStations() {
   try {
     const response = await chassisApi.getStations()
-    stations.value = response.stations || []
+    stations.value = response.data || []
   } catch (e) {
     console.error('加载站点失败', e)
   }
@@ -698,7 +694,7 @@ let statusInterval: number | null = null
 async function loadStatus() {
   try {
     const response = await chassisApi.getStatus()
-    status.value = response || {}
+    status.value = response.data || {}
   } catch (e) {
     console.error('加载状态失败', e)
   }
