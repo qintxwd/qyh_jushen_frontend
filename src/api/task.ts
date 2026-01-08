@@ -127,8 +127,16 @@ export interface TaskExecutionState {
 /** 节点状态 */
 export interface NodeStatus {
   node_id: string
-  status: 'idle' | 'running' | 'success' | 'failure'
+  node_type?: string
+  node_name?: string
+  status: 'idle' | 'running' | 'success' | 'failure' | 'halted'
   message?: string
+  duration?: number
+  // 扩展字段（用于复杂场景）
+  children_count?: number
+  current_child_index?: number
+  current_iteration?: number
+  total_iterations?: number
 }
 
 // ==================== 节点定义库 ====================

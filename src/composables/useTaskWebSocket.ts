@@ -5,6 +5,20 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useTaskEditorStore } from '@/stores/task'
 
+export interface NodeStatusData {
+  node_id: string
+  node_type?: string
+  node_name?: string
+  status: 'idle' | 'running' | 'success' | 'failure' | 'halted'
+  message?: string
+  duration?: number
+  // 扩展字段（用于复杂场景）
+  children_count?: number
+  current_child_index?: number
+  current_iteration?: number
+  total_iterations?: number
+}
+
 export interface TaskStatusMessage {
   type: 'task_status' | 'node_status' | 'error'
   data: {
@@ -16,11 +30,7 @@ export interface TaskStatusMessage {
     total_nodes: number
     progress: number
     elapsed_time: number
-    node_statuses: Array<{
-      node_id: string
-      status: 'idle' | 'running' | 'success' | 'failure'
-      message?: string
-    }>
+    node_statuses: NodeStatusData[]
     error?: string
   }
 }
@@ -154,17 +164,25 @@ export function useTaskWebSocket() {
       
       // 更新节点状态
       if (data.node_statuses && data.node_statuses.length > 0) {
-        // 如果后端提供了完整的节点状态列表
+        // 如果后端提供了完整的节点状态列表，直接使用
         console.log('✅ 使用node_statuses更新节点')
         for (const nodeStatus of data.node_statuses) {
           taskStore.updateNodeStatus(nodeStatus.node_id, {
             node_id: nodeStatus.node_id,
+            node_type: nodeStatus.node_type,
+            node_name: nodeStatus.node_name,
             status: nodeStatus.status,
-            message: nodeStatus.message
+            message: nodeStatus.message,
+            duration: nodeStatus.duration,
+            // 扩展字段
+            children_count: nodeStatus.children_count,
+            current_child_index: nodeStatus.current_child_index,
+            current_iteration: nodeStatus.current_iteration,
+            total_iterations: nodeStatus.total_iterations
           })
         }
       } else if (data.current_node_id) {
-        // 如果只有 current_node_id，根据它来更新节点状态
+        // 如果只有 current_node_id，根据它来更新节点状态（兼容旧版本）
         console.log('⚠️  只使用current_node_id更新（node_statuses为空）')
         taskStore.updateCurrentRunningNode(data.current_node_id, data.status)
       } else {

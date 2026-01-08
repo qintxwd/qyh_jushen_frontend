@@ -18,6 +18,11 @@
     
     <div class="node-body">
       <div class="control-type">{{ controlDescription }}</div>
+      <!-- 循环进度显示 -->
+      <div v-if="data.type === 'Loop' && data.status === 'running' && loopProgress" class="loop-progress">
+        <span class="loop-label">循环:</span>
+        <span class="loop-value">{{ loopProgress }}</span>
+      </div>
       <!-- 参数预览 -->
       <div v-if="displayParams.length > 0" class="param-preview">
         <div v-for="param in displayParams" :key="param.name" class="param-item">
@@ -43,6 +48,7 @@
 import { computed, inject } from 'vue'
 import { Handle, Position, useVueFlow } from '@vue-flow/core'
 import type { FlowNodeData } from '@/stores/task'
+import { useTaskEditorStore } from '@/stores/task'
 import { getNodeDefinition } from '@/api/task'
 
 const props = defineProps<{
@@ -52,6 +58,7 @@ const props = defineProps<{
 }>()
 
 const { getEdges } = useVueFlow()
+const taskStore = useTaskEditorStore()
 
 // 获取节点定义
 const nodeDef = computed(() => getNodeDefinition(props.data.type))
@@ -63,8 +70,23 @@ const controlDescription = computed(() => {
     case 'Parallel': return '并行执行子节点'
     case 'Selector': return '选择执行子节点'
     case 'Decorator': return '装饰器节点'
+    case 'Loop': return '循环执行'
     default: return ''
   }
+})
+
+// 循环进度显示
+const loopProgress = computed(() => {
+  if (props.data.type !== 'Loop') return null
+  
+  const nodeStatus = taskStore.nodeStatuses.get(props.id)
+  if (!nodeStatus) return null
+  
+  const current = (nodeStatus.current_iteration ?? 0) + 1
+  const total = nodeStatus.total_iterations ?? props.data.params?.iterations ?? 0
+  
+  if (total === 0) return `${current}/∞`
+  return `${current}/${total}`
 })
 
 // 子节点数量
@@ -146,6 +168,26 @@ const statusClass = computed(() => {
   font-size: 11px;
   color: #888;
   margin-bottom: 6px;
+}
+
+.loop-progress {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 4px 8px;
+  background-color: rgba(64, 158, 255, 0.15);
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.loop-label {
+  color: #409eff;
+}
+
+.loop-value {
+  color: #67c23a;
+  font-weight: 600;
+  font-family: monospace;
 }
 
 .param-preview {

@@ -20,7 +20,7 @@ export interface FlowNodeData {
   type: NodeType
   label: string
   params: Record<string, any>
-  status?: 'idle' | 'running' | 'success' | 'failure'
+  status?: 'idle' | 'running' | 'success' | 'failure' | 'halted'
   color?: string
   icon?: string
 }
@@ -51,6 +51,10 @@ export const useTaskEditorStore = defineStore('taskEditor', () => {
   // 执行状态
   const executionState = ref<TaskExecutionState | null>(null)
   const nodeStatuses = ref<Map<string, NodeStatus>>(new Map())
+  
+  // 跟踪执行历史（用于处理循环和并行）
+  const lastRunningNodeId = ref<string | null>(null)  // 上一个 running 的节点
+  const executedNodeIds = ref<Set<string>>(new Set()) // 已执行过的节点（用于循环检测）
   
   // UI 状态
   const nodePaletteVisible = ref(true)
@@ -229,40 +233,88 @@ export const useTaskEditorStore = defineStore('taskEditor', () => {
     }
   }
   
-  /** 根据 current_node_id 更新节点运行状态 */
+  /** 根据 current_node_id 更新节点运行状态
+   * 
+   * 支持的场景：
+   * 1. 普通顺序任务：A -> B -> C，当前节点切换时，上一个节点标记为 success
+   * 2. 循环任务：Loop 内的节点可能多次执行，重新进入时重置为 running
+   * 3. 并行任务：Parallel 下多个节点可能同时 running，不互相影响
+   * 4. 组合场景：以上的混合
+   */
   function updateCurrentRunningNode(currentNodeId: string, taskStatus: string) {
-    // 如果任务已完成/失败/取消/idle，清除所有 running 状态
+    // 如果任务已完成/失败/取消/idle，处理最终状态
     if (['success', 'failure', 'cancelled', 'idle', 'completed', 'failed'].includes(taskStatus)) {
+      const finalStatus = (taskStatus === 'success' || taskStatus === 'completed') ? 'success' 
+                        : (taskStatus === 'failure' || taskStatus === 'failed') ? 'failure' 
+                        : 'idle'
+      
       for (const node of nodes.value) {
         if (node.data && node.data.status === 'running') {
-          // 任务成功/完成时，之前运行的节点应该是成功的
-          if (taskStatus === 'success' || taskStatus === 'completed') {
-            node.data.status = 'success'
-          } else if (taskStatus === 'failure' || taskStatus === 'failed') {
-            node.data.status = 'failure'
-          } else {
-            // cancelled 或 idle 时重置为 idle
-            node.data.status = 'idle'
-          }
+          node.data.status = finalStatus
         }
       }
+      
+      // 重置跟踪状态
+      lastRunningNodeId.value = null
+      executedNodeIds.value.clear()
       return
     }
     
-    // 更新节点状态 - 注意：并行执行时不要将其他running节点改为success
-    // 只更新当前节点为running
-    if (currentNodeId) {
-      for (const node of nodes.value) {
-        if (node.data && node.id === currentNodeId) {
-          node.data.status = 'running'
-        }
+    // 任务正在运行中
+    if (!currentNodeId) return
+    
+    const previousNodeId = lastRunningNodeId.value
+    
+    // 情况1: 首次设置当前节点（任务刚开始）
+    if (!previousNodeId) {
+      const node = nodes.value.find(n => n.id === currentNodeId)
+      if (node?.data) {
+        node.data.status = 'running'
       }
+      lastRunningNodeId.value = currentNodeId
+      executedNodeIds.value.add(currentNodeId)
+      return
     }
+    
+    // 情况2: 当前节点没变（同一个节点的重复状态更新）
+    if (previousNodeId === currentNodeId) {
+      return
+    }
+    
+    // 情况3: 当前节点变化了
+    // 检查是否是循环场景（当前节点之前已经执行过）
+    const isLoopReentry = executedNodeIds.value.has(currentNodeId)
+    
+    if (isLoopReentry) {
+      // 循环场景：新一轮循环开始
+      // 找到从当前节点开始的"循环链"，重置它们的状态
+      // 简化处理：只重置当前节点为 running，之前的保持 success
+      console.log(`🔄 检测到循环: 节点 ${currentNodeId} 重新进入执行`)
+    }
+    
+    // 将上一个节点标记为 success（无论是顺序还是循环场景）
+    // 注意：只标记上一个节点，不影响其他可能并行运行的节点
+    const prevNode = nodes.value.find(n => n.id === previousNodeId)
+    if (prevNode?.data && prevNode.data.status === 'running') {
+      prevNode.data.status = 'success'
+    }
+    
+    // 将当前节点设为 running
+    const currentNode = nodes.value.find(n => n.id === currentNodeId)
+    if (currentNode?.data) {
+      currentNode.data.status = 'running'
+    }
+    
+    // 更新跟踪状态
+    lastRunningNodeId.value = currentNodeId
+    executedNodeIds.value.add(currentNodeId)
   }
   
   /** 清除所有节点状态 */
   function clearNodeStatuses() {
     nodeStatuses.value.clear()
+    lastRunningNodeId.value = null
+    executedNodeIds.value.clear()
     for (const node of nodes.value) {
       if (node.data) {
         node.data.status = 'idle'
