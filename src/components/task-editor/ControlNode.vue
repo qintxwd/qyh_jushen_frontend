@@ -206,11 +206,15 @@ const statusClass = computed(() => {
 .status-running .status-indicator {
   border-color: #409eff;
   color: #409eff;
+  background-color: rgba(64, 158, 255, 0.15);
+  box-shadow: 0 0 12px rgba(64, 158, 255, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .status-success .status-indicator {
   border-color: #67c23a;
   color: #67c23a;
+  background-color: rgba(103, 194, 58, 0.15);
+  box-shadow: 0 0 8px rgba(103, 194, 58, 0.3);
 }
 
 .status-failure .status-indicator {
@@ -220,6 +224,7 @@ const statusClass = computed(() => {
 
 .loading-icon {
   animation: spin 1s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(64, 158, 255, 0.6));
 }
 
 @keyframes spin {
