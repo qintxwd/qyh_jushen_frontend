@@ -127,6 +127,22 @@ export function useTaskWebSocket() {
     if (message.type === 'task_status') {
       const data = message.data
       
+      // 🔍 调试日志 - 详细显示收到的状态
+      console.group(`📨 收到任务状态更新 [${new Date().toLocaleTimeString()}]`)
+      console.log('📊 任务状态:', data.status)
+      console.log('🎯 当前节点:', data.current_node_id)
+      console.log('📈 进度:', `${(data.progress * 100).toFixed(0)}% (${data.completed_nodes}/${data.total_nodes})`)
+      console.log('📝 节点状态数组长度:', data.node_statuses?.length || 0)
+      
+      if (data.node_statuses && data.node_statuses.length > 0) {
+        console.table(data.node_statuses.map(ns => ({
+          '节点ID': ns.node_id,
+          '状态': ns.status,
+          '图标': ns.status === 'idle' ? '⚪' : ns.status === 'running' ? '🔵' : ns.status === 'success' ? '✅' : '❌'
+        })))
+      }
+      console.groupEnd()
+      
       // 更新 store 中的执行状态
       taskStore.updateExecutionState({
         task_id: data.task_id || '',
@@ -139,6 +155,7 @@ export function useTaskWebSocket() {
       // 更新节点状态
       if (data.node_statuses && data.node_statuses.length > 0) {
         // 如果后端提供了完整的节点状态列表
+        console.log('✅ 使用node_statuses更新节点')
         for (const nodeStatus of data.node_statuses) {
           taskStore.updateNodeStatus(nodeStatus.node_id, {
             node_id: nodeStatus.node_id,
@@ -148,8 +165,11 @@ export function useTaskWebSocket() {
         }
       } else if (data.current_node_id) {
         // 如果只有 current_node_id，根据它来更新节点状态
+        console.log('⚠️  只使用current_node_id更新（node_statuses为空）')
         // 先将之前的 running 节点标记为其他状态
         taskStore.updateCurrentRunningNode(data.current_node_id, data.status)
+      } else {
+        console.warn('⚠️  没有节点状态信息！')
       }
       
       // 更新执行标志
