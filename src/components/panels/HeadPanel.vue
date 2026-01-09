@@ -248,11 +248,11 @@ const tiltMarks = {
 // 预设位置
 const presets = [
   { id: 1, name: '正前方', icon: 'Aim', pan: 0, tilt: 0 },
-  { id: 2, name: '左侧', icon: 'Back', pan: 0.7, tilt: 0 },
-  { id: 3, name: '右侧', icon: 'Right', pan: -0.7, tilt: 0 },
+  { id: 2, name: '左侧', icon: 'Back', pan: -0.7, tilt: 0 },
+  { id: 3, name: '右侧', icon: 'Right', pan: 0.7, tilt: 0 },
   { id: 4, name: '向下', icon: 'Bottom', pan: 0, tilt: -0.5 },
   { id: 5, name: '向上', icon: 'Top', pan: 0, tilt: 0.5 },
-  { id: 6, name: '左下', icon: 'BottomLeft', pan: 0.5, tilt: -0.3 }
+  { id: 6, name: '左下', icon: 'BottomLeft', pan: -0.5, tilt: -0.3 }
 ]
 
 // 头部可视化样式
