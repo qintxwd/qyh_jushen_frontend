@@ -12,7 +12,6 @@ export interface LiftState {
   current_speed: number
   position_reached: boolean
   alarm: boolean
-  shutdown_requested: boolean  // 硬件关机请求
 }
 
 export interface LiftControlResponse {
@@ -21,7 +20,7 @@ export interface LiftControlResponse {
 }
 
 export interface LiftControlRequest {
-  command: number  // 1=使能, 2=去使能, 3=设置速度, 4=去位置, 5=上升, 6=下降, 7=复位, 8=停止, 9=关机
+  command: number  // 1=使能, 2=去使能, 3=设置速度, 4=去位置, 5=上升, 6=下降, 7=复位, 8=停止
   value?: number
   hold?: boolean
 }
@@ -35,8 +34,7 @@ export const LiftCommand = {
   MOVE_UP: 5,
   MOVE_DOWN: 6,
   RESET_ALARM: 7,
-  STOP: 8,
-  SHUTDOWN: 9
+  STOP: 8
 }
 
 // ==================== API 方法 ====================
@@ -112,13 +110,7 @@ export const liftApi = {
     return this.control({ command: LiftCommand.RESET_ALARM })
   },
 
-  /**
-   * 系统关机
-   * 通过PLC实现：写关机线圈 -> 系统shutdown -> PLC断电
-   */
-  async systemShutdown(): Promise<LiftControlResponse> {
-    return apiClient.post('/api/v1/system/shutdown')
-  }
+
 }
 
 export default liftApi

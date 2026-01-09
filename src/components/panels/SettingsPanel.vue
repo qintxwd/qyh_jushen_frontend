@@ -1,5 +1,19 @@
 <template>
   <div class="settings-panel">
+    <!-- 关机进行中遮罩 -->
+    <div v-if="shutdownState.shutdown_in_progress" class="shutdown-overlay">
+      <div class="shutdown-modal">
+        <el-icon class="shutdown-icon" :size="64"><Warning /></el-icon>
+        <h2>系统正在关机</h2>
+        <p class="trigger-source">{{ shutdownState.trigger_source_text }}</p>
+        <div class="countdown">
+          <span class="countdown-number">{{ shutdownState.countdown_seconds }}</span>
+          <span class="countdown-label">秒后关机</span>
+        </div>
+        <p class="shutdown-hint">请勿断电，等待系统安全关闭...</p>
+      </div>
+    </div>
+
     <!-- 用户信息 -->
     <div class="panel-section">
       <h3 class="section-title">用户信息</h3>
@@ -77,23 +91,48 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
-import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { Warning } from '@element-plus/icons-vue'
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useLayoutStore } from '@/stores/layout'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { liftApi } from '@/api/lift'
+import shutdownApi, { type ShutdownState } from '@/api/shutdown'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const layoutStore = useLayoutStore()
 
 const shuttingDown = ref(false)
+let pollTimer: ReturnType<typeof setInterval> | null = null
+
+// 关机状态
+const shutdownState = reactive<ShutdownState>({
+  shutdown_in_progress: false,
+  trigger_source: 0,
+  trigger_source_text: '',
+  countdown_seconds: -1,
+  plc_connected: false
+})
 
 const settings = reactive({
   darkMode: true,
   antiAlias: true
 })
+
+// 轮询关机状态
+async function pollShutdownState() {
+  try {
+    const state = await shutdownApi.getShutdownState()
+    shutdownState.shutdown_in_progress = state.shutdown_in_progress
+    shutdownState.trigger_source = state.trigger_source
+    shutdownState.trigger_source_text = state.trigger_source_text
+    shutdownState.countdown_seconds = state.countdown_seconds
+    shutdownState.plc_connected = state.plc_connected
+  } catch (e) {
+    // 忽略轮询错误
+  }
+}
 
 // 从localStorage加载设置
 function loadSettings() {
@@ -107,11 +146,9 @@ function loadSettings() {
       console.error('Failed to load settings:', e)
     }
   }
-  // 应用暗色模式
   applyDarkMode()
 }
 
-// 应用暗色模式到body
 function applyDarkMode() {
   if (settings.darkMode) {
     document.documentElement.classList.remove('light')
@@ -122,13 +159,21 @@ function applyDarkMode() {
   }
 }
 
-// 监听暗色模式变化
 watch(() => settings.darkMode, () => {
   applyDarkMode()
 })
 
 onMounted(() => {
   loadSettings()
+  // 开始轮询关机状态
+  pollShutdownState()
+  pollTimer = setInterval(pollShutdownState, 1000)
+})
+
+onUnmounted(() => {
+  if (pollTimer) {
+    clearInterval(pollTimer)
+  }
 })
 
 const roleText = computed(() => {
@@ -175,7 +220,7 @@ async function handleShutdown() {
     )
     
     shuttingDown.value = true
-    const result = await liftApi.systemShutdown()
+    const result = await shutdownApi.shutdownSystem()
     
     if (result.success) {
       ElMessage.warning('系统正在关机，请稍候...')
@@ -197,8 +242,75 @@ async function handleShutdown() {
   padding: var(--spacing-lg);
   height: 100%;
   overflow-y: auto;
+  position: relative;
 }
 
+/* 关机遮罩样式 */
+.shutdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shutdown-modal {
+  text-align: center;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.shutdown-icon {
+  color: #ef4444;
+  margin-bottom: 20px;
+}
+
+.shutdown-modal h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.trigger-source {
+  color: #fbbf24;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.countdown-number {
+  font-size: 72px;
+  font-weight: bold;
+  color: #ef4444;
+  line-height: 1;
+}
+
+.countdown-label {
+  font-size: 18px;
+  color: #94a3b8;
+}
+
+.shutdown-hint {
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* 其余样式保持不变 */
 .settings-panel::-webkit-scrollbar {
   width: 8px;
 }
@@ -337,33 +449,6 @@ async function handleShutdown() {
 :deep(.el-divider) {
   margin: var(--spacing-lg) 0;
   border-color: rgba(148, 163, 184, 0.1);
-}
-
-:deep(.el-form-item__label) {
-  color: var(--color-text-tertiary);
-}
-
-:deep(.el-input__wrapper) {
-  background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  transition: all 0.3s ease;
-}
-
-:deep(.el-input__wrapper:hover) {
-  border-color: rgba(148, 163, 184, 0.4);
-}
-
-:deep(.el-input__wrapper.is-focus) {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary);
-}
-
-:deep(.el-input__inner) {
-  color: var(--color-text-primary);
-}
-
-:deep(.el-input-number) {
-  width: 100px;
 }
 
 :deep(.el-button--primary) {
