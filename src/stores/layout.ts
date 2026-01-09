@@ -225,12 +225,10 @@ export const useLayoutStore = defineStore('layout', () => {
     connected: boolean
     enabled: boolean
     alarm: boolean
-    shutdownRequested: boolean  // 硬件关机请求
   }>({
     connected: false,
     enabled: false,
-    alarm: false,
-    shutdownRequested: false
+    alarm: false
   })
 
   // 底盘状态
@@ -333,16 +331,13 @@ export const useLayoutStore = defineStore('layout', () => {
     return { text: '正常', type: 'success' as const }
   })
 
-  // 头部状态信息
+  // 头部状态信息（头部舵机没有使能概念，连接即可使用）
   const headStatusInfo = computed(() => {
     if (!headStatus.value.connected) {
       return { text: '未连接', type: 'danger' as const }
     }
     if (headStatus.value.error) {
       return { text: '故障', type: 'danger' as const }
-    }
-    if (!headStatus.value.enabled) {
-      return { text: '未使能', type: 'warning' as const }
     }
     return { text: '正常', type: 'success' as const }
   })
@@ -652,17 +647,8 @@ export const useLayoutStore = defineStore('layout', () => {
   }
 
   function updateLiftStatus(status: Partial<typeof liftStatus.value>) {
-    // 检测硬件关机请求状态变化
-    const wasShutdownRequested = liftStatus.value.shutdownRequested
     Object.assign(liftStatus.value, status)
     connectionStatus.value.lift = status.connected ?? liftStatus.value.connected
-    
-    // 如果是新的关机请求，触发关机事件
-    if (status.shutdownRequested && !wasShutdownRequested) {
-      console.warn('⚠️ 检测到硬件关机按钮触发!')
-      // 发送自定义事件，App.vue 会监听并显示关机提示
-      window.dispatchEvent(new CustomEvent('hardware-shutdown-requested'))
-    }
   }
 
   // 更新双臂状态

@@ -465,16 +465,14 @@ async function fetchLiftStatus() {
       layoutStore.updateLiftStatus({
         connected: response.data.connected ?? false,
         enabled: response.data.enabled ?? false,
-        alarm: response.data.alarm ?? false,
-        shutdownRequested: response.data.shutdown_requested ?? false
+        alarm: response.data.alarm ?? false
       })
     }
   } catch (error) {
     layoutStore.updateLiftStatus({
       connected: false,
       enabled: false,
-      alarm: false,
-      shutdownRequested: false
+      alarm: false
     })
   }
 }
@@ -650,6 +648,31 @@ async function fetchVRStatus() {
   }
 }
 
+// 获取关机状态（独立于其他设备）
+let lastShutdownInProgress = false
+async function fetchShutdownStatus() {
+  try {
+    const response = await axios.get(`${getApiBase()}/shutdown/state`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      timeout: 2000
+    })
+    
+    if (response.data) {
+      const shutdownInProgress = response.data.shutdown_in_progress ?? false
+      // 检测新的关机请求（硬件按钮触发 trigger_source=1）
+      if (shutdownInProgress && !lastShutdownInProgress && response.data.trigger_source === 1) {
+        console.warn('⚠️ 检测到硬件关机按钮触发!')
+        window.dispatchEvent(new CustomEvent('hardware-shutdown-requested'))
+      }
+      lastShutdownInProgress = shutdownInProgress
+    }
+  } catch {
+    // 忽略错误
+  }
+}
+
 // 统一获取所有设备状态
 async function fetchAllStatus() {
   await Promise.all([
@@ -660,7 +683,8 @@ async function fetchAllStatus() {
     fetchHeadStatus(),
     fetchChassisStatus(),
     fetchWaistStatus(),
-    fetchVRStatus()
+    fetchVRStatus(),
+    fetchShutdownStatus()
   ])
 }
 
