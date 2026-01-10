@@ -53,34 +53,90 @@
 
     <!-- 设备状态检查 - 紧凑网格布局 -->
     <div class="panel-section">
-      <h3 class="section-title">设备状态</h3>
+      <div class="section-header">
+        <h3 class="section-title">设备状态</h3>
+        <div class="device-selection-actions" v-if="collectionState === 'idle'">
+          <el-button link type="primary" size="small" @click="selectAllDevices">全选</el-button>
+          <el-button link size="small" @click="deselectAllDevices">清空</el-button>
+        </div>
+      </div>
       <div class="device-grid">
         <div class="device-tag" :class="globalArmStatusInfo.type">
+          <el-checkbox 
+            v-model="deviceSelection.leftArm" 
+            :disabled="collectionState !== 'idle'"
+            size="small"
+          />
           <SvgIcon name="cpu" :size="16" />
-          <span>双臂</span>
+          <span>左臂</span>
+          <span class="status-text">{{ globalArmStatusInfo.text }}</span>
+        </div>
+        <div class="device-tag" :class="globalArmStatusInfo.type">
+          <el-checkbox 
+            v-model="deviceSelection.rightArm" 
+            :disabled="collectionState !== 'idle'"
+            size="small"
+          />
+          <SvgIcon name="cpu" :size="16" />
+          <span>右臂</span>
           <span class="status-text">{{ globalArmStatusInfo.text }}</span>
         </div>
         <div class="device-tag" :class="globalGripperStatusInfo.type">
+          <el-checkbox 
+            v-model="deviceSelection.leftGripper" 
+            :disabled="collectionState !== 'idle'"
+            size="small"
+          />
           <SvgIcon name="scissor" :size="16" />
-          <span>夹爪</span>
+          <span>左夹爪</span>
+          <span class="status-text">{{ globalGripperStatusInfo.text }}</span>
+        </div>
+        <div class="device-tag" :class="globalGripperStatusInfo.type">
+          <el-checkbox 
+            v-model="deviceSelection.rightGripper" 
+            :disabled="collectionState !== 'idle'"
+            size="small"
+          />
+          <SvgIcon name="scissor" :size="16" />
+          <span>右夹爪</span>
           <span class="status-text">{{ globalGripperStatusInfo.text }}</span>
         </div>
         <div class="device-tag" :class="globalHeadStatusInfo.type">
+          <el-checkbox 
+            v-model="deviceSelection.head" 
+            :disabled="collectionState !== 'idle'"
+            size="small"
+          />
           <SvgIcon name="camera" :size="16" />
           <span>头部</span>
           <span class="status-text">{{ globalHeadStatusInfo.text }}</span>
         </div>
         <div class="device-tag" :class="globalLiftStatusInfo.type">
+          <el-checkbox 
+            v-model="deviceSelection.lift" 
+            :disabled="collectionState !== 'idle'"
+            size="small"
+          />
           <SvgIcon name="dcaret" :size="16" />
           <span>升降</span>
           <span class="status-text">{{ globalLiftStatusInfo.text }}</span>
         </div>
         <div class="device-tag" :class="globalChassisStatusInfo.type">
+          <el-checkbox 
+            v-model="deviceSelection.chassis" 
+            :disabled="collectionState !== 'idle'"
+            size="small"
+          />
           <SvgIcon name="van" :size="16" />
           <span>底盘</span>
           <span class="status-text">{{ globalChassisStatusInfo.text }}</span>
         </div>
         <div class="device-tag" :class="globalVrStatusInfo.type">
+          <el-checkbox 
+            v-model="deviceSelection.vr" 
+            :disabled="collectionState !== 'idle'"
+            size="small"
+          />
           <SvgIcon name="view" :size="16" />
           <span>VR</span>
           <span class="status-text">{{ globalVrStatusInfo.text }}</span>
@@ -316,6 +372,18 @@ const deviceStatus = reactive({
   vr: { ready: false, error: false, text: '未检查' }
 })
 
+// 设备选择状态（默认：头部相机 + 右臂 + 右夹爪 - 适合简单夹取任务）
+const deviceSelection = reactive({
+  leftArm: false,      // 左臂 - 可选
+  rightArm: true,      // 右臂 - 选中（夹取方块）
+  leftGripper: false,  // 左夹爪 - 可选
+  rightGripper: true,  // 右夹爪 - 选中（夹取方块）
+  head: true,          // 头部相机 - 选中（观察）
+  lift: false,         // 升降 - 可选
+  chassis: false,      // 底盘 - 可选
+  vr: true             // VR - 遥操作必需
+})
+
 // 加载状态
 const initLoading = ref(false)
 const startLoading = ref(false)
@@ -344,8 +412,28 @@ const recordingForm = reactive({
 // 可用话题列表
 const availableTopics = ref<string[]>([])
 
-// 默认录制话题
-const defaultRecordingTopics = [
+// 默认录制话题（根据设备选择智能推荐）
+const getDefaultTopics = () => {
+  const topics = [
+    '/joint_states',  // 全局关节状态
+    '/tf',            // 动态坐标变换
+    '/tf_static'      // 静态坐标变换
+  ]
+  
+  // 根据选中的设备添加对应话题
+  if (deviceSelection.leftArm) topics.push('/left_arm/joint_states')
+  if (deviceSelection.rightArm) topics.push('/right_arm/joint_states')
+  if (deviceSelection.leftGripper) topics.push('/left_gripper/state')
+  if (deviceSelection.rightGripper) topics.push('/right_gripper/state')
+  if (deviceSelection.head) topics.push('/head/joint_states')
+  if (deviceSelection.lift) topics.push('/lift/state')
+  if (deviceSelection.chassis) topics.push('/chassis/odom')
+  
+  return topics
+}
+
+// 所有可能的录制话题（用于后备）
+const allRecordingTopics = [
   '/joint_states',
   '/tf',
   '/tf_static',
@@ -360,6 +448,8 @@ const defaultRecordingTopics = [
 
 // 预定义动作
 const predefinedActions = [
+  '夹取方块',      // 默认第一个 - 适合初学者
+  '放置方块',
   '拿取杯子',
   '放置杯子',
   '开门',
@@ -400,55 +490,127 @@ function formatDuration(seconds: number): string {
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
 }
 
-// 设备初始化 - 执行所有初始化动作
+// 设备选择快捷操作
+function selectAllDevices() {
+  Object.keys(deviceSelection).forEach(key => {
+    const k = key as keyof typeof deviceSelection
+    deviceSelection[k] = true
+  })
+}
+
+function deselectAllDevices() {
+  Object.keys(deviceSelection).forEach(key => {
+    const k = key as keyof typeof deviceSelection
+    deviceSelection[k] = false
+  })
+}
+
+// 设备初始化 - 仅初始化选中的设备
 async function initializeDevices() {
+  // 检查是否至少选中一个设备
+  const selectedCount = Object.values(deviceSelection).filter(v => v).length
+  if (selectedCount === 0) {
+    ElMessage.warning('请至少选择一个设备进行初始化')
+    return
+  }
+  
   initLoading.value = true
   collectionState.value = 'initializing'
   
   // 重置设备状态
   Object.keys(deviceStatus).forEach(key => {
     const k = key as keyof typeof deviceStatus
-    deviceStatus[k] = { ready: false, error: false, text: '等待中...' }
+    if (deviceSelection[k]) {
+      deviceStatus[k] = { ready: false, error: false, text: '等待中...' }
+    } else {
+      deviceStatus[k] = { ready: false, error: false, text: '未选中' }
+    }
   })
   
-  addLog('========== 开始初始化所有设备 ==========', 'info')
+  const selectedDevices = Object.keys(deviceSelection)
+    .filter(k => deviceSelection[k as keyof typeof deviceSelection])
+    .join(', ')
+  
+  addLog(`========== 开始初始化选中设备 ==========`, 'info')
+  addLog(`已选设备: ${selectedDevices}`, 'info')
   
   let allSuccess = true
+  let failedDevices: string[] = []
   
-  // 1. 初始化双臂（连接 -> 上电 -> 使能 -> 伺服模式）
-  const armOk = await initArm()
-  if (!armOk) allSuccess = false
+  // 1. 初始化手臂（连接 -> 上电 -> 使能 -> 伺服模式）
+  // 注意：左右臂共用驱动，任一选中都需要完整初始化
+  if (deviceSelection.leftArm || deviceSelection.rightArm) {
+    const armOk = await initArm()
+    if (!armOk) {
+      allSuccess = false
+      if (deviceSelection.leftArm) failedDevices.push('左臂')
+      if (deviceSelection.rightArm) failedDevices.push('右臂')
+    }
+  }
   
   // 2. 初始化夹爪（使能）
-  const gripperOk = await initGripper()
-  if (!gripperOk) allSuccess = false
+  if (deviceSelection.leftGripper) {
+    const leftGripperOk = await initLeftGripper()
+    if (!leftGripperOk) {
+      allSuccess = false
+      failedDevices.push('左夹爪')
+    }
+  }
+  
+  if (deviceSelection.rightGripper) {
+    const rightGripperOk = await initRightGripper()
+    if (!rightGripperOk) {
+      allSuccess = false
+      failedDevices.push('右夹爪')
+    }
+  }
   
   // 3. 初始化头部（使能）
-  const headOk = await initHead()
-  if (!headOk) allSuccess = false
+  if (deviceSelection.head) {
+    const headOk = await initHead()
+    if (!headOk) {
+      allSuccess = false
+      failedDevices.push('头部')
+    }
+  }
   
   // 4. 初始化升降（使能）
-  const liftOk = await initLift()
-  if (!liftOk) allSuccess = false
+  if (deviceSelection.lift) {
+    const liftOk = await initLift()
+    if (!liftOk) {
+      allSuccess = false
+      failedDevices.push('升降')
+    }
+  }
   
   // 5. 初始化底盘（手动速度模式）
-  const chassisOk = await initChassis()
-  if (!chassisOk) allSuccess = false
+  if (deviceSelection.chassis) {
+    const chassisOk = await initChassis()
+    if (!chassisOk) {
+      allSuccess = false
+      failedDevices.push('底盘')
+    }
+  }
   
   // 6. 检查 VR 连接
-  const vrOk = await checkVR()
-  if (!vrOk) allSuccess = false
+  if (deviceSelection.vr) {
+    const vrOk = await checkVR()
+    if (!vrOk) {
+      allSuccess = false
+      failedDevices.push('VR')
+    }
+  }
   
   addLog('==========================================', 'info')
   
   if (allSuccess) {
     collectionState.value = 'ready'
-    addLog('✓ 所有设备初始化成功！可以开始采集', 'success')
+    addLog(`✓ 选中的 ${selectedCount} 个设备初始化成功！可以开始采集`, 'success')
     ElMessage.success('设备初始化成功，可以开始采集')
   } else {
     collectionState.value = 'idle'
-    addLog('✗ 部分设备初始化失败，请检查后重试', 'error')
-    ElMessage.error('设备初始化失败，请查看日志')
+    addLog(`✗ 部分设备初始化失败: ${failedDevices.join(', ')}`, 'error')
+    ElMessage.error(`设备初始化失败: ${failedDevices.join(', ')}，请查看日志`)
   }
   
   initLoading.value = false
@@ -514,29 +676,44 @@ async function initArm(): Promise<boolean> {
   }
 }
 
-// 初始化夹爪：使能左右夹爪
-async function initGripper(): Promise<boolean> {
+// 初始化左夹爪
+async function initLeftGripper(): Promise<boolean> {
   deviceStatus.gripper = { ready: false, error: false, text: '初始化中...' }
-  addLog('[夹爪] 开始初始化...', 'info')
+  addLog('[左夹爪] 开始初始化...', 'info')
   
   try {
-    // 使能左夹爪
-    addLog('[夹爪] 使能左夹爪...', 'info')
+    addLog('[左夹爪] 使能...', 'info')
     await axios.post('/api/v1/gripper/left/enable', {}, getAuthHeaders())
     await delay(500)
     
-    // 使能右夹爪
-    addLog('[夹爪] 使能右夹爪...', 'info')
-    await axios.post('/api/v1/gripper/right/enable', {}, getAuthHeaders())
-    await delay(500)
-    
     deviceStatus.gripper = { ready: true, error: false, text: '已使能' }
-    addLog('[夹爪] ✓ 初始化完成', 'success')
+    addLog('[左夹爪] ✓ 初始化完成', 'success')
     return true
   } catch (error: any) {
     const msg = error.response?.data?.detail || error.message || '未知错误'
     deviceStatus.gripper = { ready: false, error: true, text: '初始化失败' }
-    addLog(`[夹爪] ✗ 初始化失败: ${msg}`, 'error')
+    addLog(`[左夹爪] ✗ 初始化失败: ${msg}`, 'error')
+    return false
+  }
+}
+
+// 初始化右夹爪
+async function initRightGripper(): Promise<boolean> {
+  deviceStatus.gripper = { ready: false, error: false, text: '初始化中...' }
+  addLog('[右夹爪] 开始初始化...', 'info')
+  
+  try {
+    addLog('[右夹爪] 使能...', 'info')
+    await axios.post('/api/v1/gripper/right/enable', {}, getAuthHeaders())
+    await delay(500)
+    
+    deviceStatus.gripper = { ready: true, error: false, text: '已使能' }
+    addLog('[右夹爪] ✓ 初始化完成', 'success')
+    return true
+  } catch (error: any) {
+    const msg = error.response?.data?.detail || error.message || '未知错误'
+    deviceStatus.gripper = { ready: false, error: true, text: '初始化失败' }
+    addLog(`[右夹爪] ✗ 初始化失败: ${msg}`, 'error')
     return false
   }
 }
@@ -639,7 +816,7 @@ function selectAllTopics() {
 }
 
 function selectDefaultTopics() {
-  recordingForm.topics = defaultRecordingTopics.filter(t => availableTopics.value.includes(t))
+  recordingForm.topics = getDefaultTopics().filter(t => availableTopics.value.includes(t))
 }
 
 async function fetchAvailableTopics() {
@@ -647,8 +824,8 @@ async function fetchAvailableTopics() {
     const response = await axios.get('/api/v1/recording/topics', getAuthHeaders())
     availableTopics.value = response.data.topics || []
   } catch (error) {
-    // 使用默认话题列表
-    availableTopics.value = defaultRecordingTopics
+    // 使用所有话题列表作为后备
+    availableTopics.value = allRecordingTopics
   }
 }
 
@@ -656,7 +833,7 @@ async function fetchAvailableTopics() {
 function showStartDialog() {
   recordingForm.actionName = ''
   recordingForm.note = ''
-  recordingForm.topics = [...defaultRecordingTopics]  // 默认选中常用话题
+  recordingForm.topics = getDefaultTopics()  // 根据选中设备智能推荐话题
   fetchAvailableTopics()  // 获取可用话题
   startDialogVisible.value = true
 }
@@ -903,24 +1080,31 @@ onUnmounted(() => {
   color: rgba(148, 163, 184, 0.8);
 }
 
-.status-badge.initializing {
-  background: rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+.stat选择操作 */
+.device-selection-actions {
+  display: flex;
+  gap: var(--spacing-sm);
 }
 
-.status-badge.ready {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+/* 设备状态网格 - 紧凑布局 */
+.device-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
 }
 
-.status-badge.recording {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
-}
-
+.device-tag {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  transition: all 0.3s var(--transition-smooth);
+  cursor: pointer
 .status-badge.stopped {
   background: rgba(245, 158, 11, 0.2);
   color: var(--color-primary);
