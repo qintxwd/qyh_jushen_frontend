@@ -708,6 +708,18 @@ const jogParams = reactive({
 const activeJogAxis = ref<number | null>(null)
 const jogDirection = ref<number>(0)
 const jogIntervalId = ref<number | null>(null)
+const jogTimeoutId = ref<number | null>(null)  // 连续模式超时定时器
+const jogStartTime = ref<number>(0)  // Jog 开始时间
+const jogFailureCount = ref<number>(0)  // 连续失败次数
+const lastJogArmState = ref<boolean>(false)  // 上次Jog时的使能状态
+
+// Jog 安全配置
+const JOG_CONFIG = {
+  MAX_CONTINUOUS_TIME: 30000,  // 连续模式最大运行时间 30秒
+  REQUEST_TIMEOUT: 2000,       // 单次请求超时 2秒
+  MAX_FAILURES: 3,             // 最大连续失败次数
+  INTERVAL_MS: 100             // 连续模式发送间隔
+}
 
 
 
@@ -1308,8 +1320,27 @@ async function startJog(axisNum: number, direction: number) {
     return
   }
   
+  // 状态检查：必须使能且未在伺服模式
+  if (!armState.enabled) {
+    ElMessage.warning('机械臂未使能，无法点动')
+    return
+  }
+  
+  if (isServoRunning.value) {
+    ElMessage.warning('伺服模式运行中，无法点动')
+    return
+  }
+  
+  // 如果已有点动在运行，先停止
+  if (activeJogAxis.value !== null) {
+    await stopJog()
+  }
+  
   activeJogAxis.value = axisNum
   jogDirection.value = direction
+  jogStartTime.value = Date.now()
+  jogFailureCount.value = 0  // 重置失败计数
+  lastJogArmState.value = armState.enabled
   
   // 计算位置增量
   const position = jogParams.stepSize * direction
@@ -1323,14 +1354,39 @@ async function startJog(axisNum: number, direction: number) {
     
     // 设置定时器持续发送
     jogIntervalId.value = window.setInterval(async () => {
+      // 检查是否超过最大运行时间
+      const runningTime = Date.now() - jogStartTime.value
+      if (runningTime > JOG_CONFIG.MAX_CONTINUOUS_TIME) {
+        ElMessage.warning(`点动已运行 ${JOG_CONFIG.MAX_CONTINUOUS_TIME / 1000}秒，自动停止`)
+        await stopJog()
+        return
+      }
+      
+      // 检查机械臂状态是否变化
+      if (!armState.enabled || isServoRunning.value) {
+        console.log('机械臂状态变化，自动停止点动')
+        await stopJog()
+        return
+      }
+      
       await executeJog(axisNum, position)
-    }, 100) // 100ms 间隔
+    }, JOG_CONFIG.INTERVAL_MS)
+    
+    // 设置最大运行时间保护
+    jogTimeoutId.value = window.setTimeout(async () => {
+      ElMessage.warning(`点动超时 (${JOG_CONFIG.MAX_CONTINUOUS_TIME / 1000}秒)，强制停止`)
+      await stopJog()
+    }, JOG_CONFIG.MAX_CONTINUOUS_TIME)
   }
 }
 
 // 执行 Jog 命令
 async function executeJog(axisNum: number, position: number) {
   try {
+    // 使用 AbortController 实现请求超时
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), JOG_CONFIG.REQUEST_TIMEOUT)
+    
     await api.post('/api/v1/arm/jog', {
       robot_id: jogParams.robotId,
       axis_num: axisNum,
@@ -1338,19 +1394,48 @@ async function executeJog(axisNum: number, position: number) {
       coord_type: jogParams.coordType,
       velocity: jogParams.velocity,
       position: Math.abs(position) * Math.sign(position)
+    }, {
+      signal: controller.signal
     })
+    
+    clearTimeout(timeoutId)
+    jogFailureCount.value = 0  // 成功后重置失败计数
+    
   } catch (error: any) {
-    console.warn('Jog command failed:', error)
-    stopJog()
+    jogFailureCount.value++
+    
+    // 判断错误类型
+    if (error.name === 'AbortError' || error.code === 'ECONNABORTED') {
+      console.warn(`Jog请求超时 (${JOG_CONFIG.REQUEST_TIMEOUT}ms), 失败次数: ${jogFailureCount.value}`)
+    } else if (error.code === 'ERR_NETWORK') {
+      console.warn('网络连接失败，停止点动')
+      ElMessage.error('网络连接失败')
+      await stopJog()
+      return
+    } else {
+      console.warn('Jog command failed:', error.message)
+    }
+    
+    // 连续失败次数过多，停止点动
+    if (jogFailureCount.value >= JOG_CONFIG.MAX_FAILURES) {
+      ElMessage.error(`点动连续失败 ${JOG_CONFIG.MAX_FAILURES} 次，已停止`)
+      await stopJog()
+      return
+    }
   }
 }
 
 // 停止 Jog
 async function stopJog() {
-  // 先清除定时器，防止继续发送命令
+  // 清除所有定时器
   if (jogIntervalId.value) {
     clearInterval(jogIntervalId.value)
     jogIntervalId.value = null
+  }
+  
+  if (jogTimeoutId.value) {
+    clearTimeout(jogTimeoutId.value)
+    jogTimeoutId.value = null
   }
   
   // 保存当前轴号用于发送停止命令
@@ -1360,16 +1445,27 @@ async function stopJog() {
   // 立即重置状态
   activeJogAxis.value = null
   jogDirection.value = 0
+  jogStartTime.value = 0
+  jogFailureCount.value = 0
   
   // 发送停止命令（在连续模式下确保机械臂停止运动）
   if (axisToStop !== null) {
     try {
+      // 停止命令也设置超时
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 1000)  // 1秒超时
+      
       await api.post('/api/v1/arm/jog_stop', {
         robot_id: robotToStop,
         axis_num: axisToStop
+      }, {
+        signal: controller.signal
       })
+      
+      clearTimeout(timeoutId)
     } catch (error) {
       console.warn('Jog stop failed:', error)
+      // 停止命令失败不影响前端状态清理
     }
   }
 }
@@ -1398,11 +1494,101 @@ onMounted(() => {
   startPolling()
   fetchArmPoints()
   loadGripperConfig()
+  
+  // 添加页面关闭前的紧急停止处理
+  window.addEventListener('beforeunload', handleBeforeUnload)
 })
 
 onUnmounted(() => {
+  // 移除事件监听
+  window.removeEventListener('beforeunload', handleBeforeUnload)
+  
   stopPolling()
+  // 组件卸载时停止所有Jog操作
+  if (activeJogAxis.value !== null) {
+    // 使用同步方式发送停止命令
+    sendJogStopSync()
+  }
 })
+
+// 页面关闭前的处理
+function handleBeforeUnload(event: BeforeUnloadEvent) {
+  if (activeJogAxis.value !== null) {
+    // 使用 sendBeacon 确保停止命令发送
+    sendJogStopSync()
+    
+    // 可选：显示警告（但现代浏览器可能不显示自定义消息）
+    event.preventDefault()
+    event.returnValue = ''
+  }
+}
+
+// 同步发送 Jog 停止命令（使用 sendBeacon 或 Fetch keepalive）
+function sendJogStopSync() {
+  if (activeJogAxis.value === null) return
+  
+  const axisToStop = activeJogAxis.value
+  const robotToStop = jogParams.robotId
+  
+  // 清理定时器
+  if (jogIntervalId.value) {
+    clearInterval(jogIntervalId.value)
+    jogIntervalId.value = null
+  }
+  if (jogTimeoutId.value) {
+    clearTimeout(jogTimeoutId.value)
+    jogTimeoutId.value = null
+  }
+  
+  // 重置状态
+  activeJogAxis.value = null
+  jogDirection.value = 0
+  jogStartTime.value = 0
+  jogFailureCount.value = 0
+  
+  try {
+    const token = localStorage.getItem('token')
+    const url = `${api.defaults.baseURL}/api/v1/arm/jog_stop`
+    const data = JSON.stringify({
+      robot_id: robotToStop,
+      axis_num: axisToStop
+    })
+    
+    // 方法1: 使用 sendBeacon（浏览器关闭时也会发送）
+    if (navigator.sendBeacon) {
+      // sendBeacon 只支持 POST，但不支持自定义 header
+      // 所以需要在 URL 中带 token 或后端允许这种情况
+      const blob = new Blob([data], { type: 'application/json' })
+      
+      // 尝试使用 Beacon，如果失败则降级到 Fetch
+      const beaconUrl = token ? `${url}?_emergency_stop=1&_token=${encodeURIComponent(token)}` : url
+      const sent = navigator.sendBeacon(beaconUrl, blob)
+      
+      if (sent) {
+        console.log('Emergency jog stop sent via Beacon')
+        return
+      }
+    }
+    
+    // 方法2: 使用 Fetch with keepalive
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : ''
+      },
+      body: data,
+      keepalive: true  // 关键：即使页面关闭也会完成请求
+    }).then(() => {
+      console.log('Emergency jog stop sent via Fetch')
+    }).catch(err => {
+      console.warn('Emergency jog stop failed:', err)
+    })
+    
+  } catch (error) {
+    console.warn('Failed to send emergency jog stop:', error)
+  }
+}
 </script>
 
 <style scoped>
