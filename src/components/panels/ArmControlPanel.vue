@@ -118,11 +118,12 @@
         </div>
         <div class="config-row">
           <span class="config-label">坐标系:</span>
-          <el-radio-group v-model="jogParams.coordType" size="small">
-            <el-radio-button :label="1">关节</el-radio-button>
-            <el-radio-button :label="0">基坐标</el-radio-button>
-            <el-radio-button :label="2">工具</el-radio-button>
+          <el-radio-group v-model="jogParams.coordType" size="small" disabled>
+            <el-radio-button :label="1">关节空间</el-radio-button>
           </el-radio-group>
+          <el-tooltip content="目前只支持关节空间点动" placement="top">
+            <SvgIcon name="infofilled" :size="14" style="margin-left: 8px; color: #409eff;" />
+          </el-tooltip>
         </div>
         <div class="config-row">
           <span class="config-label">模式:</span>
@@ -164,19 +165,19 @@
       </div>
       
       <!-- 关节空间点动控制 -->
-      <div class="jog-controls" v-if="jogParams.coordType === 1">
+      <div class="jog-controls">
         <div class="jog-axis-row" v-for="i in 7" :key="'joint'+i">
           <span class="axis-label">J{{ i }}</span>
           <el-button 
             :type="activeJogAxis === i && jogDirection === -1 ? 'primary' : 'default'"
             size="small"
-            class="jog-btn"
+            class="jog-btn minus"
             @mousedown="startJog(i, -1)"
             @mouseup="stopJog"
             @mouseleave="stopJog"
             @touchstart.prevent="startJog(i, -1)"
             @touchend.prevent="stopJog"
-            :disabled="!armState.enabled"
+            :disabled="!armState.enabled || isServoRunning"
           >
             <SvgIcon name="minus" :size="16" />
           </el-button>
@@ -184,21 +185,21 @@
           <el-button 
             :type="activeJogAxis === i && jogDirection === 1 ? 'primary' : 'default'"
             size="small"
-            class="jog-btn"
+            class="jog-btn plus"
             @mousedown="startJog(i, 1)"
             @mouseup="stopJog"
             @mouseleave="stopJog"
             @touchstart.prevent="startJog(i, 1)"
             @touchend.prevent="stopJog"
-            :disabled="!armState.enabled"
+            :disabled="!armState.enabled || isServoRunning"
           >
             <SvgIcon name="plus" :size="16" />
           </el-button>
         </div>
       </div>
       
-      <!-- 笛卡尔空间点动控制 -->
-      <div class="jog-controls" v-else>
+      <!-- 笛卡尔空间点动控制（暂不支持） -->
+      <div class="jog-controls" v-if="false" style="display: none;">
         <div class="jog-cartesian-section">
           <div class="cartesian-title">位置</div>
           <div class="jog-axis-row" v-for="(axis, idx) in ['X', 'Y', 'Z']" :key="'cart'+axis">
@@ -697,10 +698,10 @@ const motionParams = reactive({
 // Jog 点动控制参数
 const jogParams = reactive({
   robotId: 0,        // 0=左臂, 1=右臂
-  coordType: 1,      // 0=基坐标, 1=关节, 2=工具
+  coordType: 1,      // 固定为1=关节空间（目前只支持关节点动）
   moveMode: 1,       // 1=步进, 2=连续
-  velocity: 0.1,     // 速度 (rad/s 或 mm/s)
-  stepSize: 0.05     // 步进大小 (rad 或 mm)
+  velocity: 0.1,     // 速度 (rad/s)
+  stepSize: 0.05     // 步进大小 (rad)
 })
 
 // Jog 状态
@@ -1301,6 +1302,12 @@ function formatRotationValue(_robotId: number, _idx: number): string {
 
 // 开始 Jog
 async function startJog(axisNum: number, direction: number) {
+  // 只支持关节空间
+  if (jogParams.coordType !== 1) {
+    ElMessage.warning('目前只支持关节空间点动')
+    return
+  }
+  
   activeJogAxis.value = axisNum
   jogDirection.value = direction
   
