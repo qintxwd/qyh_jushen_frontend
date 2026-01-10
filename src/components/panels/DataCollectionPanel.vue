@@ -425,7 +425,11 @@ const getDefaultTopics = () => {
   if (deviceSelection.rightArm) topics.push('/right_arm/joint_states')
   if (deviceSelection.leftGripper) topics.push('/left_gripper/state')
   if (deviceSelection.rightGripper) topics.push('/right_gripper/state')
-  if (deviceSelection.head) topics.push('/head/joint_states')
+  if (deviceSelection.head) {
+    topics.push('/head/joint_states')
+    // 添加头部相机话题（ACT训练必需）
+    topics.push('/camera/head/color/image_raw')
+  }
   if (deviceSelection.lift) topics.push('/lift/state')
   if (deviceSelection.chassis) topics.push('/chassis/odom')
   
@@ -443,7 +447,12 @@ const allRecordingTopics = [
   '/right_gripper/state',
   '/head/joint_states',
   '/lift/state',
-  '/chassis/odom'
+  '/chassis/odom',
+  // 相机话题（ACT训练必需）
+  '/camera/head/color/image_raw',
+  '/camera/head/depth/image_raw',
+  '/camera/left_wrist/color/image_raw',
+  '/camera/right_wrist/color/image_raw'
 ]
 
 // 预定义动作

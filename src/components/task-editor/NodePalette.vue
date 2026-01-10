@@ -81,7 +81,7 @@ const emit = defineEmits<{
 const searchQuery = ref('')
 
 // 展开的类别
-const expandedCategories = ref<string[]>(['control', 'arm', 'logic'])
+const expandedCategories = ref<string[]>(['control', 'arm', 'logic', 'ai'])
 
 // 按类别分组的节点（隐藏 Sequence，因为顺序执行是默认行为）
 const nodesByCategory = computed(() => {

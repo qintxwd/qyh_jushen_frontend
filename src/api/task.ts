@@ -20,6 +20,8 @@ export type NodeType =
   | 'Wait' | 'CheckCondition'
   | 'Loop'
   | 'SubTask'
+  // AI 模型节点
+  | 'ACTExecute' | 'ACTLoadModel'
 
 /** 头部点位 */
 export interface HeadPoint {
@@ -84,7 +86,7 @@ export interface NodeParamDef {
 /** 节点定义 */
 export interface NodeDefinition {
   type: NodeType
-  category: 'control' | 'arm' | 'gripper' | 'head' | 'base' | 'lift' | 'waist' | 'logic'
+  category: 'control' | 'arm' | 'gripper' | 'head' | 'base' | 'lift' | 'waist' | 'logic' | 'ai'
   name: string
   description: string
   icon: string
@@ -421,6 +423,33 @@ export const NODE_DEFINITIONS: NodeDefinition[] = [
     params: [
       { name: 'task_id', type: 'preset', label: '选择任务', required: true, presetType: 'saved_task' }
     ]
+  },
+
+  // ==================== AI 模型节点 ====================
+  {
+    type: 'ACTExecute',
+    category: 'ai',
+    name: '执行 ACT 模型',
+    description: '执行训练好的 ACT 动作模型',
+    icon: 'MagicStick',
+    color: '#9B59B6',
+    params: [
+      { name: 'model_name', type: 'string', label: '模型名称', required: true },
+      { name: 'max_duration', type: 'number', label: '最大执行时间(秒)', default: 30, min: 5, max: 120, step: 5 },
+      { name: 'action_scale', type: 'number', label: '动作缩放', default: 0.4, min: 0.1, max: 1.0, step: 0.1 },
+      { name: 'smoothing_alpha', type: 'number', label: '平滑系数', default: 0.3, min: 0.1, max: 1.0, step: 0.1 }
+    ]
+  },
+  {
+    type: 'ACTLoadModel',
+    category: 'ai',
+    name: '加载 ACT 模型',
+    description: '预加载 ACT 模型（减少执行时延迟）',
+    icon: 'Download',
+    color: '#9B59B6',
+    params: [
+      { name: 'model_name', type: 'string', label: '模型名称', required: true }
+    ]
   }
 ]
 
@@ -450,7 +479,8 @@ export const CATEGORY_NAMES: Record<string, string> = {
   base: '底盘',
   lift: '升降',
   waist: '腰部',
-  logic: '逻辑'
+  logic: '逻辑',
+  ai: 'AI 模型'
 }
 
 // ==================== API 调用 ====================
