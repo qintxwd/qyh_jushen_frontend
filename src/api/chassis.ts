@@ -365,6 +365,27 @@ export const chassisApi = {
     const hostname = window.location.hostname
     const baseUrl = import.meta.env.VITE_API_BASE_URL || `${protocol}//${hostname}:8000`
     return `${baseUrl}/api/v1/chassis/map_image/${mapName}`
+  },
+
+  // 手动控制模式设置
+  async setControlMode(mode: number): Promise<any> {
+    // mode: 0 = 速度模式(手动), 1 = 自动模式
+    const enable = mode === 0
+    return apiClient.post('/api/v1/chassis/manual_mode', { enable, mode: 'velocity' })
+  },
+
+  // 速度控制（简化版，用于手动控制）
+  async moveBySpeed(linear: number, angular: number): Promise<any> {
+    return apiClient.post('/api/v1/chassis/velocity', {
+      linear_x: linear,
+      linear_y: 0,
+      angular_z: angular
+    })
+  },
+
+  // 导航到站点（别名）
+  async navigateToStation(stationId: number): Promise<any> {
+    return this.navigateToSiteSimple(stationId)
   }
 }
 

@@ -554,7 +554,7 @@ async function navigateToSelectedStation() {
 // ==================== 导航参数设置 ====================
 async function setSpeedLevel(value: number) {
   try {
-    await chassisApi.setSpeedLevel(value)
+    await chassisApi.setSpeedLevel({ level: value })
   } catch (e: any) {
     ElMessage.error(e.message || '设置速度失败')
   }
@@ -562,7 +562,7 @@ async function setSpeedLevel(value: number) {
 
 async function setVolume(value: number) {
   try {
-    await chassisApi.setVolume(value)
+    await chassisApi.setVolume({ volume: value })
   } catch (e: any) {
     ElMessage.error(e.message || '设置音量失败')
   }
