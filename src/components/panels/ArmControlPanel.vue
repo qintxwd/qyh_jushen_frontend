@@ -715,10 +715,10 @@ const lastJogArmState = ref<boolean>(false)  // 上次Jog时的使能状态
 
 // Jog 安全配置
 const JOG_CONFIG = {
-  MAX_CONTINUOUS_TIME: 30000,  // 连续模式最大运行时间 30秒
-  REQUEST_TIMEOUT: 2000,       // 单次请求超时 2秒
-  MAX_FAILURES: 3,             // 最大连续失败次数
-  INTERVAL_MS: 100             // 连续模式发送间隔
+  MAX_CONTINUOUS_TIME: 60000,  // 连续模式最大运行时间 60秒
+  REQUEST_TIMEOUT: 1000,       // 单次请求超时 1秒 (心跳需要快速响应)
+  MAX_FAILURES: 5,             // 最大连续失败次数
+  HEARTBEAT_INTERVAL_MS: 100   // 心跳发送间隔 (后端超时300ms，所以100ms发一次)
 }
 
 
@@ -1349,10 +1349,12 @@ async function startJog(axisNum: number, direction: number) {
   if (jogParams.moveMode === 1) {
     await executeJog(axisNum, position)
   } else {
-    // 连续模式：持续执行
-    await executeJog(axisNum, position)
+    // 连续模式：发送启动命令，然后持续发送心跳
+    // 后端收到后会发送大目标位置，持续运动
+    // 后端有300ms超时检测，如果没收到心跳会自动停止
+    await sendJogHeartbeat(axisNum, direction)
     
-    // 设置定时器持续发送
+    // 设置定时器持续发送心跳
     jogIntervalId.value = window.setInterval(async () => {
       // 检查是否超过最大运行时间
       const runningTime = Date.now() - jogStartTime.value
@@ -1369,14 +1371,54 @@ async function startJog(axisNum: number, direction: number) {
         return
       }
       
-      await executeJog(axisNum, position)
-    }, JOG_CONFIG.INTERVAL_MS)
+      await sendJogHeartbeat(axisNum, direction)
+    }, JOG_CONFIG.HEARTBEAT_INTERVAL_MS)
     
     // 设置最大运行时间保护
     jogTimeoutId.value = window.setTimeout(async () => {
       ElMessage.warning(`点动超时 (${JOG_CONFIG.MAX_CONTINUOUS_TIME / 1000}秒)，强制停止`)
       await stopJog()
     }, JOG_CONFIG.MAX_CONTINUOUS_TIME)
+  }
+}
+
+// 发送连续模式心跳
+async function sendJogHeartbeat(axisNum: number, direction: number) {
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), JOG_CONFIG.REQUEST_TIMEOUT)
+    
+    // 发送心跳: move_mode=0 表示连续模式, velocity 的正负表示方向
+    await api.post('/api/v1/arm/jog', {
+      robot_id: jogParams.robotId,
+      axis_num: axisNum,
+      move_mode: 0,  // 连续模式
+      coord_type: jogParams.coordType,
+      velocity: jogParams.velocity * direction,  // 速度带方向
+      position: 0  // 连续模式不需要 position
+    }, {
+      signal: controller.signal
+    })
+    
+    clearTimeout(timeoutId)
+    jogFailureCount.value = 0
+    
+  } catch (error: any) {
+    jogFailureCount.value++
+    
+    if (error.name === 'AbortError' || error.code === 'ECONNABORTED') {
+      console.warn(`心跳超时, 失败次数: ${jogFailureCount.value}`)
+    } else if (error.code === 'ERR_NETWORK') {
+      console.warn('网络连接失败，停止点动')
+      ElMessage.error('网络连接失败')
+      await stopJog()
+      return
+    }
+    
+    if (jogFailureCount.value >= JOG_CONFIG.MAX_FAILURES) {
+      ElMessage.error(`心跳连续失败 ${JOG_CONFIG.MAX_FAILURES} 次，已停止`)
+      await stopJog()
+    }
   }
 }
 
