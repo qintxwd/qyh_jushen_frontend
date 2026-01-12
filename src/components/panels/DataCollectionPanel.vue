@@ -30,6 +30,60 @@
 
     <el-divider />
 
+    <!-- 动作选择 -->
+    <div class="panel-section">
+      <h3 class="section-title">选择动作</h3>
+      <div class="action-selector">
+        <el-select 
+          v-model="selectedActionId" 
+          placeholder="选择要采集的动作"
+          :disabled="collectionState !== 'idle'"
+          :loading="actionLoading"
+          style="width: 100%"
+        >
+          <el-option 
+            v-for="action in actionList" 
+            :key="action.id" 
+            :label="action.name"
+            :value="action.id"
+          >
+            <div class="action-option">
+              <span class="action-name">{{ action.name }}</span>
+              <span class="action-meta">
+                <el-tag v-if="action.status === 'trained'" size="small" type="success">
+                  已训练 ({{ action.episode_count }}条)
+                </el-tag>
+                <el-tag v-else size="small" type="warning">
+                  采集中 ({{ action.episode_count }}条)
+                </el-tag>
+              </span>
+            </div>
+          </el-option>
+        </el-select>
+        <div v-if="selectedAction" class="action-info">
+          <div class="action-status-bar">
+            <el-tag 
+              :type="selectedAction.status === 'trained' ? 'success' : 'warning'" 
+              size="small"
+            >
+              {{ selectedAction.status === 'trained' ? '✓ 已训练' : '● 数据采集中' }}
+            </el-tag>
+            <span class="episode-count">已采集 {{ selectedAction.episode_count }} 条轨迹</span>
+          </div>
+          <p class="action-desc">{{ selectedAction.description || '暂无描述' }}</p>
+          <div class="action-tags">
+            <el-tag v-for="tag in selectedAction.tags" :key="tag" size="small" type="info">{{ tag }}</el-tag>
+          </div>
+          <div class="action-topics">
+            <span class="label">录制话题:</span>
+            <span class="topics">{{ selectedAction.topics.length }} 个</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <el-divider />
+
     <!-- 采集状态 -->
     <div class="panel-section">
       <h3 class="section-title">采集状态</h3>
@@ -331,11 +385,12 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
-import { ref, reactive, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import CameraView from '@/components/CameraView.vue'
 import { useLayoutStore } from '@/stores/layout'
+import { listActions, getActionTopics, type ActionSummary } from '@/api/actions'
 
 const layoutStore = useLayoutStore()
 
@@ -346,6 +401,47 @@ const globalHeadStatusInfo = computed(() => layoutStore.headStatusInfo)
 const globalLiftStatusInfo = computed(() => layoutStore.liftStatusInfo)
 const globalChassisStatusInfo = computed(() => layoutStore.chassisStatusInfo)
 const globalVrStatusInfo = computed(() => layoutStore.vrStatusInfo)
+
+// ==================== 动作选择 ====================
+const actionList = ref<ActionSummary[]>([])
+const selectedActionId = ref<string>('')
+const actionLoading = ref(false)
+
+// 加载动作列表
+async function loadActionList() {
+  actionLoading.value = true
+  try {
+    actionList.value = await listActions()
+    // 默认选择第一个动作
+    if (actionList.value.length > 0 && !selectedActionId.value) {
+      selectedActionId.value = actionList.value[0].id
+    }
+    addLog(`加载了 ${actionList.value.length} 个可用动作`, 'info')
+  } catch (error: any) {
+    addLog(`加载动作列表失败: ${error.message}`, 'error')
+  } finally {
+    actionLoading.value = false
+  }
+}
+
+// 当前选中的动作详情
+const selectedAction = computed(() => {
+  return actionList.value.find(a => a.id === selectedActionId.value)
+})
+
+// 监听动作选择变化，自动更新话题
+watch(selectedActionId, async (newId) => {
+  if (newId && collectionState.value === 'idle') {
+    try {
+      const topics = await getActionTopics(newId)
+      recordingForm.topics = topics
+      addLog(`已切换到动作: ${selectedAction.value?.name}`, 'info')
+      addLog(`录制话题: ${topics.join(', ')}`, 'info')
+    } catch (error: any) {
+      addLog(`获取动作话题失败: ${error.message}`, 'warning')
+    }
+  }
+})
 
 // 采集状态
 type CollectionState = 'idle' | 'initializing' | 'ready' | 'recording' | 'stopped'
@@ -458,23 +554,23 @@ const allRecordingTopics = [
   '/camera/right_wrist/color/image_raw'
 ]
 
-// 预定义动作
-const predefinedActions = [
-  '夹取方块',      // 默认第一个 - 适合初学者
-  '放置方块',
-  '拿取杯子',
-  '放置杯子',
-  '开门',
-  '关门',
-  '拿取物品',
-  '放置物品',
-  '按按钮',
-  '拉抽屉',
-  '推抽屉',
-  '擦桌子',
-  '整理物品',
-  '其他'
-]
+// 预定义动作 - 现在从 API 动态获取
+// 这些是回退选项，当 API 不可用时使用
+const predefinedActions = computed(() => {
+  if (actionList.value.length > 0) {
+    return actionList.value.map(a => a.name)
+  }
+  // 回退选项
+  return [
+    '夹取方块',
+    '放置方块',
+    '拿取杯子',
+    '放置杯子',
+    '开门',
+    '关门',
+    '其他'
+  ]
+})
 
 // 工具函数
 function getAuthHeaders() {
@@ -843,9 +939,17 @@ async function fetchAvailableTopics() {
 
 // 录制控制
 function showStartDialog() {
-  recordingForm.actionName = ''
+  // 如果有选中的动作，使用其名称作为默认值
+  recordingForm.actionName = selectedAction.value?.name || ''
   recordingForm.note = ''
-  recordingForm.topics = getDefaultTopics()  // 根据选中设备智能推荐话题
+  
+  // 如果有选中的动作，使用其配置的话题；否则使用默认话题
+  if (selectedAction.value && selectedAction.value.topics.length > 0) {
+    recordingForm.topics = [...selectedAction.value.topics]
+  } else {
+    recordingForm.topics = getDefaultTopics()
+  }
+  
   fetchAvailableTopics()  // 获取可用话题
   startDialogVisible.value = true
 }
@@ -1011,6 +1115,9 @@ async function fetchDeviceStatus() {
 
 onMounted(() => {
   addLog('数据采集面板已加载', 'info')
+  // 加载动作列表
+  loadActionList()
+  // 状态轮询
   statusTimer = window.setInterval(fetchDeviceStatus, 2000)
 })
 
@@ -1051,6 +1158,74 @@ onUnmounted(() => {
 
 .section-header .section-title {
   margin: 0;
+}
+
+/* 动作选择器 */
+.action-selector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.action-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.action-name {
+  font-weight: 500;
+}
+
+.action-meta {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.action-info {
+  padding: var(--spacing-sm);
+  background: rgba(30, 41, 59, 0.4);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.action-status-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.episode-count {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.action-desc {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.action-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.action-topics {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.action-topics .label {
+  margin-right: var(--spacing-xs);
+}
+
+.action-topics .topics {
+  color: var(--color-primary);
 }
 
 /* 相机视图 */
