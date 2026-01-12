@@ -245,6 +245,7 @@ const state = reactive({
 // 目标值 (-1 到 1)
 const targetPan = ref(0)
 const targetTilt = ref(0)
+const initialized = ref(false)  // 是否已初始化滑块位置
 
 // 滑块刻度
 const panMarks = {
@@ -368,6 +369,13 @@ async function fetchState() {
       state.tiltPosition = response.data.tilt_position ?? 500
       state.panNormalized = response.data.pan_normalized ?? 0
       state.tiltNormalized = response.data.tilt_normalized ?? 0
+      
+      // 首次加载时，将滑块初始化为当前位置
+      if (!initialized.value) {
+        targetPan.value = state.panNormalized
+        targetTilt.value = state.tiltNormalized
+        initialized.value = true
+      }
     }
   } catch (error) {
     console.error('获取头部状态失败:', error)
@@ -411,11 +419,15 @@ const editPointForm = reactive({
 // 获取点位列表
 const fetchHeadPoints = async () => {
   try {
-    const response = await axios.get(`${getApiBase()}/head/points`)
-    headPoints.value = response.data
+    const response = await axios.get(`${getApiBase()}/head/points`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    headPoints.value = response.data.points || response.data || []
   } catch (error) {
     console.error('获取头部点位列表失败:', error)
-    ElMessage.error('获取点位列表失败')
+    // 不弹出错误提示，只在控制台记录
   }
 }
 
