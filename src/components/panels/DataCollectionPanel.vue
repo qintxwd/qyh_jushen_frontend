@@ -1281,7 +1281,7 @@ onUnmounted(() => {
   color: rgba(148, 163, 184, 0.8);
 }
 
-.stat选择操作 */
+/* 设备选择操作 */
 .device-selection-actions {
   display: flex;
   gap: var(--spacing-sm);
@@ -1305,7 +1305,8 @@ onUnmounted(() => {
   font-size: 12px;
   border: 1px solid rgba(148, 163, 184, 0.15);
   transition: all 0.3s var(--transition-smooth);
-  cursor: pointer
+  cursor: pointer;
+}
 .status-badge.stopped {
   background: rgba(245, 158, 11, 0.2);
   color: var(--color-primary);
