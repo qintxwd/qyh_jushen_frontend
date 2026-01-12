@@ -163,6 +163,9 @@
               @mousedown="startManualMove('forward')"
               @mouseup="stopManualMove"
               @mouseleave="stopManualMove"
+              @touchstart.prevent="startManualMove('forward')"
+              @touchend.prevent="stopManualMove"
+              @touchcancel.prevent="stopManualMove"
               :disabled="!state.connected || !state.enabled"
             >
               <SvgIcon name="top" :size="16" />
@@ -175,6 +178,9 @@
               @mousedown="startManualMove('back')"
               @mouseup="stopManualMove"
               @mouseleave="stopManualMove"
+              @touchstart.prevent="startManualMove('back')"
+              @touchend.prevent="stopManualMove"
+              @touchcancel.prevent="stopManualMove"
               :disabled="!state.connected || !state.enabled"
             >
               <SvgIcon name="bottom" :size="16" />
@@ -379,8 +385,12 @@ const editPointForm = reactive({
 // 获取点位列表
 async function fetchWaistPoints() {
   try {
-    const response = await axios.get(`${getApiBase()}/waist/points`)
-    waistPoints.value = response.data
+    const response = await axios.get(`${getApiBase()}/waist/points`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    waistPoints.value = response.data.points || response.data || []
   } catch (error) {
     console.error('获取腰部点位列表失败:', error)
   }
