@@ -434,7 +434,7 @@ export const NODE_DEFINITIONS: NodeDefinition[] = [
     icon: 'MagicStick',
     color: '#9B59B6',
     params: [
-      { name: 'model_name', type: 'string', label: '模型名称', required: true },
+      { name: 'action_id', type: 'preset', label: '选择动作', required: true, presetType: 'trained_action' },
       { name: 'max_duration', type: 'number', label: '最大执行时间(秒)', default: 30, min: 5, max: 120, step: 5 },
       { name: 'action_scale', type: 'number', label: '动作缩放', default: 0.4, min: 0.1, max: 1.0, step: 0.1 },
       { name: 'smoothing_alpha', type: 'number', label: '平滑系数', default: 0.3, min: 0.1, max: 1.0, step: 0.1 }
@@ -448,7 +448,7 @@ export const NODE_DEFINITIONS: NodeDefinition[] = [
     icon: 'Download',
     color: '#9B59B6',
     params: [
-      { name: 'model_name', type: 'string', label: '模型名称', required: true }
+      { name: 'action_id', type: 'preset', label: '选择动作', required: true, presetType: 'trained_action' }
     ]
   }
 ]

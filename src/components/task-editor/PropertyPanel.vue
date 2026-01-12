@@ -140,6 +140,7 @@ import { ref, computed, watch, reactive, onMounted } from 'vue'
 import type { FlowNode } from '@/stores/task'
 import type { NodeDefinition } from '@/api/task'
 import { listPresets, listTasks, listHeadPoints, listLiftPoints, listWaistPoints } from '@/api/task'
+import { listTrainedActions } from '@/api/actions'
 import { useTaskEditorStore } from '@/stores/task'
 
 const props = defineProps<{
@@ -290,8 +291,9 @@ function getPresetName(presetType: string, presetId: string): string {
 }
 
 // 加载预设
-async function loadPresets(presetType: string) {
-  if (presetsCache.value[presetType]) return
+async function loadPresets(presetType: string, forceRefresh: boolean = false) {
+  // trained_action 类型每次都刷新（模型可能新训练完成）
+  if (presetsCache.value[presetType] && !forceRefresh && presetType !== 'trained_action') return
   
   try {
     if (presetType === 'saved_task') {
@@ -301,6 +303,14 @@ async function loadPresets(presetType: string) {
       presetsCache.value[presetType] = tasks
         .filter(t => t.id !== currentTaskId)
         .map(t => ({ id: t.id, name: t.name }))
+    } else if (presetType === 'trained_action') {
+      // 特殊处理：从已训练的动作列表加载（每次刷新）
+      const trainedActions = await listTrainedActions()
+      presetsCache.value[presetType] = trainedActions.map(a => ({
+        id: a.id,
+        name: a.name,
+        description: `v${a.model_version || 1} - ${a.description || ''}`
+      }))
     } else if (presetType === 'head_point') {
       // 特殊处理：从 head_points API 加载
       const headPoints = await listHeadPoints()

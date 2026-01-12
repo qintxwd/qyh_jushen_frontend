@@ -972,8 +972,9 @@ async function startRecording() {
     addLog(`录制话题: ${recordingForm.topics.join(', ')}`, 'info')
     
     // 调用后端开始录制 API
+    // 使用 action_id（如 pickup_cube）而非显示名称，以便正确保存到 model_actions/{action_id}/ 目录
     const response = await axios.post('/api/v1/recording/start', {
-      action_name: recordingForm.actionName,
+      action_name: selectedActionId.value || recordingForm.actionName,  // 优先使用 action_id
       user_name: localStorage.getItem('username') || 'user',
       version: 'v1',
       topics: recordingForm.topics  // 传入选中的话题
@@ -1039,8 +1040,21 @@ async function saveAndUpload() {
   
   try {
     // 录制已在停止时自动保存到 bag 文件
-    // 这里可以添加额外的上传逻辑，比如上传到云端
     addLog(`数据已保存: ${currentBagPath.value}`, 'success')
+    
+    // 更新动作的轨迹数量统计
+    if (selectedActionId.value) {
+      try {
+        const { updateEpisodeCount } = await import('@/api/actions')
+        const newCount = await updateEpisodeCount(selectedActionId.value)
+        addLog(`轨迹数量已更新: ${newCount} 条`, 'info')
+        // 刷新动作列表以显示最新数量
+        await loadActionList()
+      } catch (e: any) {
+        addLog(`更新轨迹数量失败: ${e.message}`, 'warning')
+      }
+    }
+    
     ElMessage.success('数据已保存')
     
     // 重置为 ready 状态，可以继续采集

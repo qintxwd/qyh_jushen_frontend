@@ -34,6 +34,7 @@ export interface ActionSummary {
   episode_count: number     // 已采集轨迹数
   topics: string[]
   camera_count: number
+  model_version?: number    // 模型版本号
   created_at: string
   updated_at: string
 }
