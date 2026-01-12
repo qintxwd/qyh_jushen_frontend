@@ -65,6 +65,20 @@
             :marks="tiltMarks"
           />
         </div>
+        <div class="control-item speed-control">
+          <div class="control-header">
+            <span class="control-label">运动速度</span>
+            <span class="control-value">{{ moveSpeed.toFixed(0) }}%</span>
+          </div>
+          <el-slider 
+            v-model="moveSpeed" 
+            :min="1" 
+            :max="100"
+            :step="1"
+            size="small"
+            :marks="speedMarks"
+          />
+        </div>
       </div>
       
       <div class="action-buttons">
@@ -245,6 +259,15 @@ const tiltMarks = {
   '1': '上'
 }
 
+// 速度设置 (0-100%)
+const moveSpeed = ref(50)
+
+const speedMarks = {
+  '1': '慢',
+  '50': '中',
+  '100': '快'
+}
+
 // 预设位置
 const presets = [
   { id: 1, name: '正前方', icon: 'Aim', pan: 0, tilt: 0 },
@@ -261,10 +284,14 @@ const headStyle = computed(() => ({
 }))
 
 // 发送控制命令
-async function sendControl(pan: number | null, tilt: number | null) {
+async function sendControl(pan: number | null, tilt: number | null, speed: number | null = null) {
+  const payload: { pan: number | null; tilt: number | null; speed?: number | null } = { pan, tilt }
+  if (speed !== null) {
+    payload.speed = speed
+  }
   const response = await axios.post(
     `${getApiBase()}/head/control`,
-    { pan, tilt },
+    payload,
     {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -278,7 +305,7 @@ async function sendControl(pan: number | null, tilt: number | null) {
 async function executeMove() {
   loading.value = true
   try {
-    const result = await sendControl(targetPan.value, targetTilt.value)
+    const result = await sendControl(targetPan.value, targetTilt.value, moveSpeed.value)
     if (result.success) {
       ElMessage.success('头部控制已执行')
     } else {
