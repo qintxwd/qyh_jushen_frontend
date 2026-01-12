@@ -373,15 +373,16 @@ const deviceStatus = reactive({
 })
 
 // 设备选择状态（默认：头部相机 + 右臂 + 右夹爪 - 适合简单夹取任务）
+// 注意：VR 用于遥操作控制，但 VR 数据本身不录制（录制的是机器人关节状态）
 const deviceSelection = reactive({
   leftArm: false,      // 左臂 - 可选
   rightArm: true,      // 右臂 - 选中（夹取方块）
   leftGripper: false,  // 左夹爪 - 可选
   rightGripper: true,  // 右夹爪 - 选中（夹取方块）
-  head: true,          // 头部相机 - 选中（观察）
+  head: true,          // 头部相机 - 选中（RGB + 深度）
   lift: false,         // 升降 - 可选
   chassis: false,      // 底盘 - 可选
-  vr: true             // VR - 遥操作必需
+  vr: false            // VR - 仅用于遥操作，不录制数据
 })
 
 // 加载状态
@@ -429,6 +430,8 @@ const getDefaultTopics = () => {
     topics.push('/head/joint_states')
     // 添加头部相机话题（ACT训练必需）
     topics.push('/camera/head/color/image_raw')
+    // 添加深度相机话题（提供3D空间信息）
+    topics.push('/camera/head/depth/image_raw')
   }
   if (deviceSelection.lift) topics.push('/lift/state')
   if (deviceSelection.chassis) topics.push('/chassis/odom')
