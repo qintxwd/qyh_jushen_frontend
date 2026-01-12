@@ -4,6 +4,8 @@
  * 动作有两种状态：
  * - collecting: 数据采集中，只能用于数据采集
  * - trained: 已训练，可以执行推理，同时也支持继续采集数据
+ * 
+ * 目录结构：model_actions/{robot_name}/{version}/{action_id}/
  */
 import axios from 'axios'
 
@@ -23,6 +25,34 @@ api.interceptors.request.use((config) => {
 // 动作状态类型
 export type ActionStatus = 'collecting' | 'trained'
 
+// 机器人信息（从后端获取）
+export interface RobotInfo {
+  name: string
+  version: string
+}
+
+// 缓存的机器人信息
+let cachedRobotInfo: RobotInfo | null = null
+
+/**
+ * 获取当前机器人信息
+ */
+export async function getRobotInfo(): Promise<RobotInfo> {
+  if (cachedRobotInfo) {
+    return cachedRobotInfo
+  }
+  const response = await api.get('/robot-info')
+  if (response.data.success) {
+    cachedRobotInfo = {
+      name: response.data.robot_name,
+      version: response.data.robot_version
+    }
+    return cachedRobotInfo
+  }
+  // 默认值
+  return { name: 'general', version: '1.0' }
+}
+
 export interface ActionSummary {
   id: string
   name: string
@@ -35,6 +65,8 @@ export interface ActionSummary {
   topics: string[]
   camera_count: number
   model_version?: number    // 模型版本号
+  robot_name?: string       // 机器人类型
+  robot_version?: string    // 机器人版本
   created_at: string
   updated_at: string
 }
