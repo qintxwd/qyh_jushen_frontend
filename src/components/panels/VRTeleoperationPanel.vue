@@ -65,18 +65,18 @@
           <div class="joystick-value">{{ formatJoystick(vrStatus.left_controller?.joystick) }}</div>
         </div>
 
-        <!-- 按钮组 -->
+        <!-- 按钮组 [A, B, X, Y, Menu, JoyClick] -->
         <div class="buttons-row">
-          <div class="button-circle" :class="{ pressed: vrStatus.left_controller?.buttons?.[0] }">
+          <div class="button-circle" :class="{ pressed: vrStatus.left_controller?.buttons?.[2] }">
             <span>X</span>
           </div>
-          <div class="button-circle" :class="{ pressed: vrStatus.left_controller?.buttons?.[1] }">
+          <div class="button-circle" :class="{ pressed: vrStatus.left_controller?.buttons?.[3] }">
             <span>Y</span>
           </div>
-          <div class="button-pill" :class="{ pressed: vrStatus.left_controller?.buttons?.[2] }">
+          <div class="button-pill" :class="{ pressed: vrStatus.left_controller?.buttons?.[4] }">
             <span>Menu</span>
           </div>
-          <div class="button-pill" :class="{ pressed: vrStatus.left_controller?.buttons?.[3] }">
+          <div class="button-pill" :class="{ pressed: vrStatus.left_controller?.buttons?.[5] }">
             <span>Joy</span>
           </div>
         </div>
@@ -154,10 +154,10 @@
           <div class="button-circle" :class="{ pressed: vrStatus.right_controller?.buttons?.[1] }">
             <span>B</span>
           </div>
-          <div class="button-pill" :class="{ pressed: vrStatus.right_controller?.buttons?.[2] }">
+          <div class="button-pill" :class="{ pressed: vrStatus.right_controller?.buttons?.[4] }">
             <span>Home</span>
           </div>
-          <div class="button-pill" :class="{ pressed: vrStatus.right_controller?.buttons?.[3] }">
+          <div class="button-pill" :class="{ pressed: vrStatus.right_controller?.buttons?.[5] }">
             <span>Joy</span>
           </div>
         </div>
