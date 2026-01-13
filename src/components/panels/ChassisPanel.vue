@@ -554,17 +554,25 @@ async function navigateToSelectedStation() {
 // ==================== 导航参数设置 ====================
 async function setSpeedLevel(value: number) {
   try {
-    await chassisApi.setSpeedLevel({ level: value })
+    const result = await chassisApi.setSpeedLevel({ level: value })
+    if (result?.success !== false) {
+      ElMessage.success(`速度级别已设置为 ${value}`)
+    }
   } catch (e: any) {
-    ElMessage.error(e.message || '设置速度失败')
+    console.error('设置速度失败:', e)
+    ElMessage.error(e.response?.data?.detail || e.message || '设置速度失败')
   }
 }
 
 async function setVolume(value: number) {
   try {
-    await chassisApi.setVolume({ volume: value })
+    const result = await chassisApi.setVolume({ volume: value })
+    if (result?.success !== false) {
+      ElMessage.success(`音量已设置为 ${value}`)
+    }
   } catch (e: any) {
-    ElMessage.error(e.message || '设置音量失败')
+    console.error('设置音量失败:', e)
+    ElMessage.error(e.response?.data?.detail || e.message || '设置音量失败')
   }
 }
 
