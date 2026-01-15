@@ -649,6 +649,19 @@ async function fetchVRStatus() {
   }
 }
 
+// 获取 ROS 连接状态
+async function fetchRosStatus() {
+  try {
+    const response = await axios.get(`${getApiBase()}/health`, { timeout: 2000 })
+    const data = normalizeApiResponse(response.data)
+    layoutStore.updateConnectionStatus({
+      ros: data?.ros2_connected ?? false
+    })
+  } catch {
+    layoutStore.updateConnectionStatus({ ros: false })
+  }
+}
+
 // 获取关机状态（独立于其他设备）
 let lastShutdownInProgress = false
 async function fetchShutdownStatus() {
@@ -677,6 +690,7 @@ async function fetchShutdownStatus() {
 // 统一获取所有设备状态
 async function fetchAllStatus() {
   await Promise.all([
+    fetchRosStatus(),
     fetchLiftStatus(),
     fetchArmStatus(),
     fetchCameraStatus(),
