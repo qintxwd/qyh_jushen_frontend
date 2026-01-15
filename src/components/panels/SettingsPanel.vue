@@ -240,6 +240,16 @@ async function handleShutdown() {
     }
   } catch (e) {
     if (e !== 'cancel') {
+      // 如果请求异常但关机已触发，给出提示而非错误
+      try {
+        const state = await shutdownApi.getShutdownState()
+        if (state.shutdown_in_progress) {
+          ElMessage.warning('系统正在关机，请稍候...')
+          return
+        }
+      } catch {
+        // 忽略状态检查失败
+      }
       ElMessage.error('关机命令发送失败')
     }
   } finally {
