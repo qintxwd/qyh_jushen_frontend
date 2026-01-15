@@ -100,6 +100,26 @@
 
     <el-divider />
 
+    <!-- 电磁铁控制 -->
+    <div class="panel-section">
+      <h3 class="section-title">电磁铁</h3>
+      <div class="electromagnet-control">
+        <el-tag :type="electromagnetOn ? 'success' : 'info'" size="small">
+          {{ electromagnetOn ? '电磁铁开' : '电磁铁关' }}
+        </el-tag>
+        <el-button
+          :type="electromagnetOn ? 'warning' : 'info'"
+          size="small"
+          :loading="electromagnetLoading"
+          @click="toggleElectromagnet"
+        >
+          {{ electromagnetOn ? '关闭电磁铁' : '开启电磁铁' }}
+        </el-button>
+      </div>
+    </div>
+
+    <el-divider />
+
     <!-- 控制按钮 -->
     <div class="panel-section">
       <h3 class="section-title">采集控制</h3>
@@ -337,6 +357,11 @@ const recordingForm = reactive({
 // 可用话题列表
 const availableTopics = ref<string[]>([])
 
+// 电磁铁状态
+const electromagnetOn = ref(false)
+const electromagnetLoading = ref(false)
+let electromagnetInterval: number | null = null
+
 // 默认录制话题（已更新为实际系统话题名称）
 const defaultTopics = [
   '/joint_states',
@@ -404,6 +429,36 @@ async function fetchAvailableTopics() {
     availableTopics.value = response.data.topics || []
   } catch (error) {
     availableTopics.value = allRecordingTopics
+  }
+}
+
+async function fetchElectromagnetState() {
+  try {
+    const response = await axios.get('/api/v1/lift/state', getAuthHeaders())
+    if (response.data) {
+      electromagnetOn.value = response.data.electromagnet_on ?? false
+    }
+  } catch (error) {
+    // ignore
+  }
+}
+
+async function toggleElectromagnet() {
+  if (electromagnetLoading.value) return
+  electromagnetLoading.value = true
+  try {
+    const enable = !electromagnetOn.value
+    const response = await axios.post('/api/v1/lift/electromagnet', { enable }, getAuthHeaders())
+    if (response.data?.success) {
+      electromagnetOn.value = enable
+      addLog(enable ? '电磁铁已开启' : '电磁铁已关闭', 'success')
+    } else {
+      addLog(response.data?.message || '电磁铁操作失败', 'warning')
+    }
+  } catch (error: any) {
+    addLog(`电磁铁操作失败: ${error.response?.data?.detail || error.message}`, 'error')
+  } finally {
+    electromagnetLoading.value = false
   }
 }
 
@@ -552,11 +607,16 @@ function resetState() {
 onMounted(() => {
   addLog('数据采集面板已加载', 'info')
   loadActionList()
+  fetchElectromagnetState()
+  electromagnetInterval = window.setInterval(fetchElectromagnetState, 1000)
 })
 
 onUnmounted(() => {
   if (recordingTimer) {
     clearInterval(recordingTimer)
+  }
+  if (electromagnetInterval) {
+    clearInterval(electromagnetInterval)
   }
 })
 </script>
@@ -718,6 +778,17 @@ onUnmounted(() => {
 .recording-action {
   font-size: 14px;
   color: var(--color-text-secondary);
+}
+
+/* 电磁铁控制 */
+.electromagnet-control {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: var(--radius-md);
 }
 
 /* 控制按钮 */

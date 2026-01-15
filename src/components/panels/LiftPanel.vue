@@ -23,6 +23,9 @@
               <el-tag :type="state.enabled ? 'success' : 'info'" size="small">
                 {{ state.enabled ? '使能' : '未使能' }}
               </el-tag>
+              <el-tag :type="state.electromagnetOn ? 'success' : 'info'" size="small">
+                {{ state.electromagnetOn ? '电磁铁开' : '电磁铁关' }}
+              </el-tag>
             </div>
           </div>
           
@@ -67,6 +70,15 @@
               <SvgIcon v-if="state.enabled" name="disable" :size="14" />
               <SvgIcon v-else name="enable" :size="14" />
               {{ state.enabled ? '下使能' : '上使能' }}
+            </el-button>
+            <el-button
+              :type="state.electromagnetOn ? 'warning' : 'info'"
+              @click="toggleElectromagnet"
+              :loading="loading.electromagnet"
+              :disabled="!state.connected"
+              size="small"
+            >
+              {{ state.electromagnetOn ? '关闭电磁铁' : '开启电磁铁' }}
             </el-button>
             <div class="speed-mini">
               <el-input-number
@@ -302,7 +314,8 @@ const state = reactive({
   currentPosition: 0,
   currentSpeed: 20,
   positionReached: true,
-  alarm: false
+  alarm: false,
+  electromagnetOn: false
 })
 
 // 输入值
@@ -315,7 +328,8 @@ const loading = reactive({
   speed: false,
   position: false,
   reset: false,
-  stop: false
+  stop: false,
+  electromagnet: false
 })
 
 // 快捷位置
@@ -654,6 +668,34 @@ async function resetAlarm() {
   }
 }
 
+// 切换电磁铁
+async function toggleElectromagnet() {
+  loading.electromagnet = true
+  try {
+    const enable = !state.electromagnetOn
+    const response = await axios.post(
+      `${getApiBase()}/lift/electromagnet`,
+      { enable },
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    )
+    const result = response.data
+    if (result?.success) {
+      state.electromagnetOn = enable
+      ElMessage.success(result.message || (enable ? '电磁铁已开启' : '电磁铁已关闭'))
+    } else {
+      ElMessage.error(result?.message || '电磁铁操作失败')
+    }
+  } catch (error: any) {
+    ElMessage.error('电磁铁操作失败: ' + (error.response?.data?.detail || error.message))
+  } finally {
+    loading.electromagnet = false
+  }
+}
+
 // 获取状态
 async function fetchState() {
   try {
@@ -670,6 +712,7 @@ async function fetchState() {
       state.currentSpeed = response.data.current_speed ?? 20
       state.positionReached = response.data.position_reached ?? true
       state.alarm = response.data.alarm ?? false
+      state.electromagnetOn = response.data.electromagnet_on ?? false
     }
   } catch (error) {
     console.error('获取状态失败:', error)
