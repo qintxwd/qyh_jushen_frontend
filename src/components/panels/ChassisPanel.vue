@@ -322,6 +322,70 @@
             </el-tag>
           </div>
 
+          <!-- 方向按钮 -->
+          <div class="manual-control-grid" v-if="manualMode">
+            <div class="direction-pad">
+              <div class="pad-row">
+                <div class="pad-empty"></div>
+                <el-button
+                  class="direction-btn"
+                  :type="keyStates.forward ? 'primary' : ''"
+                  @mousedown="startManualMove('forward')"
+                  @mouseup="stopManualMove('forward')"
+                  @mouseleave="stopManualMove('forward')"
+                  @touchstart.prevent="startManualMove('forward')"
+                  @touchend="stopManualMove('forward')"
+                  @touchcancel="stopManualMove('forward')"
+                >
+                  <SvgIcon name="arrowup" :size="16" />
+                  <span class="key-hint">W</span>
+                </el-button>
+                <div class="pad-empty"></div>
+              </div>
+              <div class="pad-row">
+                <el-button
+                  class="direction-btn"
+                  :type="keyStates.left ? 'primary' : ''"
+                  @mousedown="startManualMove('left')"
+                  @mouseup="stopManualMove('left')"
+                  @mouseleave="stopManualMove('left')"
+                  @touchstart.prevent="startManualMove('left')"
+                  @touchend="stopManualMove('left')"
+                  @touchcancel="stopManualMove('left')"
+                >
+                  <SvgIcon name="refreshleft" :size="16" />
+                  <span class="key-hint">A</span>
+                </el-button>
+                <el-button
+                  class="direction-btn"
+                  :type="keyStates.backward ? 'primary' : ''"
+                  @mousedown="startManualMove('backward')"
+                  @mouseup="stopManualMove('backward')"
+                  @mouseleave="stopManualMove('backward')"
+                  @touchstart.prevent="startManualMove('backward')"
+                  @touchend="stopManualMove('backward')"
+                  @touchcancel="stopManualMove('backward')"
+                >
+                  <SvgIcon name="arrowdown" :size="16" />
+                  <span class="key-hint">S</span>
+                </el-button>
+                <el-button
+                  class="direction-btn"
+                  :type="keyStates.right ? 'primary' : ''"
+                  @mousedown="startManualMove('right')"
+                  @mouseup="stopManualMove('right')"
+                  @mouseleave="stopManualMove('right')"
+                  @touchstart.prevent="startManualMove('right')"
+                  @touchend="stopManualMove('right')"
+                  @touchcancel="stopManualMove('right')"
+                >
+                  <SvgIcon name="refreshright" :size="16" />
+                  <span class="key-hint">D</span>
+                </el-button>
+              </div>
+            </div>
+          </div>
+
           <!-- 紧急停止按钮 -->
           <el-button 
             v-if="manualMode"
@@ -426,6 +490,13 @@ const keyStates = reactive({
   backward: false,
   left: false,
   right: false
+})
+
+// 手动控制循环
+let manualControlInterval: number | null = null
+const lastManualCommand = reactive({
+  linear: 0,
+  angular: 0
 })
 
 // ==================== 计算属性 ====================
@@ -609,6 +680,7 @@ async function toggleManualMode(enabled: boolean) {
       // 开始监听键盘
       window.addEventListener('keydown', handleKeyDown)
       window.addEventListener('keyup', handleKeyUp)
+      startManualLoop()
     } else {
       // 停止手动控制
       await chassisApi.setControlMode(1) // 1 = 自动模式
@@ -616,6 +688,7 @@ async function toggleManualMode(enabled: boolean) {
       // 停止监听键盘
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
+      stopManualLoop()
       // 停止机器人
       stopChassis()
     }
@@ -627,6 +700,11 @@ async function toggleManualMode(enabled: boolean) {
 
 function handleKeyDown(event: KeyboardEvent) {
   if (!manualMode.value) return
+  if (event.repeat) return
+
+  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(event.key.toLowerCase())) {
+    event.preventDefault()
+  }
 
   switch (event.key.toLowerCase()) {
     case 'w':
@@ -653,6 +731,10 @@ function handleKeyDown(event: KeyboardEvent) {
 function handleKeyUp(event: KeyboardEvent) {
   if (!manualMode.value) return
 
+  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(event.key.toLowerCase())) {
+    event.preventDefault()
+  }
+
   switch (event.key.toLowerCase()) {
     case 'w':
     case 'arrowup':
@@ -675,6 +757,36 @@ function handleKeyUp(event: KeyboardEvent) {
   updateManualControl()
 }
 
+function startManualLoop() {
+  if (manualControlInterval) return
+  manualControlInterval = window.setInterval(() => {
+    updateManualControl()
+  }, 100)
+}
+
+function stopManualLoop() {
+  if (manualControlInterval) {
+    clearInterval(manualControlInterval)
+    manualControlInterval = null
+  }
+  lastManualCommand.linear = 0
+  lastManualCommand.angular = 0
+}
+
+function startManualMove(direction: keyof typeof keyStates) {
+  if (!manualMode.value) {
+    ElMessage.warning('请先启用手动控制模式')
+    return
+  }
+  keyStates[direction] = true
+  updateManualControl()
+}
+
+function stopManualMove(direction: keyof typeof keyStates) {
+  keyStates[direction] = false
+  updateManualControl()
+}
+
 async function updateManualControl() {
   let linear = 0
   let angular = 0
@@ -684,14 +796,25 @@ async function updateManualControl() {
   if (keyStates.left) angular += manualSpeeds.angular
   if (keyStates.right) angular -= manualSpeeds.angular
 
+  const moving = linear !== 0 || angular !== 0
+  const changed = linear !== lastManualCommand.linear || angular !== lastManualCommand.angular
+
+  if (!moving && !changed) return
+
   try {
     await chassisApi.moveBySpeed(linear, angular)
+    lastManualCommand.linear = linear
+    lastManualCommand.angular = angular
   } catch (e: any) {
     console.error('手动控制失败', e)
   }
 }
 
 async function stopChassis() {
+  keyStates.forward = false
+  keyStates.backward = false
+  keyStates.left = false
+  keyStates.right = false
   try {
     await chassisApi.moveBySpeed(0, 0)
     ElMessage.success('已停止')
@@ -727,6 +850,7 @@ onUnmounted(() => {
     window.removeEventListener('keydown', handleKeyDown)
     window.removeEventListener('keyup', handleKeyUp)
   }
+  stopManualLoop()
 })
 </script>
 
@@ -1080,6 +1204,41 @@ onUnmounted(() => {
 
 .keyboard-hint {
   margin-top: 12px;
+}
+
+/* 手动控制方向按钮 */
+.manual-control-grid {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.direction-pad {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pad-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.pad-empty {
+  width: 60px;
+  height: 60px;
+}
+
+.direction-btn {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 10px;
 }
 
 /* 滚动条样式 */
