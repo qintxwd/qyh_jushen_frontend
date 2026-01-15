@@ -11,7 +11,7 @@
       
       <div class="title-center">
         <!-- 布局切换按钮 -->
-        <el-button-group size="small" class="layout-toggle">
+        <el-button-group size="default" class="layout-toggle">
           <el-tooltip content="单窗口模式">
             <el-button 
               :type="!layoutStore.splitMode ? 'primary' : 'default'"
@@ -760,7 +760,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 48px;
+  height: 56px;
   padding: 0 12px;
   background-color: #323233;
   border-bottom: 1px solid #3c3c3c;
@@ -795,7 +795,7 @@ onUnmounted(() => {
 
 .app-title {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   color: #e0e0e0;
 }
@@ -827,9 +827,9 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  font-size: 12px;
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
   font-weight: 600;
   color: #666;
   background-color: #3c3c3c;
@@ -860,7 +860,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 8px;
+  padding: 6px 10px;
   border-radius: 6px;
   transition: background-color 0.2s;
 }
@@ -870,7 +870,7 @@ onUnmounted(() => {
 }
 
 .username {
-  font-size: 14px;
+  font-size: 15px;
   color: #e0e0e0;
 }
 
@@ -925,7 +925,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 14px;
   border-radius: 10px;
   transition: all 0.3s ease;
   position: relative;
@@ -959,7 +959,7 @@ onUnmounted(() => {
 }
 
 .nav-label {
-  font-size: 14px;
+  font-size: 15px;
   white-space: nowrap;
 }
 
@@ -1059,7 +1059,7 @@ onUnmounted(() => {
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(245, 158, 11, 0.2);
   color: #CBD5E1;
-  font-size: 12px;
+  font-size: 14px;
   flex-shrink: 0;
   font-family: var(--font-body);
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
@@ -1077,7 +1077,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
+  padding: 6px 10px;
   border-radius: 6px;
   white-space: nowrap;
   transition: all 0.3s ease;

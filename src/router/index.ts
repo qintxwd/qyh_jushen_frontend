@@ -32,12 +32,6 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true, requiresOperator: true }
   },
   {
-    path: '/terminal',
-    name: 'Terminal',
-    component: () => import('@/views/Terminal.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
-  },
-  {
     path: '/ros-gui',
     name: 'RosGUI',
     component: () => import('@/views/RosGUI.vue'),

@@ -869,7 +869,7 @@ onUnmounted(() => {
 .status-bar {
   display: flex;
   gap: 16px;
-  padding: 12px;
+  padding: 16px;
   background: linear-gradient(135deg, #2c2c2c 0%, #1e1e1e 100%);
   border-radius: 8px;
   border: 1px solid #3c3c3c;
@@ -894,13 +894,13 @@ onUnmounted(() => {
 }
 
 .status-label {
-  font-size: 12px;
+  font-size: 13px;
   color: #888;
   font-weight: 500;
 }
 
 .status-value {
-  font-size: 12px;
+  font-size: 13px;
   color: #e0e0e0;
   font-family: 'Consolas', monospace;
 }
@@ -913,8 +913,8 @@ onUnmounted(() => {
 }
 
 .battery-mini-bar {
-  width: 60px;
-  height: 20px;
+  width: 80px;
+  height: 24px;
   background-color: #2c2c2c;
   border-radius: 4px;
   border: 1px solid #3c3c3c;
@@ -929,7 +929,7 @@ onUnmounted(() => {
 }
 
 .battery-text {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   font-family: 'Consolas', monospace;
 }
@@ -947,7 +947,7 @@ onUnmounted(() => {
 }
 
 .battery-voltage {
-  font-size: 11px;
+  font-size: 12px;
   color: #888;
   font-family: 'Consolas', monospace;
 }
@@ -970,13 +970,13 @@ onUnmounted(() => {
 /* 面板区块 */
 .panel-section {
   background-color: #252526;
-  padding: 16px;
+  padding: 18px;
   border-radius: 8px;
   border: 1px solid #3c3c3c;
 }
 
 .section-title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: #e0e0e0;
   margin: 0 0 12px 0;
@@ -998,27 +998,27 @@ onUnmounted(() => {
 .emergency-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 /* 状态标志 */
 .flags-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 .flag-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 8px;
+  gap: 6px;
+  padding: 10px;
   background-color: #1e1e1e;
   border-radius: 6px;
   border: 1px solid #3c3c3c;
   color: #666;
-  font-size: 11px;
+  font-size: 12px;
   transition: all 0.3s;
 }
 
@@ -1083,11 +1083,11 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 10px 14px;
   cursor: pointer;
   border-bottom: 1px solid #2c2c2c;
   transition: all 0.2s;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .station-item-compact:last-child {
@@ -1116,10 +1116,10 @@ onUnmounted(() => {
 }
 
 .station-empty {
-  padding: 24px;
+  padding: 28px;
   text-align: center;
   color: #666;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 /* 导航参数 */
@@ -1138,12 +1138,12 @@ onUnmounted(() => {
 }
 
 .param-label {
-  font-size: 12px;
+  font-size: 13px;
   color: #888;
 }
 
 .param-value {
-  font-size: 12px;
+  font-size: 13px;
   color: #e0e0e0;
   text-align: right;
   font-family: 'Consolas', monospace;
@@ -1154,20 +1154,20 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px;
+  padding: 10px;
   background-color: #1e1e1e;
   border-radius: 6px;
   border: 1px solid #3c3c3c;
 }
 
 .map-label {
-  font-size: 12px;
+  font-size: 13px;
   color: #888;
 }
 
 .map-name {
   flex: 1;
-  font-size: 12px;
+  font-size: 13px;
   color: #409eff;
 }
 
@@ -1191,12 +1191,12 @@ onUnmounted(() => {
 }
 
 .speed-label {
-  font-size: 12px;
+  font-size: 13px;
   color: #888;
 }
 
 .speed-value {
-  font-size: 12px;
+  font-size: 13px;
   color: #e0e0e0;
   text-align: right;
   font-family: 'Consolas', monospace;
@@ -1226,19 +1226,19 @@ onUnmounted(() => {
 }
 
 .pad-empty {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
 }
 
 .direction-btn {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 /* 滚动条样式 */

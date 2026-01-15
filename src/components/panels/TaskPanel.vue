@@ -362,8 +362,8 @@ defineExpose({
 /* 节点面板容器 */
 .node-palette-container {
   position: relative;
-  width: 260px;
-  min-width: 260px;
+  width: clamp(220px, 22vw, 300px);
+  min-width: 220px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -375,8 +375,8 @@ defineExpose({
 /* 属性面板容器 */
 .property-panel-container {
   position: relative;
-  width: 280px;
-  min-width: 280px;
+  width: clamp(240px, 24vw, 320px);
+  min-width: 240px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -397,8 +397,8 @@ defineExpose({
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 24px;
-  height: 48px;
+  width: 32px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -419,20 +419,20 @@ defineExpose({
 }
 
 .collapse-button.left {
-  right: -24px;
+  right: -32px;
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   border-left: none;
 }
 
 .collapse-button.right {
-  left: -24px;
+  left: -32px;
   border-radius: var(--radius-md) 0 0 var(--radius-md);
   border-right: none;
 }
 
 /* 任务列表对话框 */
 .task-list-dialog {
-  max-height: 400px;
+  max-height: 520px;
   overflow-y: auto;
   padding: var(--spacing-xs);
 }
@@ -466,20 +466,20 @@ defineExpose({
 
 .empty-list p {
   margin: var(--spacing-md) 0 0 0;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .task-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
 }
 
 .task-list-item {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-xl);
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(148, 163, 184, 0.2);
@@ -522,18 +522,18 @@ defineExpose({
 }
 
 .task-name {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   color: var(--color-text-primary);
 }
 
 .task-desc {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-tertiary);
 }
 
 .task-time {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-tertiary);
   opacity: 0.7;
 }
@@ -549,6 +549,7 @@ defineExpose({
   backdrop-filter: blur(20px);
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: var(--radius-xl);
+  width: min(720px, 86vw) !important;
 }
 
 :deep(.el-dialog__header) {
@@ -568,5 +569,16 @@ defineExpose({
 :deep(.el-dialog__footer) {
   border-top: 1px solid rgba(148, 163, 184, 0.1);
   padding: var(--spacing-lg);
+}
+
+:deep(.el-dialog__footer .el-button) {
+  height: 40px;
+  padding: 0 18px;
+  font-size: 14px;
+}
+
+:deep(.task-list-dialog .el-button) {
+  height: 36px;
+  font-size: 13px;
 }
 </style>

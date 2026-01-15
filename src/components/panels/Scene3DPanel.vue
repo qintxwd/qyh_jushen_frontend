@@ -3,20 +3,20 @@
     <!-- 场景头部工具栏 -->
     <div class="scene-toolbar">
       <div class="toolbar-left">
-        <el-button-group size="small">
+        <el-button-group size="default">
           <el-tooltip content="重置视角">
             <el-button @click="resetCamera">
-              <SvgIcon name="view-reset" :size="16" />
+              <SvgIcon name="view-reset" :size="18" />
             </el-button>
           </el-tooltip>
           <el-tooltip content="俯视图">
             <el-button @click="setTopView">
-              <SvgIcon name="view-top" :size="16" />
+              <SvgIcon name="view-top" :size="18" />
             </el-button>
           </el-tooltip>
           <el-tooltip content="前视图">
             <el-button @click="setFrontView">
-              <SvgIcon name="view-front" :size="16" />
+              <SvgIcon name="view-front" :size="18" />
             </el-button>
           </el-tooltip>
         </el-button-group>
@@ -25,16 +25,16 @@
       <div class="toolbar-right">
         <el-tooltip content="显示关节状态">
           <el-button 
-            size="small" 
+            size="default" 
             :type="showJointStatus ? 'primary' : 'default'"
             @click="showJointStatus = !showJointStatus"
           >
-            <SvgIcon name="dataline" :size="16" />
+            <SvgIcon name="dataline" :size="18" />
           </el-button>
         </el-tooltip>
         <el-tooltip content="全屏">
-          <el-button size="small" @click="toggleFullscreen">
-            <SvgIcon name="fullscreen" :size="16" />
+          <el-button size="default" @click="toggleFullscreen">
+            <SvgIcon name="fullscreen" :size="18" />
           </el-button>
         </el-tooltip>
       </div>
@@ -99,7 +99,7 @@ function toggleFullscreen() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 12px 16px;
   background-color: #252526;
   border-bottom: 1px solid #3c3c3c;
   flex-shrink: 0;
@@ -109,7 +109,7 @@ function toggleFullscreen() {
 .toolbar-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .scene-content {
@@ -120,8 +120,8 @@ function toggleFullscreen() {
 
 .joint-overlay {
   position: absolute;
-  bottom: 12px;
-  left: 12px;
+  bottom: 16px;
+  left: 16px;
   z-index: 10;
   pointer-events: auto;
 }

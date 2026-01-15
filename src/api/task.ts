@@ -263,8 +263,8 @@ export const NODE_DEFINITIONS: NodeDefinition[] = [
     color: '#909399',
     params: [
       { name: 'position_name', type: 'preset', label: '预设点位', presetType: 'head_point' },
-      { name: 'pan', type: 'number', label: '水平角', default: 0, min: -1, max: 1, step: 0.1 },
-      { name: 'tilt', type: 'number', label: '俯仰角', default: 0, min: -1, max: 1, step: 0.1 }
+      { name: 'yaw', type: 'number', label: '水平角 (Pan)', default: 0, min: -1, max: 1, step: 0.1 },
+      { name: 'pitch', type: 'number', label: '俯仰角 (Tilt)', default: 0, min: -1, max: 1, step: 0.1 }
     ]
   },
   {

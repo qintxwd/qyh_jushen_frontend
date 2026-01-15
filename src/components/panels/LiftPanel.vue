@@ -741,7 +741,7 @@ onUnmounted(() => {
 
 <style scoped>
 .lift-panel {
-  padding: 12px;
+  padding: 16px;
   height: 100%;
   overflow: hidden;
 }
@@ -757,14 +757,14 @@ onUnmounted(() => {
 .panel-layout {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  height: calc(100% - 50px);
+  gap: 16px;
+  height: 100%;
 }
 
 .top-section {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
+  grid-template-columns: minmax(240px, 320px) 1fr;
+  gap: 16px;
 }
 
 .bottom-section {
@@ -772,7 +772,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-height: 0;
+  min-height: 220px;
 }
 
 /* 紧凑状态栏 */
@@ -780,7 +780,7 @@ onUnmounted(() => {
   background: rgba(30, 41, 59, 0.4);
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px;
 }
 
 .status-header {
@@ -791,7 +791,7 @@ onUnmounted(() => {
 }
 
 .status-header h3 {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: #e0e0e0;
   margin: 0;
@@ -870,12 +870,12 @@ onUnmounted(() => {
 }
 
 .value-item .label {
-  font-size: 10px;
+  font-size: 12px;
   color: #888;
 }
 
 .value-item .value {
-  font-size: 11px;
+  font-size: 13px;
   font-family: 'Consolas', monospace;
   color: #10b981;
   font-weight: 600;
@@ -885,24 +885,25 @@ onUnmounted(() => {
 .control-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .control-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .speed-mini {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   align-items: center;
   flex: 1;
 }
 
 .unit {
-  font-size: 11px;
+  font-size: 12px;
   color: #888;
 }
 
@@ -910,33 +911,34 @@ onUnmounted(() => {
   background: rgba(30, 41, 59, 0.4);
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 6px;
-  padding: 8px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .position-input-row {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .quick-positions-mini {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
+  gap: 6px;
 }
 
 .quick-positions-mini .el-button {
-  padding: 4px;
-  font-size: 11px;
+  padding: 8px 6px;
+  font-size: 12px;
 }
 
 .manual-compact {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 .jog-btn-mini {
@@ -944,7 +946,8 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  height: 32px;
+  height: 40px;
+  font-size: 14px;
 }
 
 :deep(.el-divider) {
@@ -974,7 +977,7 @@ onUnmounted(() => {
 }
 
 .points-header h3 {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: #e0e0e0;
   margin: 0;
@@ -982,10 +985,11 @@ onUnmounted(() => {
 
 .point-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
   overflow-y: auto;
-  padding: 4px;
+  padding: 6px;
+  flex: 1;
 }
 
 .point-grid::-webkit-scrollbar {
@@ -1006,7 +1010,7 @@ onUnmounted(() => {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  min-height: 90px;
+  min-height: 110px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1053,7 +1057,7 @@ onUnmounted(() => {
 }
 
 .point-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #f0f0f0;
   display: flex;
@@ -1062,7 +1066,7 @@ onUnmounted(() => {
 }
 
 .point-value {
-  font-size: 13px;
+  font-size: 14px;
   color: #10b981;
   font-family: 'Consolas', monospace;
   font-weight: 700;
@@ -1081,10 +1085,10 @@ onUnmounted(() => {
 
 .point-go-btn {
   flex: 1;
-  padding: 6px 12px !important;
-  height: 30px;
+  padding: 8px 14px !important;
+  height: 36px;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
   background: linear-gradient(135deg, #10b981, #059669) !important;
   border: none !important;
   box-shadow: 0 3px 8px rgba(16, 185, 129, 0.4);

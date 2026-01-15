@@ -11,85 +11,36 @@
       />
     </div>
 
-    <!-- 当前状态 -->
+    <!-- 当前状态 (紧凑) -->
     <div class="panel-section">
-      <h3 class="section-title">当前位置</h3>
-      <div class="head-visual">
+      <div class="head-compact">
         <div class="head-avatar" :style="headStyle">
-          <SvgIcon name="camera" :size="40" />
+          <SvgIcon name="camera" :size="32" />
         </div>
-        <div class="head-angles">
-          <div class="angle-item">
-            <span class="angle-label">水平 (Pan)</span>
-            <span class="angle-value">{{ (state.panNormalized * 90).toFixed(1) }}°</span>
-          </div>
-          <div class="angle-item">
-            <span class="angle-label">俯仰 (Tilt)</span>
-            <span class="angle-value">{{ (state.tiltNormalized * 90).toFixed(1) }}°</span>
-          </div>
+        <div class="angle-compact">
+          <span>Pan: {{ (state.panNormalized * 90).toFixed(1) }}°</span>
+          <span>Tilt: {{ (state.tiltNormalized * 90).toFixed(1) }}°</span>
         </div>
       </div>
     </div>
 
     <el-divider />
 
-    <!-- 手动控制 -->
+    <!-- 预设位置 -->
     <div class="panel-section">
-      <h3 class="section-title">手动控制</h3>
-      <div class="control-sliders">
-        <div class="control-item">
-          <div class="control-header">
-            <span class="control-label">水平 Pan (左/右)</span>
-            <span class="control-value">{{ (targetPan * 90).toFixed(0) }}°</span>
+      <h3 class="section-title">快捷位置</h3>
+      <div class="preset-grid">
+        <div 
+          v-for="preset in presets" 
+          :key="preset.id"
+          class="preset-item"
+          @click="goToPreset(preset)"
+        >
+          <div class="preset-icon">
+            <el-icon :size="20"><component :is="preset.icon" /></el-icon>
           </div>
-          <el-slider 
-            v-model="targetPan" 
-            :min="-1" 
-            :max="1"
-            :step="0.05"
-            size="small"
-            :marks="panMarks"
-          />
+          <span class="preset-name">{{ preset.name }}</span>
         </div>
-        <div class="control-item">
-          <div class="control-header">
-            <span class="control-label">俯仰 Tilt (上/下)</span>
-            <span class="control-value">{{ (targetTilt * 90).toFixed(0) }}°</span>
-          </div>
-          <el-slider 
-            v-model="targetTilt" 
-            :min="-1" 
-            :max="1"
-            :step="0.05"
-            size="small"
-            :marks="tiltMarks"
-          />
-        </div>
-        <div class="control-item speed-control">
-          <div class="control-header">
-            <span class="control-label">运动速度</span>
-            <span class="control-value">{{ moveSpeed.toFixed(0) }}%</span>
-          </div>
-          <el-slider 
-            v-model="moveSpeed" 
-            :min="1" 
-            :max="100"
-            :step="1"
-            size="small"
-            :marks="speedMarks"
-          />
-        </div>
-      </div>
-      
-      <div class="action-buttons">
-        <el-button type="primary" @click="executeMove" :loading="loading">
-          <SvgIcon name="execute-move" :size="16" />
-          执行
-        </el-button>
-        <el-button @click="resetHead" :loading="loadingReset">
-          <SvgIcon name="home-position" :size="16" />
-          回正
-        </el-button>
       </div>
     </div>
 
@@ -122,7 +73,7 @@
             </div>
           </div>
           <div class="point-actions">
-            <el-button size="small" text @click.stop="goToPoint(point.id)">
+            <el-button size="small" text @click.stop="goToPoint(point)">
               <SvgIcon name="position" :size="16" />
             </el-button>
             <el-button size="small" text @click.stop="openEditDialog(point)" v-if="!point.is_builtin">
@@ -168,21 +119,63 @@
 
     <el-divider />
 
-    <!-- 预设位置 -->
+    <!-- 手动控制 -->
     <div class="panel-section">
-      <h3 class="section-title">快捷位置</h3>
-      <div class="preset-grid">
-        <div 
-          v-for="preset in presets" 
-          :key="preset.id"
-          class="preset-item"
-          @click="goToPreset(preset)"
-        >
-          <div class="preset-icon">
-            <el-icon :size="20"><component :is="preset.icon" /></el-icon>
+      <h3 class="section-title">手动控制</h3>
+      <div class="control-sliders">
+        <div class="control-item">
+          <div class="control-header">
+            <span class="control-label">水平 Pan (左/右)</span>
+            <span class="control-value">{{ (targetPan * 90).toFixed(0) }}°</span>
           </div>
-          <span class="preset-name">{{ preset.name }}</span>
+          <el-slider 
+            v-model="targetPan" 
+            :min="-1" 
+            :max="1"
+            :step="0.05"
+            size="default"
+            :marks="panMarks"
+          />
         </div>
+        <div class="control-item">
+          <div class="control-header">
+            <span class="control-label">俯仰 Tilt (上/下)</span>
+            <span class="control-value">{{ (targetTilt * 90).toFixed(0) }}°</span>
+          </div>
+          <el-slider 
+            v-model="targetTilt" 
+            :min="-1" 
+            :max="1"
+            :step="0.05"
+            size="default"
+            :marks="tiltMarks"
+          />
+        </div>
+        <div class="control-item speed-control">
+          <div class="control-header">
+            <span class="control-label">运动速度</span>
+            <span class="control-value">{{ moveSpeed.toFixed(0) }}%</span>
+          </div>
+          <el-slider 
+            v-model="moveSpeed" 
+            :min="1" 
+            :max="100"
+            :step="1"
+            size="default"
+            :marks="speedMarks"
+          />
+        </div>
+      </div>
+      
+      <div class="action-buttons">
+        <el-button type="primary" @click="executeMove" :loading="loading">
+          <SvgIcon name="execute-move" :size="16" />
+          执行
+        </el-button>
+        <el-button @click="resetHead" :loading="loadingReset">
+          <SvgIcon name="home-position" :size="16" />
+          回正
+        </el-button>
       </div>
     </div>
 
@@ -608,7 +601,7 @@ onUnmounted(() => {
 
 <style scoped>
 .head-panel {
-  padding: var(--spacing-lg);
+  padding: 20px;
 }
 
 .panel-section {
@@ -617,34 +610,27 @@ onUnmounted(() => {
 
 .section-title {
   margin: 0 0 var(--spacing-md) 0;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.head-visual {
+.head-compact {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-lg);
+  gap: 12px;
+  padding: 12px 14px;
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: var(--radius-lg);
-  transition: all 0.3s var(--transition-smooth);
-}
-
-.head-visual:hover {
-  background: rgba(30, 41, 59, 0.6);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
 }
 
 .head-avatar {
-  width: 80px;
-  height: 80px;
+  width: 56px;
+  height: 56px;
   background: linear-gradient(135deg, var(--color-primary) 0%, #fbbf24 100%);
   border-radius: 50%;
   display: flex;
@@ -656,34 +642,13 @@ onUnmounted(() => {
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
 }
 
-.head-angles {
-  flex: 1;
+.angle-compact {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.angle-item {
-  display: flex;
-  justify-content: space-between;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: var(--radius-md);
-}
-
-.angle-label {
-  font-size: 12px;
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.angle-value {
+  gap: 6px;
   font-size: 14px;
-  font-family: 'Consolas', monospace;
   color: #10b981;
+  font-family: 'Consolas', monospace;
   font-weight: 700;
 }
 
@@ -715,13 +680,13 @@ onUnmounted(() => {
 }
 
 .control-label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   font-weight: 600;
 }
 
 .control-value {
-  font-size: 12px;
+  font-size: 13px;
   font-family: 'Consolas', monospace;
   color: var(--color-primary);
   font-weight: 700;
@@ -734,6 +699,8 @@ onUnmounted(() => {
 
 .action-buttons .el-button {
   flex: 1;
+  height: 44px;
+  font-size: 15px;
 }
 
 .preset-grid {
@@ -747,7 +714,7 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-md) var(--spacing-sm);
+  padding: 14px 10px;
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(15px);
   border: 1px solid rgba(148, 163, 184, 0.2);
@@ -784,7 +751,7 @@ onUnmounted(() => {
 }
 
 .preset-name {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-primary);
   text-align: center;
   font-weight: 500;
@@ -831,7 +798,7 @@ onUnmounted(() => {
 }
 
 .point-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-text-primary);
   display: flex;
@@ -845,13 +812,13 @@ onUnmounted(() => {
 }
 
 .point-desc {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-tertiary);
   margin-top: var(--spacing-xs);
 }
 
 .point-position {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-secondary);
   font-family: 'Consolas', monospace;
   margin-top: var(--spacing-xs);
@@ -870,7 +837,7 @@ onUnmounted(() => {
   gap: var(--spacing-sm);
   padding: var(--spacing-xl);
   color: var(--color-text-tertiary);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .points-actions {
@@ -889,7 +856,7 @@ onUnmounted(() => {
 }
 
 .update-label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   margin-bottom: var(--spacing-sm);
 }
@@ -900,7 +867,7 @@ onUnmounted(() => {
 }
 
 :deep(.el-slider__marks-text) {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--color-text-tertiary);
 }
 
@@ -909,6 +876,6 @@ onUnmounted(() => {
 }
 
 :deep(.el-alert .el-alert__title) {
-  font-size: 12px;
+  font-size: 13px;
 }
 </style>

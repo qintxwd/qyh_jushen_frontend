@@ -139,7 +139,7 @@ const handleLogin = async () => {
 }
 
 .login-card {
-  width: 420px;
+  width: 560px;
   background: rgba(30, 41, 59, 0.6) !important;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(248, 250, 252, 0.1);
@@ -169,7 +169,7 @@ const handleLogin = async () => {
 
 .card-header h1 {
   margin: 0 0 12px 0;
-  font-size: 32px;
+  font-size: 36px;
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
   background: linear-gradient(135deg, #F8FAFC 0%, #F59E0B 100%);
@@ -181,7 +181,7 @@ const handleLogin = async () => {
 
 .card-header p {
   margin: 0;
-  font-size: 15px;
+  font-size: 17px;
   font-family: 'DM Sans', sans-serif;
   color: #94A3B8;
   font-weight: 500;
@@ -200,11 +200,11 @@ const handleLogin = async () => {
 .default-account :deep(.el-alert__title) {
   color: #93C5FD;
   font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 :deep(.el-form-item) {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 :deep(.el-input__wrapper) {
@@ -212,7 +212,7 @@ const handleLogin = async () => {
   border: 1px solid rgba(148, 163, 184, 0.2);
   box-shadow: none;
   border-radius: 12px;
-  padding: 12px 16px;
+  padding: 16px 18px;
   transition: all 0.3s ease;
 }
 
@@ -230,7 +230,7 @@ const handleLogin = async () => {
 :deep(.el-input__inner) {
   color: #F8FAFC;
   font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 :deep(.el-input__inner::placeholder) {
@@ -243,8 +243,8 @@ const handleLogin = async () => {
   border-radius: 12px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 600;
-  font-size: 16px;
-  padding: 14px;
+  font-size: 18px;
+  padding: 16px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
 }

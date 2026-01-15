@@ -57,14 +57,6 @@
                 </el-button>
                 <el-button 
                   v-if="authStore.isAdmin" 
-                  @click="$router.push('/terminal')"
-                  type="warning"
-                >
-                  <SvgIcon name="monitor" :size="16" />
-                  系统终端
-                </el-button>
-                <el-button 
-                  v-if="authStore.isAdmin" 
                   @click="$router.push('/lift-control')"
                   type="primary"
                 >

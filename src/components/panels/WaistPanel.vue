@@ -742,30 +742,31 @@ onUnmounted(() => {
 
 <style scoped>
 .waist-panel {
-  padding: 12px;
+  padding: 14px;
   height: 100%;
   overflow: hidden;
 }
 
 .alert-compact {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .alert-compact :deep(.el-alert) {
-  padding: 8px 12px;
+  padding: 10px 14px;
 }
 
 .panel-layout {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   height: calc(100% - 50px);
 }
 
 .top-section {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  gap: 14px;
+  align-items: start;
 }
 
 .bottom-section {
@@ -781,12 +782,12 @@ onUnmounted(() => {
   background: rgba(30, 41, 59, 0.4);
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px;
 }
 
 .status-row {
   display: flex;
-  gap: 12px;
+  gap: 14px;
 }
 
 .status-visual-mini {
@@ -797,8 +798,8 @@ onUnmounted(() => {
 }
 
 .angle-display {
-  width: 60px;
-  height: 70px;
+  width: 72px;
+  height: 84px;
   position: relative;
   display: flex;
   align-items: flex-end;
@@ -811,8 +812,8 @@ onUnmounted(() => {
 .body-base-mini {
   position: absolute;
   bottom: 4px;
-  width: 30px;
-  height: 14px;
+  width: 36px;
+  height: 16px;
   background: rgba(148, 163, 184, 0.3);
   border-radius: 3px;
   border: 1px solid rgba(148, 163, 184, 0.2);
@@ -820,9 +821,9 @@ onUnmounted(() => {
 
 .body-torso-mini {
   position: absolute;
-  bottom: 14px;
-  width: 3px;
-  height: 45px;
+  bottom: 16px;
+  width: 4px;
+  height: 52px;
   transform-origin: bottom center;
   transition: transform 0.3s ease;
 }
@@ -831,8 +832,8 @@ onUnmounted(() => {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 3px;
-  height: 38px;
+  width: 4px;
+  height: 44px;
   background: linear-gradient(to top, var(--color-primary), #fbbf24);
   border-radius: 2px;
   box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
@@ -843,8 +844,8 @@ onUnmounted(() => {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   background: linear-gradient(135deg, var(--color-primary), #fbbf24);
   border-radius: 50%;
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
@@ -852,7 +853,7 @@ onUnmounted(() => {
 }
 
 .angle-value {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--color-primary);
 }
@@ -861,26 +862,26 @@ onUnmounted(() => {
   flex: 1;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
+  gap: 8px;
 }
 
 .info-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 8px;
+  padding: 6px 10px;
   background: rgba(15, 23, 42, 0.6);
   border-radius: 4px;
   border: 1px solid rgba(148, 163, 184, 0.1);
 }
 
 .info-item .label {
-  font-size: 10px;
+  font-size: 12px;
   color: #888;
 }
 
 .info-item .value {
-  font-size: 11px;
+  font-size: 12px;
   font-family: 'Consolas', monospace;
   color: #10b981;
   font-weight: 600;
@@ -890,18 +891,18 @@ onUnmounted(() => {
 .control-compact {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .control-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
 }
 
 .speed-mini {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   align-items: center;
   flex: 1;
 }
@@ -910,44 +911,46 @@ onUnmounted(() => {
   background: rgba(30, 41, 59, 0.4);
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 6px;
-  padding: 10px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .slider-row {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
 }
 
 .unit {
-  font-size: 11px;
+  font-size: 12px;
   color: #888;
   min-width: 15px;
 }
 
 .angle-buttons {
-  display: flex;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
 }
 
 .quick-angles-mini {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 }
 
 .quick-angles-mini .el-button {
-  padding: 4px;
-  font-size: 11px;
+  padding: 6px;
+  font-size: 12px;
+  height: 32px;
 }
 
 .manual-compact {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 .jog-btn-mini {
@@ -955,14 +958,15 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  height: 32px;
+  height: 40px;
+  font-size: 13px;
 }
 
 :deep(.el-slider) {
   --el-slider-main-bg-color: var(--color-primary);
   --el-slider-runway-bg-color: rgba(15, 23, 42, 0.6);
-  --el-slider-button-wrapper-size: 32px;
-  --el-slider-button-size: 14px;
+  --el-slider-button-wrapper-size: 36px;
+  --el-slider-button-size: 16px;
 }
 
 :deep(.el-slider__bar) {
@@ -980,12 +984,12 @@ onUnmounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  padding: 0 4px;
+  margin-bottom: 10px;
+  padding: 0 6px;
 }
 
 .points-header h3 {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: #e0e0e0;
   margin: 0;
@@ -993,10 +997,10 @@ onUnmounted(() => {
 
 .point-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
   overflow-y: auto;
-  padding: 4px;
+  padding: 6px;
 }
 
 .point-grid::-webkit-scrollbar {
@@ -1012,12 +1016,12 @@ onUnmounted(() => {
   background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(30, 41, 59, 0.4));
   border: 1px solid rgba(148, 163, 184, 0.3);
   border-radius: 10px;
-  padding: 12px;
+  padding: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  min-height: 90px;
+  min-height: 110px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1064,7 +1068,7 @@ onUnmounted(() => {
 }
 
 .point-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: #f0f0f0;
   display: flex;
@@ -1073,7 +1077,7 @@ onUnmounted(() => {
 }
 
 .point-value {
-  font-size: 13px;
+  font-size: 14px;
   color: #10b981;
   font-family: 'Consolas', monospace;
   font-weight: 700;
@@ -1092,10 +1096,10 @@ onUnmounted(() => {
 
 .point-go-btn {
   flex: 1;
-  padding: 6px 12px !important;
-  height: 30px;
+  padding: 8px 14px !important;
+  height: 36px;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
   background: linear-gradient(135deg, #10b981, #059669) !important;
   border: none !important;
   box-shadow: 0 3px 8px rgba(16, 185, 129, 0.4);
@@ -1113,9 +1117,24 @@ onUnmounted(() => {
 }
 
 .point-actions .el-button {
-  padding: 4px 6px;
+  padding: 6px 8px;
   min-height: auto;
   opacity: 0.7;
+}
+
+.waist-panel :deep(.el-button--small) {
+  height: 36px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+.waist-panel :deep(.el-input-number--small) {
+  height: 34px;
+}
+
+.waist-panel :deep(.el-tag--small) {
+  height: 24px;
+  font-size: 12px;
 }
 
 .point-actions .el-button:hover {

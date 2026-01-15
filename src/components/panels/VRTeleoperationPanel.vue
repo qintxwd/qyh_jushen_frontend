@@ -320,27 +320,27 @@ onUnmounted(() => {
 
 <style scoped>
 .vr-panel-modern {
-  padding: 20px;
+  padding: clamp(12px, 2vw, 20px);
   font-family: var(--font-body);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: clamp(12px, 2vw, 20px);
 }
 
 /* 状态栏 */
 .vr-status-bar {
   display: flex;
-  gap: 16px;
+  gap: clamp(10px, 1.6vw, 16px);
   flex-wrap: wrap;
 }
 
 .status-badge {
   flex: 1;
-  min-width: 250px;
+  min-width: 220px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px 20px;
+  gap: 12px;
+  padding: 14px 18px;
   background: rgba(30, 41, 59, 0.5);
   backdrop-filter: blur(15px);
   border-radius: 14px;
@@ -355,15 +355,15 @@ onUnmounted(() => {
 }
 
 .badge-icon {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(15, 23, 42, 0.6);
   border-radius: 12px;
   color: #64748B;
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .status-badge.online .badge-icon {
@@ -378,7 +378,7 @@ onUnmounted(() => {
 }
 
 .badge-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   font-family: var(--font-heading);
   color: #F8FAFC;
@@ -414,11 +414,11 @@ onUnmounted(() => {
 
 .head-pose-mini {
   flex: 1;
-  min-width: 250px;
+  min-width: 220px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
+  gap: 10px;
+  padding: 14px 18px;
   background: rgba(30, 41, 59, 0.5);
   backdrop-filter: blur(15px);
   border-radius: 14px;
@@ -426,15 +426,15 @@ onUnmounted(() => {
 }
 
 .head-icon {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(139, 92, 246, 0.15);
   border-radius: 12px;
   color: #A78BFA;
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .pose-data {
@@ -447,7 +447,7 @@ onUnmounted(() => {
 .data-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-size: 12px;
 }
 
@@ -460,7 +460,7 @@ onUnmounted(() => {
 .data-value {
   font-family: 'Monaco', 'Consolas', monospace;
   color: #3B82F6;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .data-value.rpy {
@@ -470,8 +470,8 @@ onUnmounted(() => {
 /* 控制器网格 */
 .controllers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(12px, 2vw, 20px);
 }
 
 .controller-panel {
@@ -479,10 +479,10 @@ onUnmounted(() => {
   backdrop-filter: blur(15px);
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.2);
-  padding: 20px;
+  padding: clamp(14px, 2vw, 20px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: clamp(12px, 1.6vw, 16px);
   transition: all 0.3s ease;
 }
 
@@ -494,14 +494,14 @@ onUnmounted(() => {
 .panel-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding-bottom: 12px;
+  gap: 8px;
+  padding-bottom: 10px;
   border-bottom: 1px solid rgba(148, 163, 184, 0.15);
 }
 
 .controller-icon {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -512,7 +512,7 @@ onUnmounted(() => {
 }
 
 .controller-name {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   font-family: var(--font-heading);
   color: #F8FAFC;
@@ -524,7 +524,7 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding: 20px;
+  padding: clamp(14px, 2vw, 20px);
   background: rgba(15, 23, 42, 0.5);
   border-radius: 12px;
   border: 2px solid rgba(148, 163, 184, 0.15);
@@ -584,8 +584,8 @@ onUnmounted(() => {
 }
 
 .joystick-visual {
-  width: 120px;
-  height: 120px;
+  width: clamp(96px, 14vw, 140px);
+  height: clamp(96px, 14vw, 140px);
   background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
   border-radius: 50%;
   position: relative;
@@ -620,8 +620,8 @@ onUnmounted(() => {
 }
 
 .cursor-ring {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   border: 2px solid #3B82F6;
   box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
@@ -633,8 +633,8 @@ onUnmounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   background: #3B82F6;
   border-radius: 50%;
   box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
@@ -654,7 +654,7 @@ onUnmounted(() => {
 }
 
 .joystick-value {
-  font-size: 11px;
+  font-size: 12px;
   font-family: 'Monaco', 'Consolas', monospace;
   color: #10B981;
 }
@@ -663,7 +663,7 @@ onUnmounted(() => {
 .buttons-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 .button-circle,
@@ -675,7 +675,7 @@ onUnmounted(() => {
   background: rgba(15, 23, 42, 0.6);
   border: 2px solid rgba(148, 163, 184, 0.2);
   border-radius: 50%;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: #94A3B8;
   transition: all 0.2s ease;
@@ -684,7 +684,7 @@ onUnmounted(() => {
 
 .button-pill {
   border-radius: 20px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .button-circle.pressed,
@@ -700,7 +700,7 @@ onUnmounted(() => {
 .axis-section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .axis-row {
@@ -710,7 +710,7 @@ onUnmounted(() => {
 }
 
 .axis-name {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #94A3B8;
   min-width: 50px;
@@ -718,7 +718,7 @@ onUnmounted(() => {
 
 .axis-track {
   flex: 1;
-  height: 8px;
+  height: 10px;
   background: rgba(15, 23, 42, 0.6);
   border-radius: 4px;
   overflow: hidden;
@@ -751,7 +751,7 @@ onUnmounted(() => {
 }
 
 .axis-percent {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   font-family: 'Monaco', 'Consolas', monospace;
   color: #CBD5E1;
@@ -767,9 +767,9 @@ onUnmounted(() => {
 }
 
 .pose-collapse summary {
-  padding: 10px 14px;
+  padding: 12px 14px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: #94A3B8;
   user-select: none;
@@ -782,7 +782,7 @@ onUnmounted(() => {
 }
 
 .pose-content {
-  padding: 10px 14px;
+  padding: 12px 14px;
   border-top: 1px solid rgba(148, 163, 184, 0.1);
   display: flex;
   flex-direction: column;
@@ -792,7 +792,7 @@ onUnmounted(() => {
 .pose-row {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 12px;
   color: #94A3B8;
 }
 
@@ -810,7 +810,7 @@ onUnmounted(() => {
 
 .tip {
   flex: 1;
-  min-width: 250px;
+  min-width: 220px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -818,8 +818,20 @@ onUnmounted(() => {
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 10px;
-  font-size: 12px;
+  font-size: 13px;
   color: #93C5FD;
+}
+
+@media (max-width: 1200px) {
+  .vr-status-bar {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 900px) {
+  .controllers-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .tip .el-icon {

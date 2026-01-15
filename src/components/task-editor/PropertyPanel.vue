@@ -174,9 +174,9 @@ watch(
       if (props.nodeDefinition) {
         for (const param of props.nodeDefinition.params) {
           if (param.type === 'preset' && formData[param.name]) {
-            // head_point: position_name -> pan, tilt
+            // head_point: position_name -> yaw, pitch
             if (param.presetType === 'head_point' && param.name === 'position_name') {
-              if (formData['pan'] === undefined || formData['tilt'] === undefined) {
+              if (formData['yaw'] === undefined || formData['pitch'] === undefined) {
                 loadHeadPointDetails(formData[param.name])
               }
             }
@@ -227,14 +227,14 @@ function onPresetChange(paramName: string, value: any, presetType?: string) {
   onParamChange()
 }
 
-// 加载头部点位详细信息并填充pan/tilt
+// 加载头部点位详细信息并填充yaw/pitch
 async function loadHeadPointDetails(pointId: string) {
   try {
     const headPoints = await listHeadPoints()
     const point = headPoints.find(p => p.id === pointId)
     if (point) {
-      formData['pan'] = point.pan
-      formData['tilt'] = point.tilt
+      formData['yaw'] = point.pan     // head_point.pan -> yaw (水平角)
+      formData['pitch'] = point.tilt  // head_point.tilt -> pitch (俯仰角)
       emit('update-params', { ...formData })
     }
   } catch (e) {

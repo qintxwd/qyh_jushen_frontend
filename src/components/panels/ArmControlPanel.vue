@@ -100,6 +100,97 @@
 
     <el-divider />
 
+    <!-- 点位管理 -->
+    <div class="panel-section">
+      <h3 class="section-title">
+        <SvgIcon name="location" :size="16" />
+        点位管理
+      </h3>
+      
+      <!-- 点位列表 -->
+      <div class="points-list">
+        <div 
+          v-for="point in armPoints" 
+          :key="point.id"
+          class="point-item"
+          :class="{ selected: selectedPointId === point.id, builtin: point.is_builtin }"
+          @click="selectedPointId = point.id"
+        >
+          <div class="point-info">
+            <span class="point-name">
+              <SvgIcon v-if="point.is_builtin" name="star" :size="14" class="builtin-icon" />
+              {{ point.name }}
+            </span>
+            <span class="point-desc" v-if="point.description">{{ point.description }}</span>
+          </div>
+          <div class="point-actions" v-if="selectedPointId === point.id">
+            <el-button 
+              size="small" 
+              type="warning" 
+              circle
+              :disabled="point.id === 'zero'"
+              @click.stop="openEditDialog(point)"
+            >
+              <SvgIcon name="edit" :size="16" />
+            </el-button>
+            <el-button 
+              size="small" 
+              type="danger" 
+              circle
+              :disabled="point.is_builtin"
+              @click.stop="deletePoint(point)"
+            >
+              <SvgIcon name="delete" :size="16" />
+            </el-button>
+          </div>
+        </div>
+        
+        <div v-if="armPoints.length === 0" class="empty-points">
+          暂无点位，请添加
+        </div>
+      </div>
+      
+      <!-- 点位操作按钮 -->
+      <div class="points-actions">
+        <el-button 
+          type="primary"
+          :disabled="!selectedPointId || !armState.enabled || isServoRunning"
+          :loading="loading.goToPoint"
+          @click="goToSelectedPoint"
+        >
+          <SvgIcon name="position" :size="16" />
+          移动到选中点位
+        </el-button>
+        
+        <el-dropdown trigger="click" @command="handleAddPoint">
+          <el-button type="success">
+            <SvgIcon name="plus" :size="16" />
+            采集新点位
+            <SvgIcon name="arrowdown" :size="16" />
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="both">采集双臂</el-dropdown-item>
+              <el-dropdown-item command="left">仅采集左臂</el-dropdown-item>
+              <el-dropdown-item command="right">仅采集右臂</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+      
+      <!-- 更新选中点位 -->
+      <div class="update-point-section" v-if="selectedPointId && selectedPointId !== 'zero'">
+        <span class="update-label">更新选中点位为当前位置:</span>
+        <div class="update-buttons">
+          <el-button size="small" @click="updatePointJoints('both')">双臂</el-button>
+          <el-button size="small" @click="updatePointJoints('left')">仅左臂</el-button>
+          <el-button size="small" @click="updatePointJoints('right')">仅右臂</el-button>
+        </div>
+      </div>
+    </div>
+
+    <el-divider />
+
     <!-- 点动控制 (Jog) -->
     <div class="panel-section">
       <h3 class="section-title">
@@ -265,97 +356,6 @@
               <SvgIcon name="plus" :size="16" />
             </el-button>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <el-divider />
-
-    <!-- 点位管理 -->
-    <div class="panel-section">
-      <h3 class="section-title">
-        <SvgIcon name="location" :size="16" />
-        点位管理
-      </h3>
-      
-      <!-- 点位列表 -->
-      <div class="points-list">
-        <div 
-          v-for="point in armPoints" 
-          :key="point.id"
-          class="point-item"
-          :class="{ selected: selectedPointId === point.id, builtin: point.is_builtin }"
-          @click="selectedPointId = point.id"
-        >
-          <div class="point-info">
-            <span class="point-name">
-              <SvgIcon v-if="point.is_builtin" name="star" :size="14" class="builtin-icon" />
-              {{ point.name }}
-            </span>
-            <span class="point-desc" v-if="point.description">{{ point.description }}</span>
-          </div>
-          <div class="point-actions" v-if="selectedPointId === point.id">
-            <el-button 
-              size="small" 
-              type="warning" 
-              circle
-              :disabled="point.id === 'zero'"
-              @click.stop="openEditDialog(point)"
-            >
-              <SvgIcon name="edit" :size="16" />
-            </el-button>
-            <el-button 
-              size="small" 
-              type="danger" 
-              circle
-              :disabled="point.is_builtin"
-              @click.stop="deletePoint(point)"
-            >
-              <SvgIcon name="delete" :size="16" />
-            </el-button>
-          </div>
-        </div>
-        
-        <div v-if="armPoints.length === 0" class="empty-points">
-          暂无点位，请添加
-        </div>
-      </div>
-      
-      <!-- 点位操作按钮 -->
-      <div class="points-actions">
-        <el-button 
-          type="primary"
-          :disabled="!selectedPointId || !armState.enabled || isServoRunning"
-          :loading="loading.goToPoint"
-          @click="goToSelectedPoint"
-        >
-          <SvgIcon name="position" :size="16" />
-          移动到选中点位
-        </el-button>
-        
-        <el-dropdown trigger="click" @command="handleAddPoint">
-          <el-button type="success">
-            <SvgIcon name="plus" :size="16" />
-            采集新点位
-            <SvgIcon name="arrowdown" :size="16" />
-          </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="both">采集双臂</el-dropdown-item>
-              <el-dropdown-item command="left">仅采集左臂</el-dropdown-item>
-              <el-dropdown-item command="right">仅采集右臂</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </div>
-      
-      <!-- 更新选中点位 -->
-      <div class="update-point-section" v-if="selectedPointId && selectedPointId !== 'zero'">
-        <span class="update-label">更新选中点位为当前位置:</span>
-        <div class="update-buttons">
-          <el-button size="small" @click="updatePointJoints('both')">双臂</el-button>
-          <el-button size="small" @click="updatePointJoints('left')">仅左臂</el-button>
-          <el-button size="small" @click="updatePointJoints('right')">仅右臂</el-button>
         </div>
       </div>
     </div>

@@ -50,7 +50,7 @@
         </div>
         <el-progress 
           :percentage="Math.round(currentGripperState.current_position / 255 * 100)" 
-          :stroke-width="12"
+          :stroke-width="14"
           :format="() => currentGripperState.current_position + ' / 255'"
         />
         <div class="status-row" style="margin-top: 8px;">
@@ -59,7 +59,7 @@
         </div>
         <el-progress 
           :percentage="Math.round(currentGripperState.current_force / 255 * 100)" 
-          :stroke-width="12"
+          :stroke-width="14"
           status="warning"
           :format="() => currentGripperState.current_force + ' / 255'"
         />
@@ -145,7 +145,7 @@
             v-model="targetPosition" 
             :min="0" 
             :max="255"
-            size="small"
+            size="default"
           />
         </div>
         <div class="control-item">
@@ -157,7 +157,7 @@
             v-model="speed" 
             :min="0" 
             :max="255"
-            size="small"
+            size="default"
           />
         </div>
         <div class="control-item">
@@ -169,7 +169,7 @@
             v-model="force" 
             :min="0" 
             :max="255"
-            size="small"
+            size="default"
           />
         </div>
       </div>
@@ -372,7 +372,7 @@ onUnmounted(() => {
 
 <style scoped>
 .gripper-panel {
-  padding: var(--spacing-lg);
+  padding: 20px;
 }
 
 .panel-section {
@@ -381,7 +381,7 @@ onUnmounted(() => {
 
 .section-title {
   margin: 0 0 var(--spacing-md) 0;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--color-text-secondary);
   text-transform: uppercase;
@@ -399,13 +399,14 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
-  padding: var(--spacing-md);
+  padding: 16px;
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.3s var(--transition-smooth);
+  font-size: 14px;
 }
 
 .gripper-tab:hover {
@@ -439,7 +440,7 @@ onUnmounted(() => {
 }
 
 .status-label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-tertiary);
   min-width: 60px;
   text-transform: uppercase;
@@ -447,7 +448,7 @@ onUnmounted(() => {
 }
 
 .status-value {
-  font-size: 14px;
+  font-size: 16px;
   font-family: 'Consolas', monospace;
   color: #10b981;
   font-weight: 700;
@@ -484,16 +485,26 @@ onUnmounted(() => {
 }
 
 .control-label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-secondary);
   font-weight: 600;
 }
 
 .control-value {
-  font-size: 12px;
+  font-size: 13px;
   font-family: 'Consolas', monospace;
   color: var(--color-primary);
   font-weight: 700;
+}
+
+.quick-buttons .el-button {
+  height: 44px;
+  font-size: 14px;
+}
+
+.panel-section > .el-button {
+  height: 46px;
+  font-size: 15px;
 }
 
 .settings-list {

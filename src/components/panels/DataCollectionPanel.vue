@@ -623,16 +623,16 @@ onUnmounted(() => {
 
 <style scoped>
 .data-collection-panel {
-  padding: var(--spacing-lg);
+  padding: clamp(12px, 2vw, 20px);
 }
 
 .panel-section {
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: clamp(8px, 1.5vw, 16px);
 }
 
 .section-title {
   margin: 0 0 var(--spacing-md) 0;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-text-secondary);
   text-transform: uppercase;
@@ -663,7 +663,7 @@ onUnmounted(() => {
 }
 
 .action-info {
-  padding: var(--spacing-sm);
+  padding: clamp(10px, 1.2vw, 16px);
   background: rgba(30, 41, 59, 0.4);
   border-radius: var(--radius-md);
   border: 1px solid rgba(148, 163, 184, 0.15);
@@ -677,18 +677,18 @@ onUnmounted(() => {
 }
 
 .episode-count {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-secondary);
 }
 
 .action-desc {
   margin: 0 0 var(--spacing-xs) 0;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--color-text-secondary);
 }
 
 .action-topics {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-muted);
 }
 
@@ -703,8 +703,8 @@ onUnmounted(() => {
 /* 相机视图 */
 .camera-grid {
   display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr;
-  gap: var(--spacing-sm);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: clamp(8px, 1.5vw, 16px);
 }
 
 .camera-wrapper {
@@ -716,7 +716,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--spacing-md);
+  padding: clamp(12px, 2vw, 20px);
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(148, 163, 184, 0.2);
@@ -727,9 +727,9 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-lg);
+  padding: 8px 18px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   transition: all 0.3s var(--transition-smooth);
 }
@@ -769,14 +769,14 @@ onUnmounted(() => {
 }
 
 .recording-time {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   font-family: 'Consolas', monospace;
   color: #ef4444;
 }
 
 .recording-action {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--color-text-secondary);
 }
 
@@ -784,8 +784,8 @@ onUnmounted(() => {
 .electromagnet-control {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm);
+  gap: clamp(8px, 1vw, 12px);
+  padding: clamp(8px, 1.2vw, 14px);
   background: rgba(30, 41, 59, 0.4);
   border: 1px solid rgba(148, 163, 184, 0.15);
   border-radius: var(--radius-md);
@@ -795,13 +795,13 @@ onUnmounted(() => {
 .control-buttons {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: clamp(8px, 1.2vw, 14px);
 }
 
 .control-btn {
   width: 100%;
-  height: 44px;
-  font-size: 15px;
+  height: 52px;
+  font-size: 16px;
   font-weight: 600;
   transition: all 0.3s var(--transition-smooth);
 }
@@ -813,7 +813,7 @@ onUnmounted(() => {
 
 /* 日志容器 */
 .log-container {
-  max-height: 150px;
+  max-height: 180px;
   overflow-y: auto;
   background: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(10px);
@@ -826,7 +826,7 @@ onUnmounted(() => {
   display: flex;
   gap: var(--spacing-xs);
   padding: 2px var(--spacing-xs);
-  font-size: 11px;
+  font-size: 12px;
   font-family: 'Consolas', monospace;
   border-radius: 3px;
 }
@@ -859,7 +859,7 @@ onUnmounted(() => {
   text-align: center;
   color: rgba(148, 163, 184, 0.5);
   padding: var(--spacing-md);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 :deep(.el-divider) {
@@ -871,6 +871,7 @@ onUnmounted(() => {
   background: rgba(30, 41, 59, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(148, 163, 184, 0.2);
+  width: min(520px, 90vw) !important;
 }
 
 :deep(.el-dialog__header) {
@@ -885,5 +886,35 @@ onUnmounted(() => {
   margin-top: var(--spacing-sm);
   display: flex;
   gap: var(--spacing-sm);
+}
+
+:deep(.el-button--small) {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+:deep(.el-input__wrapper) {
+  min-height: 38px;
+}
+
+:deep(.el-select .el-input__inner) {
+  height: 38px;
+}
+
+@media (max-width: 1200px) {
+  .camera-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .camera-grid {
+    grid-template-columns: 1fr;
+  }
+  .status-badge {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>
