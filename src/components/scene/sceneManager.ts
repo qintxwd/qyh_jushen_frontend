@@ -279,6 +279,9 @@ class SceneManager {
   // 切换网格显示
   toggleGrid() {
     this.showGrid = !this.showGrid
+    if (!this.gridHelper && this.scene) {
+      this.addGrid()
+    }
     if (this.gridHelper) {
       this.gridHelper.visible = this.showGrid
     }
@@ -383,6 +386,28 @@ class SceneManager {
     this.camera.up.set(0, 0, 1)
     this.camera.position.set(1.5, -1.5, 1.2)
     this.controls.target.set(0, 0, 0)
+    this.controls.update()
+  }
+
+  setTopView() {
+    if (!this.camera || !this.controls) return
+    const target = this.controls.target.clone()
+    const distance = Math.max(this.camera.position.distanceTo(target), 2)
+    // 顶视图：从 +Z 方向俯视
+    this.camera.up.set(0, 1, 0)
+    this.camera.position.set(target.x, target.y, target.z + distance)
+    this.controls.target.copy(target)
+    this.controls.update()
+  }
+
+  setFrontView() {
+    if (!this.camera || !this.controls) return
+    const target = this.controls.target.clone()
+    const distance = Math.max(this.camera.position.distanceTo(target), 2)
+    // 前视图：沿 +X 方向观察，稍微抬高
+    this.camera.up.set(0, 0, 1)
+    this.camera.position.set(target.x + distance, target.y, target.z + distance * 0.25)
+    this.controls.target.copy(target)
     this.controls.update()
   }
   

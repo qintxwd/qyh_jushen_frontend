@@ -558,9 +558,19 @@ function resetCamera() {
   sceneManager.resetCamera()
 }
 
+function setTopView() {
+  sceneManager.setTopView()
+}
+
+function setFrontView() {
+  sceneManager.setFrontView()
+}
+
 // 暴露方法给父组件
 defineExpose({
   resetCamera,
+  setTopView,
+  setFrontView,
   reloadMap,
   get leftJoints() { return sceneManager.leftJoints },
   get rightJoints() { return sceneManager.rightJoints },
