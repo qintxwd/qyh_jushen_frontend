@@ -44,6 +44,7 @@ import axios from 'axios'
 import { chassisApi, type MapData, type MapMeta, type MapEdge, type MapStation } from '@/api/chassis'
 import { eventBus, EVENTS } from '@/utils/eventBus'
 import { getApiBaseUrl } from '@/utils/apiUrl'
+import { normalizeApiResponse } from '@/api/client'
 
 const layoutStore = useLayoutStore()
 
@@ -137,6 +138,10 @@ function startPolling() {
       'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
     }
   })
+  api.interceptors.response.use((response) => ({
+    ...response,
+    data: normalizeApiResponse(response.data)
+  }))
   
   // 关节状态轮询
   const fetchJointStates = async () => {
@@ -189,8 +194,9 @@ function startPolling() {
       const liftResponse = await axios.get(`${getApiBase()}/api/v1/lift/state`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || ''}` }
       })
-      if (liftResponse.data?.current_position !== undefined) {
-        sceneManager.liftHeight = liftResponse.data.current_position
+      const liftData = normalizeApiResponse(liftResponse.data)
+      if (liftData?.current_position !== undefined) {
+        sceneManager.liftHeight = liftData.current_position
         sceneManager.updateArmPosition()
       }
     } catch { /* 忽略 */ }
@@ -222,7 +228,7 @@ function mapToWorld(x_mm: number, y_mm: number): [number, number] {
 async function loadMapData() {
   try {
     const data: MapData = await chassisApi.getMapData()
-    if (!data.success) return
+    if (data?.success === false) return
     
     clearMapObjects()
     

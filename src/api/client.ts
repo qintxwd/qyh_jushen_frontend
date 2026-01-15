@@ -23,6 +23,19 @@ const apiClient = axios.create({
   }
 })
 
+export const normalizeApiResponse = (data: any) => {
+  if (data && typeof data === 'object' && 'success' in data && 'code' in data && 'message' in data) {
+    return {
+      ...(data.data ?? {}),
+      success: data.success,
+      code: data.code,
+      message: data.message,
+      error: data.error
+    }
+  }
+  return data
+}
+
 // 请求拦截器（添加 Token）
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
@@ -35,13 +48,14 @@ apiClient.interceptors.request.use((config) => {
 // 响应拦截器（处理错误和Token刷新）
 apiClient.interceptors.response.use(
   (response) => {
+    const normalized = normalizeApiResponse(response.data)
     // 检查响应中是否包含新的 Token（自动刷新的情况）
-    if (response.data?.access_token) {
-      const newToken = response.data.access_token
+    if (normalized?.access_token) {
+      const newToken = normalized.access_token
       localStorage.setItem('token', newToken)
       console.log('✅ Token 已自动刷新')
     }
-    return response.data
+    return normalized
   },
   (error) => {
     if (error.response?.status === 401) {

@@ -308,6 +308,7 @@ import SvgIcon from '@/components/SvgIcon.vue'
 import { getApiV1BaseUrl } from '@/utils/apiUrl'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { chassisApi } from '@/api/chassis'
+import { normalizeApiResponse } from '@/api/client'
 
 // API 配置 - 动态获取，支持远程访问
 const getApiBase = () => getApiV1BaseUrl()
@@ -460,12 +461,12 @@ async function fetchLiftStatus() {
       },
       timeout: 2000
     })
-    
-    if (response.data) {
+    const data = normalizeApiResponse(response.data)
+    if (data) {
       layoutStore.updateLiftStatus({
-        connected: response.data.connected ?? false,
-        enabled: response.data.enabled ?? false,
-        alarm: response.data.alarm ?? false
+        connected: data.connected ?? false,
+        enabled: data.enabled ?? false,
+        alarm: data.alarm ?? false
       })
     }
   } catch (error) {
@@ -486,14 +487,14 @@ async function fetchArmStatus() {
       },
       timeout: 2000
     })
-    
-    if (response.data) {
+    const data = normalizeApiResponse(response.data)
+    if (data) {
       layoutStore.updateArmStatus({
-        connected: response.data.connected ?? false,
-        powered: response.data.powered_on ?? false,  // 修复：使用 powered_on
-        enabled: response.data.enabled ?? false,
-        servoMode: response.data.servo_mode_enabled ?? false,  // 修复：使用 servo_mode_enabled
-        error: response.data.in_error ?? false,  // 修复：使用 in_error
+        connected: data.connected ?? false,
+        powered: data.powered_on ?? false,  // 修复：使用 powered_on
+        enabled: data.enabled ?? false,
+        servoMode: data.servo_mode_enabled ?? false,  // 修复：使用 servo_mode_enabled
+        error: data.in_error ?? false,  // 修复：使用 in_error
         errorCode: 0  // 后端没有error_code字段，暂时设为0
       })
     }
@@ -511,9 +512,9 @@ async function fetchCameraStatus() {
       },
       timeout: 2000
     })
-    
-    if (response.data?.cameras) {
-      const cameras = response.data.cameras
+    const data = normalizeApiResponse(response.data)
+    if (data?.cameras) {
+      const cameras = data.cameras
       layoutStore.updateCameraStatus('head', { 
         connected: cameras.head?.available ?? false,
         streaming: cameras.head?.available ?? false
@@ -541,17 +542,17 @@ async function fetchGripperStatus() {
       },
       timeout: 2000
     })
-    
-    if (response.data) {
+    const data = normalizeApiResponse(response.data)
+    if (data) {
       layoutStore.updateGripperStatus('left', {
-        communication_ok: response.data.left?.communication_ok ?? false,
-        is_activated: response.data.left?.is_activated ?? false,
-        fault_code: response.data.left?.fault_code ?? 0
+        communication_ok: data.left?.communication_ok ?? false,
+        is_activated: data.left?.is_activated ?? false,
+        fault_code: data.left?.fault_code ?? 0
       })
       layoutStore.updateGripperStatus('right', {
-        communication_ok: response.data.right?.communication_ok ?? false,
-        is_activated: response.data.right?.is_activated ?? false,
-        fault_code: response.data.right?.fault_code ?? 0
+        communication_ok: data.right?.communication_ok ?? false,
+        is_activated: data.right?.is_activated ?? false,
+        fault_code: data.right?.fault_code ?? 0
       })
     }
   } catch {
@@ -568,12 +569,12 @@ async function fetchHeadStatus() {
       },
       timeout: 2000
     })
-    
-    if (response.data) {
+    const data = normalizeApiResponse(response.data)
+    if (data) {
       layoutStore.updateHeadStatus({
-        connected: response.data.connected ?? false,
-        enabled: response.data.enabled ?? false,
-        error: response.data.error ?? false
+        connected: data.connected ?? false,
+        enabled: data.enabled ?? false,
+        error: data.error ?? false
       })
     }
   } catch {
@@ -612,12 +613,12 @@ async function fetchWaistStatus() {
       },
       timeout: 2000
     })
-    
-    if (response.data) {
+    const data = normalizeApiResponse(response.data)
+    if (data) {
       layoutStore.updateWaistStatus({
-        connected: response.data.connected ?? false,
-        enabled: response.data.enabled ?? false,
-        error: response.data.error ?? false
+        connected: data.connected ?? false,
+        enabled: data.enabled ?? false,
+        error: data.error ?? false
       })
     }
   } catch {
@@ -634,13 +635,13 @@ async function fetchVRStatus() {
       },
       timeout: 2000
     })
-    
-    if (response.data) {
+    const data = normalizeApiResponse(response.data)
+    if (data) {
       layoutStore.updateVRStatus({
-        connected: response.data.connected ?? false,
-        headsetActive: response.data.left_hand_active || response.data.right_hand_active,
-        leftController: response.data.left_hand_active ?? false,
-        rightController: response.data.right_hand_active ?? false
+        connected: data.connected ?? false,
+        headsetActive: data.left_hand_active || data.right_hand_active,
+        leftController: data.left_hand_active ?? false,
+        rightController: data.right_hand_active ?? false
       })
     }
   } catch {
@@ -658,11 +659,11 @@ async function fetchShutdownStatus() {
       },
       timeout: 2000
     })
-    
-    if (response.data) {
-      const shutdownInProgress = response.data.shutdown_in_progress ?? false
+    const data = normalizeApiResponse(response.data)
+    if (data) {
+      const shutdownInProgress = data.shutdown_in_progress ?? false
       // 检测新的关机请求（硬件按钮触发 trigger_source=1）
-      if (shutdownInProgress && !lastShutdownInProgress && response.data.trigger_source === 1) {
+      if (shutdownInProgress && !lastShutdownInProgress && data.trigger_source === 1) {
         console.warn('⚠️ 检测到硬件关机按钮触发!')
         window.dispatchEvent(new CustomEvent('hardware-shutdown-requested'))
       }

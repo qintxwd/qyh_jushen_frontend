@@ -193,6 +193,7 @@ import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
+import { normalizeApiResponse } from '@/api/client'
 
 interface GripperState {
   is_activated: boolean
@@ -270,9 +271,10 @@ function getAuthHeaders() {
 async function fetchGripperState() {
   try {
     const response = await axios.get('/api/v1/gripper/state', getAuthHeaders())
-    if (response.data) {
-      Object.assign(leftState, response.data.left)
-      Object.assign(rightState, response.data.right)
+    const data = normalizeApiResponse(response.data)
+    if (data) {
+      Object.assign(leftState, data.left)
+      Object.assign(rightState, data.right)
     }
   } catch (error) {
     // 静默失败，避免刷屏
@@ -286,12 +288,13 @@ async function activateGripper() {
     const response = await axios.post('/api/v1/gripper/activate', {
       side: selectedGripper.value
     }, getAuthHeaders())
-    
-    if (response.data.success) {
-      ElMessage.success(response.data.message)
+
+    const data = normalizeApiResponse(response.data)
+    if (data.success) {
+      ElMessage.success(data.message)
       await fetchGripperState()
     } else {
-      ElMessage.error(response.data.message)
+      ElMessage.error(data.message)
     }
   } catch (error: any) {
     ElMessage.error(error.response?.data?.detail || '激活失败')
@@ -309,8 +312,9 @@ async function quickAction(action: string) {
       {},
       getAuthHeaders()
     )
-    
-    if (response.data.success) {
+
+    const data = normalizeApiResponse(response.data)
+    if (data.success) {
       const actionNames: Record<string, string> = {
         'open': '全开',
         'close': '全闭',
@@ -319,7 +323,7 @@ async function quickAction(action: string) {
       }
       ElMessage.success(`${selectedGripper.value === 'left' ? '左' : '右'}夹爪${actionNames[action]}完成`)
     } else {
-      ElMessage.error(response.data.message)
+      ElMessage.error(data.message)
     }
   } catch (error: any) {
     ElMessage.error(error.response?.data?.detail || '操作失败')
@@ -338,11 +342,12 @@ async function executeMove() {
       speed: speed.value,
       force: force.value
     }, getAuthHeaders())
-    
-    if (response.data.success) {
+
+    const data = normalizeApiResponse(response.data)
+    if (data.success) {
       ElMessage.success('夹爪移动命令已发送')
     } else {
-      ElMessage.error(response.data.message)
+      ElMessage.error(data.message)
     }
   } catch (error: any) {
     ElMessage.error(error.response?.data?.detail || '移动失败')

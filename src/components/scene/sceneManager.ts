@@ -9,6 +9,7 @@ import URDFLoader from 'urdf-loader'
 import type { URDFRobot } from 'urdf-loader'
 import axios from 'axios'
 import { getApiBaseUrl } from '@/utils/apiUrl'
+import { normalizeApiResponse } from '@/api/client'
 
 // API 配置 - 动态获取，支持远程访问
 const getApiBase = () => getApiBaseUrl()
@@ -156,6 +157,10 @@ class SceneManager {
           'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
         }
       })
+      api.interceptors.response.use((response) => ({
+        ...response,
+        data: normalizeApiResponse(response.data)
+      }))
       
       const response = await api.get('/urdf')
       const { urdf, source } = response.data

@@ -41,6 +41,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 import { getApiBaseUrl } from '@/utils/apiUrl'
+import { normalizeApiResponse } from '@/api/client'
 
 // API 配置 - 动态获取，支持远程访问
 const getRobotModelApi = () => `${getApiBaseUrl()}/api/v1/robot-model`
@@ -51,6 +52,10 @@ const api = axios.create({
     'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
   }
 })
+api.interceptors.response.use((response) => ({
+  ...response,
+  data: normalizeApiResponse(response.data)
+}))
 
 const isCollapsed = ref(false)
 const connected = ref(false)

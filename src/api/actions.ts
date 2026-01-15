@@ -8,9 +8,11 @@
  * 目录结构：model_actions/{robot_name}/{version}/{action_id}/
  */
 import axios from 'axios'
+import { normalizeApiResponse } from './client'
+import { getApiV1BaseUrl } from '@/utils/apiUrl'
 
 const api = axios.create({
-  baseURL: '/api/v1/actions',
+  baseURL: `${getApiV1BaseUrl()}/actions`,
 })
 
 // 添加认证头
@@ -20,6 +22,11 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
+})
+
+// 响应拦截器（统一响应格式扁平化）
+api.interceptors.response.use((response) => {
+  return { ...response, data: normalizeApiResponse(response.data) }
 })
 
 // 动作状态类型

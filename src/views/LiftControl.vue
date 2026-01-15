@@ -274,6 +274,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
+import { normalizeApiResponse } from '@/api/client'
 import { getApiV1BaseUrl } from '@/utils/apiUrl'
 
 const router = useRouter()
@@ -335,7 +336,7 @@ const sendCommand = async (command: number, value: number = 0, hold: boolean = f
         }
       }
     )
-    return response.data
+    return normalizeApiResponse(response.data)
   } catch (error: any) {
     console.error('Lift control error:', error)
     throw error
@@ -445,14 +446,15 @@ const fetchState = async () => {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     })
-    
-    if (response.data) {
-      state.connected = response.data.connected ?? false
-      state.enabled = response.data.enabled ?? false
-      state.currentPosition = response.data.current_position ?? 0
-      state.currentSpeed = response.data.current_speed ?? 20
-      state.positionReached = response.data.position_reached ?? true
-      state.alarm = response.data.alarm ?? false
+
+    const data = normalizeApiResponse(response.data)
+    if (data) {
+      state.connected = data.connected ?? false
+      state.enabled = data.enabled ?? false
+      state.currentPosition = data.current_position ?? 0
+      state.currentSpeed = data.current_speed ?? 20
+      state.positionReached = data.position_reached ?? true
+      state.alarm = data.alarm ?? false
     }
   } catch (error) {
     console.error('获取状态失败:', error)

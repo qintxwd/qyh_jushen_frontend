@@ -225,6 +225,7 @@ import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
+import { normalizeApiResponse } from '@/api/client'
 import { getApiV1BaseUrl } from '@/utils/apiUrl'
 
 // API 基础 URL - 动态获取
@@ -299,7 +300,7 @@ async function sendControl(pan: number | null, tilt: number | null, speed: numbe
       }
     }
   )
-  return response.data
+  return normalizeApiResponse(response.data)
 }
 
 // 执行移动
@@ -332,12 +333,13 @@ async function resetHead() {
         }
       }
     )
-    if (response.data.success) {
+    const data = normalizeApiResponse(response.data)
+    if (data.success) {
       targetPan.value = 0
       targetTilt.value = 0
       ElMessage.success('头部已回正')
     } else {
-      ElMessage.error(response.data.message)
+      ElMessage.error(data.message)
     }
   } catch (error: any) {
     ElMessage.error('回正失败: ' + (error.response?.data?.detail || error.message))
@@ -362,13 +364,13 @@ async function fetchState() {
       },
       timeout: 2000
     })
-    
-    if (response.data) {
-      state.connected = response.data.connected ?? false
-      state.panPosition = response.data.pan_position ?? 500
-      state.tiltPosition = response.data.tilt_position ?? 500
-      state.panNormalized = response.data.pan_normalized ?? 0
-      state.tiltNormalized = response.data.tilt_normalized ?? 0
+    const data = normalizeApiResponse(response.data)
+    if (data) {
+      state.connected = data.connected ?? false
+      state.panPosition = data.pan_position ?? 500
+      state.tiltPosition = data.tilt_position ?? 500
+      state.panNormalized = data.pan_normalized ?? 0
+      state.tiltNormalized = data.tilt_normalized ?? 0
       
       // 首次加载时，将滑块初始化为当前位置
       if (!initialized.value) {
@@ -424,7 +426,8 @@ const fetchHeadPoints = async () => {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     })
-    headPoints.value = response.data.points || response.data || []
+    const data = normalizeApiResponse(response.data)
+    headPoints.value = data?.points || data || []
   } catch (error) {
     console.error('获取头部点位列表失败:', error)
     // 不弹出错误提示，只在控制台记录

@@ -30,21 +30,21 @@ interface HeartbeatResponse {
 }
 
 export const login = (data: LoginRequest): Promise<LoginResponse> => {
-  return apiClient.post('/api/auth/login', data)
+  return apiClient.post('/api/v1/auth/login', data)
 }
 
 export const logout = (): Promise<void> => {
-  return apiClient.post('/api/auth/logout')
+  return apiClient.post('/api/v1/auth/logout')
 }
 
 export const getCurrentUser = (): Promise<any> => {
-  return apiClient.get('/api/auth/me')
+  return apiClient.get('/api/v1/auth/me')
 }
 
 export const heartbeat = (): Promise<HeartbeatResponse> => {
-  return apiClient.post('/api/auth/heartbeat')
+  return apiClient.post('/api/v1/auth/heartbeat')
 }
 
 export const refreshToken = (): Promise<any> => {
-  return apiClient.post('/api/auth/refresh')
+  return apiClient.post('/api/v1/auth/refresh')
 }

@@ -94,6 +94,7 @@ import type { URDFRobot } from 'urdf-loader'
 import axios from 'axios'
 import { chassisApi, type MapData, type MapMeta, type MapEdge, type MapStation } from '@/api/chassis'
 import { eventBus, EVENTS } from '@/utils/eventBus'
+import { normalizeApiResponse } from '@/api/client'
 
 interface Props {
   apiBaseUrl?: string
@@ -121,6 +122,10 @@ const api = axios.create({
     'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
   }
 })
+api.interceptors.response.use((response) => ({
+  ...response,
+  data: normalizeApiResponse(response.data)
+}))
 // Refs
 const containerRef = ref<HTMLElement>()
 const canvasRef = ref<HTMLElement>()

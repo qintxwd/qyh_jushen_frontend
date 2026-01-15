@@ -413,6 +413,7 @@ const commands = reactive({
 })
 
 import { getApiV1BaseUrl } from '@/utils/apiUrl'
+import { normalizeApiResponse } from '@/api/client'
 // API 基础 URL - 动态获取
 const getApiBase = () => getApiV1BaseUrl()
 
@@ -426,12 +427,13 @@ const toggleGUI = async (guiType: string) => {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     })
-    
-    if (response.data.success) {
+
+    const data = normalizeApiResponse(response.data)
+    if (data.success) {
       guiStatus[guiType] = action === 'start' ? 'running' : 'stopped'
-      ElMessage.success(response.data.message || `${guiType} GUI ${action === 'start' ? '启动' : '停止'}成功`)
+      ElMessage.success(data.message || `${guiType} GUI ${action === 'start' ? '启动' : '停止'}成功`)
     } else {
-      ElMessage.error(response.data.message || '操作失败')
+      ElMessage.error(data.message || '操作失败')
     }
   } catch (error) {
     console.error(`Toggle ${guiType} GUI error:`, error)
@@ -484,11 +486,12 @@ const sendQuickCommand = async (command: string) => {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     })
-    
-    if (response.data.success) {
-      ElMessage.success(response.data.message || '命令执行成功')
+
+    const data = normalizeApiResponse(response.data)
+    if (data.success) {
+      ElMessage.success(data.message || '命令执行成功')
     } else {
-      ElMessage.error(response.data.message || '命令执行失败')
+      ElMessage.error(data.message || '命令执行失败')
     }
   } catch (error) {
     console.error(`Quick command ${command} error:`, error)
@@ -520,9 +523,10 @@ const fetchGUIStatus = async () => {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
     })
-    
-    if (response.data) {
-      Object.assign(guiStatus, response.data)
+
+    const data = normalizeApiResponse(response.data)
+    if (data) {
+      Object.assign(guiStatus, data)
     }
   } catch (error) {
     console.error('获取 GUI 状态失败:', error)

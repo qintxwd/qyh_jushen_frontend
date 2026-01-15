@@ -654,6 +654,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
 import { getApiBaseUrl } from '@/utils/apiUrl'
+import { normalizeApiResponse } from '@/api/client'
 
 // 获取 API 基础 URL - 动态获取，支持远程访问
 const api = axios.create({ 
@@ -662,6 +663,10 @@ const api = axios.create({
     'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
   }
 })
+api.interceptors.response.use((response) => ({
+  ...response,
+  data: normalizeApiResponse(response.data)
+}))
 
 // 机械臂状态
 const armState = reactive({
