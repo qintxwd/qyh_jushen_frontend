@@ -159,8 +159,17 @@ function applyDarkMode() {
   }
 }
 
+function persistSettings() {
+  localStorage.setItem('app_settings', JSON.stringify(settings))
+}
+
 watch(() => settings.darkMode, () => {
   applyDarkMode()
+  persistSettings()
+})
+
+watch(() => settings.antiAlias, () => {
+  persistSettings()
 })
 
 onMounted(() => {
@@ -191,13 +200,15 @@ const roleTagType = computed(() => {
 })
 
 function saveSettings() {
-  localStorage.setItem('app_settings', JSON.stringify(settings))
+  persistSettings()
   ElMessage.success('设置已保存')
 }
 
 function resetSettings() {
   settings.darkMode = true
   settings.antiAlias = true
+  applyDarkMode()
+  persistSettings()
   ElMessage.info('已重置为默认设置')
 }
 
@@ -239,10 +250,13 @@ async function handleShutdown() {
 
 <style scoped>
 .settings-panel {
-  padding: var(--spacing-lg);
+  padding: clamp(12px, 2.2vw, 24px);
   height: 100%;
   overflow-y: auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
 }
 
 /* 关机遮罩样式 */
@@ -330,7 +344,7 @@ async function handleShutdown() {
 }
 
 .panel-section {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 0;
 }
 
 .section-title {
@@ -346,7 +360,7 @@ async function handleShutdown() {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  padding: var(--spacing-lg);
+  padding: clamp(12px, 2vw, 20px);
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(148, 163, 184, 0.2);
@@ -376,7 +390,7 @@ async function handleShutdown() {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
-  padding: var(--spacing-lg);
+  padding: clamp(12px, 2vw, 20px);
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(148, 163, 184, 0.2);
@@ -387,7 +401,7 @@ async function handleShutdown() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-sm) 0;
+  padding: clamp(8px, 1.2vw, 12px) 0;
   font-size: 13px;
   color: var(--color-text-primary);
   transition: all 0.2s ease;
@@ -398,13 +412,15 @@ async function handleShutdown() {
 }
 
 .action-buttons {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--spacing-sm);
 }
 
 .action-buttons .el-button {
   width: 100%;
+  height: 44px;
+  font-size: 14px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -419,11 +435,40 @@ async function handleShutdown() {
 
 .about-info {
   text-align: center;
-  padding: var(--spacing-lg);
+  padding: clamp(12px, 2vw, 20px);
   background: rgba(30, 41, 59, 0.4);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: var(--radius-lg);
+}
+
+@media (max-width: 1200px) {
+  .settings-panel {
+    gap: var(--spacing-md);
+  }
+
+  .section-title {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .settings-panel {
+    padding: 12px;
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons .el-button {
+    height: 48px;
+    font-size: 15px;
+  }
+
+  .user-name {
+    font-size: 15px;
+  }
 }
 
 .about-info p {

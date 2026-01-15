@@ -63,6 +63,36 @@
   --spacing-xl: 32px;
 }
 
+/* Light Mode Overrides */
+html.light {
+  --color-bg-primary: #F8FAFC;
+  --color-bg-secondary: #EEF2F7;
+  --color-bg-tertiary: #E2E8F0;
+
+  --color-surface: rgba(255, 255, 255, 0.8);
+  --color-surface-hover: rgba(255, 255, 255, 0.95);
+
+  --color-primary: #F59E0B;
+  --color-primary-light: #FBBF24;
+  --color-primary-dark: #D97706;
+
+  --color-accent: #7C3AED;
+  --color-accent-light: #A78BFA;
+
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #3B82F6;
+
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #334155;
+  --color-text-muted: #64748B;
+  --color-text-disabled: #94A3B8;
+
+  --color-border: rgba(15, 23, 42, 0.12);
+  --color-border-hover: rgba(245, 158, 11, 0.35);
+}
+
 /* Global Styles */
 body {
   font-family: var(--font-body);
@@ -70,6 +100,11 @@ body {
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html.light body {
+  background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+  color: var(--color-text-primary);
 }
 
 h1, h2, h3, h4, h5, h6 {

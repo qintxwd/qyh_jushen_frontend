@@ -238,12 +238,18 @@ export const useLayoutStore = defineStore('layout', () => {
     system_status_text: string   // 系统状态文本（如"待机"、"运行"等）
     emergency: boolean           // 急停状态
     error: boolean
+    batteryPercentage: number
+    batteryVoltage: number
+    isCharging: boolean
   }>({
     connected: false,
     system_status: 0,
     system_status_text: '未知',
     emergency: false,
-    error: false
+    error: false,
+    batteryPercentage: 0,
+    batteryVoltage: 0,
+    isCharging: false
   })
 
   // VR 状态
@@ -379,6 +385,20 @@ export const useLayoutStore = defineStore('layout', () => {
       return { text: chassisStatus.value.system_status_text, type: 'warning' as const } // 障碍
     }
     return { text: chassisStatus.value.system_status_text || '未知', type: 'info' as const }
+  })
+
+  const chassisBatteryInfo = computed(() => {
+    const percentage = Math.max(0, Math.min(100, chassisStatus.value.batteryPercentage || 0))
+    let level: 'low' | 'medium' | 'high' = 'high'
+    if (percentage < 20) level = 'low'
+    else if (percentage < 50) level = 'medium'
+
+    return {
+      percentage,
+      voltage: chassisStatus.value.batteryVoltage || 0,
+      charging: chassisStatus.value.isCharging,
+      level
+    }
   })
 
   // VR 状态信息
@@ -750,6 +770,7 @@ export const useLayoutStore = defineStore('layout', () => {
     headStatusInfo,
     liftStatusInfo,
     chassisStatusInfo,
+    chassisBatteryInfo,
     vrStatusInfo,
     waistStatusInfo,
     

@@ -3,7 +3,6 @@
     <!-- 工具栏 -->
     <TaskToolbar 
       @open-task-list="showTaskListDialog = true" 
-      @open-template-dialog="showTemplateDialog = true"
     />
     
     <!-- 主体区域 -->
@@ -114,8 +113,6 @@
       </template>
     </el-dialog>
     
-    <!-- 模板选择对话框 -->
-    <TemplateDialog v-model:visible="showTemplateDialog" />
   </div>
 </template>
 
@@ -129,8 +126,7 @@ import {
   TaskEditorCanvas, 
   TaskToolbar, 
   NodePalette, 
-  PropertyPanel,
-  TemplateDialog
+  PropertyPanel
 } from '@/components/task-editor'
 import { 
   listTasks, 
@@ -155,7 +151,6 @@ const selectedNodeDefinition = computed(() => taskStore.selectedNodeDefinition)
 
 // 任务列表
 const showTaskListDialog = ref(false)
-const showTemplateDialog = ref(false)
 const taskList = ref<TaskDefinition[]>([])
 const selectedTaskId = ref<string | undefined>(undefined)
 

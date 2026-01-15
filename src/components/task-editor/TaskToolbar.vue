@@ -7,10 +7,6 @@
           <SvgIcon name="plus" :size="16" />
           新建
         </el-button>
-        <el-button size="small" @click="onOpenTemplate">
-          <SvgIcon name="files" :size="16" />
-          模板
-        </el-button>
         <el-button size="small" @click="onOpen">
           <SvgIcon name="folderopened" :size="16" />
           打开
@@ -179,7 +175,6 @@ import { executeTaskTree, pauseTask, resumeTask, cancelTask, createTask, updateT
 
 const emit = defineEmits<{
   (e: 'open-task-list'): void
-  (e: 'open-template-dialog'): void
 }>()
 
 const taskStore = useTaskEditorStore()
@@ -238,10 +233,6 @@ async function onNew() {
 
 function onOpen() {
   emit('open-task-list')
-}
-
-function onOpenTemplate() {
-  emit('open-template-dialog')
 }
 
 async function onSave() {

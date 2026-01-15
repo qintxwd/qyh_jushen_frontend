@@ -77,7 +77,7 @@ export interface NodeParamDef {
   required?: boolean
   default?: any
   options?: { label: string; value: any }[]
-  presetType?: 'location' | 'arm_pose' | 'head_point' | 'lift_point' | 'waist_point' | 'gripper_position' | 'task_template' | 'saved_task'
+  presetType?: 'location' | 'arm_pose' | 'head_point' | 'lift_point' | 'waist_point' | 'gripper_position' | 'saved_task'
   min?: number
   max?: number
   step?: number
@@ -546,169 +546,9 @@ export async function getTaskStatus(taskId: string): Promise<TaskExecutionState>
 
 /** 获取预设列表 */
 export async function listPresets(
-  presetType: 'location' | 'arm_pose' | 'head_position' | 'lift_height' | 'gripper_position' | 'task_template'
+  presetType: 'location' | 'arm_pose' | 'head_position' | 'lift_height' | 'gripper_position'
 ): Promise<{ items: any[] }> {
   return apiClient.get(`/api/v1/presets/${presetType}`)
-}
-
-// ==================== 任务模板 ====================
-
-export interface TaskTemplate {
-  id: string
-  name: string
-  description: string
-  category: string
-  icon: string
-  task: TaskDefinition
-}
-
-/** 内置任务模板 */
-export const TASK_TEMPLATES: TaskTemplate[] = [
-  {
-    id: 'pick_and_place',
-    name: '抓取放置',
-    description: '抓取物体并放置到指定位置',
-    category: '常用',
-    icon: 'Goods',
-    task: {
-      name: '抓取放置任务',
-      description: '抓取物体并放置到指定位置',
-      root: {
-        id: 'root',
-        type: 'Sequence',
-        params: {},
-        children: [
-          { id: 'n1', type: 'ArmMoveJ', params: { side: 'left', velocity: 0.5 } },
-          { id: 'n2', type: 'GripperControl', params: { side: 'left', action: 'open' } },
-          { id: 'n3', type: 'ArmMoveL', params: { side: 'left', z: -0.1, velocity: 50 } },
-          { id: 'n4', type: 'GripperControl', params: { side: 'left', action: 'close' } },
-          { id: 'n5', type: 'ArmMoveL', params: { side: 'left', z: 0.1, velocity: 50 } },
-          { id: 'n6', type: 'ArmMoveJ', params: { side: 'left', velocity: 0.5 } },
-          { id: 'n7', type: 'GripperControl', params: { side: 'left', action: 'open' } }
-        ]
-      }
-    }
-  },
-  {
-    id: 'scan_and_look',
-    name: '环顾扫描',
-    description: '头部执行扫描动作，观察周围环境',
-    category: '常用',
-    icon: 'View',
-    task: {
-      name: '环顾扫描任务',
-      description: '头部执行扫描动作',
-      root: {
-        id: 'root',
-        type: 'Sequence',
-        params: {},
-        children: [
-          { id: 'n1', type: 'HeadLookAt', params: { pitch: 0, yaw: 0 } },
-          { id: 'n2', type: 'HeadScan', params: { pattern: 'left_right', speed: 0.3, repeat: 2 } },
-          { id: 'n3', type: 'HeadLookAt', params: { pitch: 0, yaw: 0 } }
-        ]
-      }
-    }
-  },
-  {
-    id: 'navigate_and_lift',
-    name: '导航与升降',
-    description: '导航到目标点并调整升降高度',
-    category: '常用',
-    icon: 'Position',
-    task: {
-      name: '导航升降任务',
-      description: '导航到目标点并调整升降高度',
-      root: {
-        id: 'root',
-        type: 'Sequence',
-        params: {},
-        children: [
-          { id: 'n1', type: 'LiftMoveTo', params: { height: 100 } },
-          { id: 'n2', type: 'BaseMoveTo', params: { timeout: 60 } },
-          { id: 'n3', type: 'LiftMoveTo', params: { height: 300 } }
-        ]
-      }
-    }
-  },
-  {
-    id: 'dual_arm_grasp',
-    name: '双臂协同抓取',
-    description: '双臂同时动作抓取大型物体',
-    category: '高级',
-    icon: 'Connection',
-    task: {
-      name: '双臂协同抓取',
-      description: '双臂同时动作抓取大型物体',
-      root: {
-        id: 'root',
-        type: 'Sequence',
-        params: {},
-        children: [
-          {
-            id: 'n1',
-            type: 'Parallel',
-            params: {},
-            children: [
-              { id: 'n1_1', type: 'ArmMoveJ', params: { side: 'left', velocity: 0.5 } },
-              { id: 'n1_2', type: 'ArmMoveJ', params: { side: 'right', velocity: 0.5 } }
-            ]
-          },
-          {
-            id: 'n2',
-            type: 'Parallel',
-            params: {},
-            children: [
-              { id: 'n2_1', type: 'GripperControl', params: { side: 'left', action: 'close' } },
-              { id: 'n2_2', type: 'GripperControl', params: { side: 'right', action: 'close' } }
-            ]
-          },
-          {
-            id: 'n3',
-            type: 'Parallel',
-            params: {},
-            children: [
-              { id: 'n3_1', type: 'ArmMoveL', params: { side: 'left', z: 0.1, velocity: 30 } },
-              { id: 'n3_2', type: 'ArmMoveL', params: { side: 'right', z: 0.1, velocity: 30 } }
-            ]
-          }
-        ]
-      }
-    }
-  },
-  {
-    id: 'home_position',
-    name: '回归初始位',
-    description: '所有部件回到初始位置',
-    category: '安全',
-    icon: 'HomeFilled',
-    task: {
-      name: '回归初始位',
-      description: '所有部件回到初始位置',
-      root: {
-        id: 'root',
-        type: 'Parallel',
-        params: {},
-        children: [
-          { id: 'n1', type: 'ArmMoveJ', params: { side: 'both', velocity: 0.3 } },
-          { id: 'n2', type: 'GripperControl', params: { side: 'left', action: 'open' } },
-          { id: 'n3', type: 'GripperControl', params: { side: 'right', action: 'open' } },
-          { id: 'n4', type: 'HeadLookAt', params: { pan: 0, tilt: 0 } },
-          { id: 'n5', type: 'LiftMoveTo', params: { height: 0 } }
-        ]
-      }
-    }
-  }
-]
-
-/** 获取模板列表 */
-export function getTaskTemplates(): TaskTemplate[] {
-  return TASK_TEMPLATES
-}
-
-/** 获取模板 */
-export function getTaskTemplate(templateId: string): TaskTemplate | undefined {
-  return TASK_TEMPLATES.find(t => t.id === templateId)
 }
 
 // ==================== 头部点位 API ====================

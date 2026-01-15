@@ -32,25 +32,6 @@
       </div>
       
       <div class="title-right">
-        <div class="status-indicators">
-          <el-tooltip content="ROS2 连接状态" placement="bottom">
-            <span class="status-dot" :class="{ active: layoutStore.connectionStatus.ros }">
-              <SvgIcon name="connection" :size="18" />
-            </span>
-          </el-tooltip>
-          <el-tooltip :content="'双臂: ' + layoutStore.armStatusInfo.text" placement="bottom">
-            <span class="status-dot" :class="{ 
-              active: layoutStore.armStatus.connected && layoutStore.armStatus.enabled,
-              warning: layoutStore.armStatus.connected && !layoutStore.armStatus.enabled,
-              error: layoutStore.armStatus.error
-            }">
-              <SvgIcon name="cpu" :size="18" />
-            </span>
-          </el-tooltip>
-        </div>
-        
-        <el-divider direction="vertical" />
-        
         <div class="user-section">
           <el-dropdown trigger="click">
             <span class="user-info">
@@ -286,11 +267,22 @@
           <span class="status-value">{{ layoutStore.vrStatusInfo.text }}</span>
         </span>
         
-        <!-- 右侧时间 -->
+        <!-- 右侧电量与充电状态 -->
         <span class="status-spacer"></span>
-        <span class="status-item status-time">
-          <SvgIcon name="clock" :size="16" />
-          {{ currentTime }}
+        <span class="status-item battery-status" :class="'battery-' + layoutStore.chassisBatteryInfo.level">
+          <div class="battery-pill">
+            <span class="battery-icon">
+              <SvgIcon name="lightning" :size="14" v-if="layoutStore.chassisBatteryInfo.charging" />
+              <SvgIcon name="odometer" :size="14" v-else />
+            </span>
+            <span class="battery-text">
+              {{ layoutStore.chassisBatteryInfo.percentage }}%
+            </span>
+            <span class="battery-voltage" v-if="layoutStore.chassisBatteryInfo.voltage">
+              {{ layoutStore.chassisBatteryInfo.voltage.toFixed(1) }}V
+            </span>
+          </div>
+          <span class="battery-badge" v-if="layoutStore.chassisBatteryInfo.charging">充电中</span>
         </span>
       </div>
     </footer>
@@ -328,9 +320,6 @@ const activeTabInSingleMode = computed(() =>
   layoutStore.leftActiveTabId || layoutStore.rightActiveTabId
 )
 
-// 当前时间
-const currentTime = ref('')
-let timeInterval: number | null = null
 
 // 拖拽状态
 let isResizing = false
@@ -442,15 +431,6 @@ function stopResize() {
   document.body.style.userSelect = ''
 }
 
-// 更新时间
-function updateTime() {
-  const now = new Date()
-  currentTime.value = now.toLocaleTimeString('zh-CN', { 
-    hour: '2-digit', 
-    minute: '2-digit', 
-    second: '2-digit' 
-  })
-}
 
 // 获取升降电机状态
 async function fetchLiftStatus() {
@@ -591,7 +571,10 @@ async function fetchChassisStatus() {
       system_status: data.system_status || 0,
       system_status_text: data.system_status_text || '未知',
       emergency: data.flags?.is_emergency_stopped || false,
-      error: (data.system_status === 0x03 || data.system_status >= 0x15) || false
+      error: (data.system_status === 0x03 || data.system_status >= 0x15) || false,
+      batteryPercentage: data.battery?.percentage ?? 0,
+      batteryVoltage: data.battery?.voltage ?? 0,
+      isCharging: data.flags?.is_charging ?? false
     })
   } catch (error) {
     layoutStore.updateChassisStatus({ 
@@ -599,7 +582,10 @@ async function fetchChassisStatus() {
       system_status: 0,
       system_status_text: '未知',
       emergency: false,
-      error: false
+      error: false,
+      batteryPercentage: 0,
+      batteryVoltage: 0,
+      isCharging: false
     })
   }
 }
@@ -721,8 +707,6 @@ function handleHardwareShutdown() {
 
 onMounted(() => {
   layoutStore.initLayout()
-  updateTime()
-  timeInterval = setInterval(updateTime, 1000)
   
   // 立即获取所有状态
   fetchAllStatus()
@@ -734,9 +718,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (timeInterval) {
-    clearInterval(timeInterval)
-  }
   if (statusInterval) {
     clearInterval(statusInterval)
   }
@@ -750,8 +731,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #1e1e1e;
-  color: #cccccc;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-secondary);
   overflow: hidden;
 }
 
@@ -762,8 +743,8 @@ onUnmounted(() => {
   justify-content: space-between;
   height: 56px;
   padding: 0 12px;
-  background-color: #323233;
-  border-bottom: 1px solid #3c3c3c;
+  background-color: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
 }
 
@@ -797,7 +778,7 @@ onUnmounted(() => {
   margin: 0;
   font-size: 18px;
   font-weight: 500;
-  color: #e0e0e0;
+  color: var(--color-text-primary);
 }
 
 .title-center {
@@ -806,7 +787,7 @@ onUnmounted(() => {
 }
 
 .layout-toggle {
-  background-color: #252526;
+  background-color: var(--color-bg-tertiary);
   border-radius: 6px;
   padding: 2px;
 }
@@ -817,40 +798,6 @@ onUnmounted(() => {
   gap: 16px;
 }
 
-.status-indicators {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.status-dot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #666;
-  background-color: #3c3c3c;
-  border-radius: 4px;
-  transition: all 0.3s;
-}
-
-.status-dot.active {
-  color: #fff;
-  background-color: #67c23a;
-}
-
-.status-dot.warning {
-  color: #fff;
-  background-color: #e6a23c;
-}
-
-.status-dot.error {
-  color: #fff;
-  background-color: #f56c6c;
-}
 
 .user-section {
   cursor: pointer;
@@ -866,12 +813,12 @@ onUnmounted(() => {
 }
 
 .user-info:hover {
-  background-color: #3c3c3c;
+  background-color: var(--color-surface-hover);
 }
 
 .username {
   font-size: 15px;
-  color: #e0e0e0;
+  color: var(--color-text-primary);
 }
 
 /* 主体区域 */
@@ -885,9 +832,9 @@ onUnmounted(() => {
 .sidebar {
   display: flex;
   flex-direction: column;
-  background: rgba(30, 41, 59, 0.5);
+  background: var(--color-surface);
   backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(248, 250, 252, 0.1);
+  border-right: 1px solid var(--color-border);
   transition: all 0.3s ease;
   flex-shrink: 0;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
@@ -929,20 +876,20 @@ onUnmounted(() => {
   border-radius: 10px;
   transition: all 0.3s ease;
   position: relative;
-  color: #CBD5E1;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .nav-item:hover .nav-item-inner {
-  background: rgba(245, 158, 11, 0.1);
-  color: #F8FAFC;
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--color-text-primary);
   transform: translateX(4px);
 }
 
 .nav-item.active .nav-item-inner {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%);
-  color: #F59E0B;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--color-primary);
+  border: 1px solid rgba(245, 158, 11, 0.35);
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
 }
 
@@ -954,7 +901,7 @@ onUnmounted(() => {
   transform: translateY(-50%);
   width: 3px;
   height: 20px;
-  background-color: #409eff;
+  background-color: var(--color-primary);
   border-radius: 0 2px 2px 0;
 }
 
@@ -1022,7 +969,7 @@ onUnmounted(() => {
 .resize-handle {
   width: 6px;
   cursor: col-resize;
-  background: rgba(30, 41, 59, 0.5);
+  background: var(--color-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1032,19 +979,19 @@ onUnmounted(() => {
 }
 
 .resize-handle:hover {
-  background: rgba(245, 158, 11, 0.2);
+  background: rgba(245, 158, 11, 0.18);
 }
 
 .resize-line {
   width: 2px;
   height: 40px;
-  background: rgba(148, 163, 184, 0.4);
+  background: var(--color-border);
   border-radius: 2px;
   transition: all 0.3s ease;
 }
 
 .resize-handle:hover .resize-line {
-  background: #F59E0B;
+  background: var(--color-primary);
   height: 60px;
   box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
 }
@@ -1055,10 +1002,10 @@ onUnmounted(() => {
   flex-direction: column;
   min-height: 28px;
   padding: 0 12px;
-  background: rgba(15, 23, 42, 0.8);
+  background: var(--color-surface);
   backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(245, 158, 11, 0.2);
-  color: #CBD5E1;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
   font-size: 14px;
   flex-shrink: 0;
   font-family: var(--font-body);
@@ -1081,8 +1028,8 @@ onUnmounted(() => {
   border-radius: 6px;
   white-space: nowrap;
   transition: all 0.3s ease;
-  background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 .status-item .el-icon {
@@ -1098,7 +1045,7 @@ onUnmounted(() => {
 }
 
 .status-divider {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--color-text-muted);
   margin: 0 2px;
 }
 
@@ -1107,8 +1054,74 @@ onUnmounted(() => {
   min-width: 8px;
 }
 
-.status-time {
-  color: rgba(255, 255, 255, 0.9);
+
+.battery-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+}
+
+.battery-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--color-bg-tertiary);
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+}
+
+.battery-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-primary);
+}
+
+.battery-text {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.battery-voltage {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.battery-badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.battery-low .battery-pill {
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.battery-low .battery-text,
+.battery-low .battery-icon {
+  color: #f87171;
+}
+
+.battery-medium .battery-pill {
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+.battery-medium .battery-text,
+.battery-medium .battery-icon {
+  color: #fbbf24;
+}
+
+.battery-high .battery-pill {
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.battery-high .battery-text,
+.battery-high .battery-icon {
+  color: #34d399;
 }
 
 /* 可点击状态项 */
@@ -1190,29 +1203,29 @@ onUnmounted(() => {
 
 /* 覆盖Element Plus在暗色主题下的样式 */
 :deep(.el-divider--vertical) {
-  border-color: #555;
+  border-color: var(--color-border);
 }
 
 :deep(.el-button) {
-  --el-button-bg-color: #3c3c3c;
-  --el-button-border-color: #555;
-  --el-button-text-color: #ccc;
-  --el-button-hover-bg-color: #505050;
-  --el-button-hover-border-color: #666;
-  --el-button-hover-text-color: #fff;
+  --el-button-bg-color: var(--color-bg-tertiary);
+  --el-button-border-color: var(--color-border);
+  --el-button-text-color: var(--color-text-secondary);
+  --el-button-hover-bg-color: var(--color-surface-hover);
+  --el-button-hover-border-color: var(--color-border-hover);
+  --el-button-hover-text-color: var(--color-text-primary);
 }
 
 :deep(.el-dropdown-menu) {
-  background-color: #2d2d2d;
-  border-color: #3c3c3c;
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-border);
 }
 
 :deep(.el-dropdown-menu__item) {
-  color: #ccc;
+  color: var(--color-text-secondary);
 }
 
 :deep(.el-dropdown-menu__item:hover) {
-  background-color: #3c3c3c;
-  color: #fff;
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-primary);
 }
 </style>
