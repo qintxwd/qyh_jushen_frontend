@@ -9,7 +9,7 @@
           </el-icon>
         </div>
         <div class="status-info">
-          <span class="status-label">机械臂状�?/span>
+          <span class="status-label">机械臂状态</span>
           <span class="status-value">{{ statusText }}</span>
         </div>
       </div>
