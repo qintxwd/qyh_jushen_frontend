@@ -1,6 +1,6 @@
 <template>
   <div class="arm-control-panel">
-    <!-- 状态显�?-->
+    <!-- 状态显示-->
     <div class="panel-section">
       <div class="status-card" :class="statusClass">
         <div class="status-indicator">
@@ -60,7 +60,7 @@
           @click="disableArm"
         >
           <SvgIcon name="disable" :size="16" />
-          去使�?
+          去使能
         </el-button>
       </div>
     </div>
@@ -70,7 +70,7 @@
       <h3 class="section-title">伺服模式</h3>
       <div class="servo-status">
         <span class="servo-mode" :class="{ active: isServoRunning }">
-          {{ isServoRunning ? '运行�? : '空闲' }}
+          {{ isServoRunning ? '运行中' : '空闲' }}
         </span>
         <span class="servo-rate" v-if="isServoRunning">
           {{ servoStatus.publish_rate_hz.toFixed(1) }} Hz
@@ -165,14 +165,14 @@
         <el-dropdown trigger="click" @command="handleAddPoint">
           <el-button type="success">
             <SvgIcon name="plus" :size="16" />
-            采集新点�?
+            采集新点位
             <SvgIcon name="arrowdown" :size="16" />
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="both">采集双臂</el-dropdown-item>
-              <el-dropdown-item command="left">仅采集左�?/el-dropdown-item>
-              <el-dropdown-item command="right">仅采集右�?/el-dropdown-item>
+              <el-dropdown-item command="left">仅采集左臂</el-dropdown-item>
+              <el-dropdown-item command="right">仅采集右臂</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -180,11 +180,11 @@
       
       <!-- 更新选中点位 -->
       <div class="update-point-section" v-if="selectedPointId && selectedPointId !== 'zero'">
-        <span class="update-label">更新选中点位为当前位�?</span>
+        <span class="update-label">更新选中点位为当前位置</span>
         <div class="update-buttons">
           <el-button size="small" @click="updatePointJoints('both')">双臂</el-button>
-          <el-button size="small" @click="updatePointJoints('left')">仅左�?/el-button>
-          <el-button size="small" @click="updatePointJoints('right')">仅右�?/el-button>
+          <el-button size="small" @click="updatePointJoints('left')">仅左臂</el-button>
+          <el-button size="small" @click="updatePointJoints('right')">仅右臂</el-button>
         </div>
       </div>
     </div>
@@ -201,18 +201,18 @@
       <!-- 机器人选择和模式选择 -->
       <div class="jog-config">
         <div class="config-row">
-          <span class="config-label">机器�?</span>
+          <span class="config-label">机器人</span>
           <el-radio-group v-model="jogParams.robotId" size="small">
             <el-radio-button :label="0">左臂</el-radio-button>
             <el-radio-button :label="1">右臂</el-radio-button>
           </el-radio-group>
         </div>
         <div class="config-row">
-          <span class="config-label">坐标�?</span>
+          <span class="config-label">坐标系</span>
           <el-radio-group v-model="jogParams.coordType" size="small" disabled>
             <el-radio-button :label="1">关节空间</el-radio-button>
           </el-radio-group>
-          <el-tooltip content="目前只支持关节空间点�? placement="top">
+          <el-tooltip content="目前只支持关节空间点位" placement="top">
             <SvgIcon name="infofilled" :size="14" style="margin-left: 8px; color: #409eff;" />
           </el-tooltip>
         </div>
@@ -225,7 +225,7 @@
         </div>
       </div>
       
-      <!-- 速度和步距设�?-->
+      <!-- 速度和步距设置-->
       <div class="jog-speed-config">
         <div class="speed-row">
           <span class="speed-label">速度:</span>
@@ -289,7 +289,7 @@
         </div>
       </div>
       
-      <!-- 笛卡尔空间点动控制（暂不支持�?-->
+      <!-- 笛卡尔空间点动控制（暂不支持-->
       <div class="jog-controls" v-if="false" style="display: none;">
         <div class="jog-cartesian-section">
           <div class="cartesian-title">位置</div>
@@ -325,7 +325,7 @@
           </div>
         </div>
         <div class="jog-cartesian-section">
-          <div class="cartesian-title">姿�?/div>
+          <div class="cartesian-title">姿态</div>
           <div class="jog-axis-row" v-for="(axis, idx) in ['Rx', 'Ry', 'Rz']" :key="'rot'+axis">
             <span class="axis-label axis-rotation">{{ axis }}</span>
             <el-button 
@@ -417,7 +417,7 @@
       <div class="payload-config">
         <div class="config-title">夹爪重量配置</div>
         <div class="payload-row">
-          <span class="payload-label">左夹�?</span>
+          <span class="payload-label">左夹爪</span>
           <el-input-number 
             v-model="payloadConfig.leftGripperMass" 
             :min="0" 
@@ -437,7 +437,7 @@
           </el-button>
         </div>
         <div class="payload-row">
-          <span class="payload-label">右夹�?</span>
+          <span class="payload-label">右夹爪</span>
           <el-input-number 
             v-model="payloadConfig.rightGripperMass" 
             :min="0" 
@@ -533,14 +533,14 @@
         </div>
       </div>
       
-      <!-- 负载状态显�?-->
+      <!-- 负载状态显示-->
       <div class="payload-status">
         <div class="status-row">
-          <span class="status-label">左臂总负�?</span>
+          <span class="status-label">左臂总负载</span>
           <span class="status-value">{{ (payloadConfig.leftGripperMass + payloadObject.left).toFixed(2) }} kg</span>
         </div>
         <div class="status-row">
-          <span class="status-label">右臂总负�?</span>
+          <span class="status-label">右臂总负载</span>
           <span class="status-value">{{ (payloadConfig.rightGripperMass + payloadObject.right).toFixed(2) }} kg</span>
         </div>
       </div>
@@ -548,9 +548,9 @@
 
     <el-divider />
 
-    <!-- 紧急控�?-->
+    <!-- 紧急控制-->
     <div class="panel-section">
-      <h3 class="section-title">紧急控�?/h3>
+      <h3 class="section-title">紧急控制</h3>
       <div class="emergency-buttons">
         <el-button 
           type="danger" 
@@ -577,10 +577,10 @@
       </div>
     </div>
 
-    <!-- 添加点位对话�?-->
+    <!-- 添加点位对话框-->
     <el-dialog
       v-model="addPointDialogVisible"
-      title="采集新点�?
+      title="采集新点位
       width="400px"
       :close-on-click-modal="false"
     >
@@ -588,7 +588,7 @@
         <el-form-item label="点位名称" required>
           <el-input 
             v-model="newPointForm.name" 
-            placeholder="请输入点位名�?
+            placeholder="请输入点位名称"
             maxlength="50"
             show-word-limit
           />
@@ -602,7 +602,7 @@
           />
         </el-form-item>
         <el-form-item label="采集模式">
-          <el-tag>{{ { both: '双臂', left: '仅左�?, right: '仅右�? }[newPointForm.side] }}</el-tag>
+          <el-tag>{{ { both: '双臂', left: '仅左臂', right: '仅右臂' }[newPointForm.side] }}</el-tag>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -613,7 +613,7 @@
       </template>
     </el-dialog>
 
-    <!-- 编辑点位对话�?-->
+    <!-- 编辑点位对话框-->
     <el-dialog
       v-model="editPointDialogVisible"
       title="编辑点位"
@@ -624,7 +624,7 @@
         <el-form-item label="点位名称" required>
           <el-input 
             v-model="editPointForm.name" 
-            placeholder="请输入点位名�?
+            placeholder="请输入点位名称"
             maxlength="50"
             show-word-limit
           />
@@ -654,7 +654,7 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import apiClient from '@/api/client'
 
-// 机械臂状�?
+// 机械臂状态
 const armState = reactive({
   connected: false,
   robot_ip: '',
@@ -662,11 +662,11 @@ const armState = reactive({
   enabled: false,
   in_estop: false,
   in_error: false,
-  servo_mode_enabled: false,  // 伺服模式是否开�?
+  servo_mode_enabled: false,  // 伺服模式是否开启
   error_message: ''
 })
 
-// 伺服状�?
+// 伺服状态
 const servoStatus = reactive({
   mode: 'idle',
   is_abs: true,
@@ -689,38 +689,38 @@ const motionParams = reactive({
 // Jog 点动控制参数
 const jogParams = reactive({
   robotId: 0,        // 0=左臂, 1=右臂
-  coordType: 1,      // 固定�?=关节空间（目前只支持关节点动�?
+  coordType: 1,      // 固定为1=关节空间（目前只支持关节点动
   moveMode: 1,       // 1=步进, 2=连续
   velocity: 0.1,     // 速度 (rad/s)
   stepSize: 0.05     // 步进大小 (rad)
 })
 
-// Jog 状�?
+// Jog 状态
 const activeJogAxis = ref<number | null>(null)
 const jogDirection = ref<number>(0)
 const jogIntervalId = ref<number | null>(null)
-const jogTimeoutId = ref<number | null>(null)  // 连续模式超时定时�?
-const jogStartTime = ref<number>(0)  // Jog 开始时�?
+const jogTimeoutId = ref<number | null>(null)  // 连续模式超时定时器
+const jogStartTime = ref<number>(0)  // Jog 开始时器
 const jogFailureCount = ref<number>(0)  // 连续失败次数
-const lastJogArmState = ref<boolean>(false)  // 上次Jog时的使能状�?
+const lastJogArmState = ref<boolean>(false)  // 上次Jog时的使能状态
 
 // Jog 安全配置
 const JOG_CONFIG = {
-  MAX_CONTINUOUS_TIME: 60000,  // 连续模式最大运行时�?60�?
-  REQUEST_TIMEOUT: 1000,       // 单次请求超时 1�?(心跳需要快速响�?
-  MAX_FAILURES: 5,             // 最大连续失败次�?
-  HEARTBEAT_INTERVAL_MS: 100   // 心跳发送间�?(后端超时300ms，所�?00ms发一�?
+  MAX_CONTINUOUS_TIME: 60000,  // 连续模式最大运行时间60秒)
+  REQUEST_TIMEOUT: 1000,       // 单次请求超时 1秒(心跳需要快速响应)
+  MAX_FAILURES: 5,             // 最大连续失败次
+  HEARTBEAT_INTERVAL_MS: 100   // 心跳发送间隔(后端超时300ms，所以100ms发一次)
 }
 
 
 
-// 当前关节状�?(弧度)
+// 当前关节状态(弧度)
 const currentJoints = reactive({
   left: [0, 0, 0, 0, 0, 0, 0],
   right: [0, 0, 0, 0, 0, 0, 0]
 })
 
-// 加载状�?
+// 加载状态
 const loading = reactive({
   power: false,
   enable: false,
@@ -737,7 +737,7 @@ const loading = reactive({
 })
 
 // ========== 负载管理 ==========
-// 夹爪配置 (持久�?
+// 夹爪配置 (持久
 const payloadConfig = reactive({
   leftGripperMass: 0.8,
   rightGripperMass: 0.8
@@ -762,7 +762,7 @@ interface ArmPoint {
 const armPoints = ref<ArmPoint[]>([])
 const selectedPointId = ref<string | null>(null)
 
-// 添加点位对话�?
+// 添加点位对话框
 const addPointDialogVisible = ref(false)
 const newPointForm = reactive({
   name: '',
@@ -770,7 +770,7 @@ const newPointForm = reactive({
   side: 'both' as 'left' | 'right' | 'both'
 })
 
-// 编辑点位对话�?
+// 编辑点位对话框
 const editPointDialogVisible = ref(false)
 const editPointForm = reactive({
   id: '',
@@ -778,18 +778,18 @@ const editPointForm = reactive({
   description: ''
 })
 
-// 轮询定时�?
+// 轮询定时器
 let pollTimer: number | null = null
 
-// 计算伺服是否真正运行�?(考虑机械臂状�?
+// 计算伺服是否真正运行中(考虑机械臂状态
 const isServoRunning = computed(() => {
-  // 如果机械臂未使能，伺服肯定不在运�?
+  // 如果机械臂未使能，伺服肯定不在运行
   if (!armState.enabled) return false
   // 根据伺服状态或 armState 中的 servo_mode_enabled 判断
   return servoStatus.mode !== 'idle' || armState.servo_mode_enabled
 })
 
-// 计算状态样�?
+// 计算状态样式
 const statusClass = computed(() => {
   if (armState.in_error || armState.in_estop) return 'error'
   if (isServoRunning.value) return 'servo'
@@ -808,13 +808,13 @@ const statusIcon = computed(() => {
 })
 
 const statusText = computed(() => {
-  if (armState.in_estop) return '急停�?
+  if (armState.in_estop) return '急停中'
   if (armState.in_error) return '故障'
-  if (isServoRunning.value) return '伺服运行�?
-  if (armState.enabled) return '已使�?
-  if (armState.powered_on) return '已上�?
-  if (armState.connected) return '已连�?
-  return '未连�?
+  if (isServoRunning.value) return '伺服运行
+  if (armState.enabled) return '已使能'
+  if (armState.powered_on) return '已上电'
+  if (armState.connected) return '已连接'
+  return '未连接'
 })
 
 // ========== 点位管理函数 ==========
@@ -832,7 +832,7 @@ async function fetchArmPoints() {
 // 移动到选中点位
 async function goToSelectedPoint() {
   if (!selectedPointId.value) {
-    ElMessage.warning('请先选择一个点�?)
+    ElMessage.warning('请先选择一个点位')
     return
   }
   
@@ -867,7 +867,7 @@ function handleAddPoint(side: 'left' | 'right' | 'both') {
 // 确认添加点位
 async function confirmAddPoint() {
   if (!newPointForm.name.trim()) {
-    ElMessage.warning('请输入点位名�?)
+    ElMessage.warning('请输入点位名称')
     return
   }
   
@@ -892,7 +892,7 @@ async function confirmAddPoint() {
   }
 }
 
-// 打开编辑对话�?
+// 打开编辑对话框
 function openEditDialog(point: ArmPoint) {
   editPointForm.id = point.id
   editPointForm.name = point.name
@@ -903,7 +903,7 @@ function openEditDialog(point: ArmPoint) {
 // 确认编辑点位
 async function confirmEditPoint() {
   if (!editPointForm.name.trim()) {
-    ElMessage.warning('请输入点位名�?)
+    ElMessage.warning('请输入点位名称')
     return
   }
   
@@ -938,7 +938,7 @@ async function updatePointJoints(side: 'left' | 'right' | 'both') {
   
   try {
     await ElMessageBox.confirm(
-      `确定要将 "${point.name}" �?{sideText}数据更新为当前位置吗？`,
+      `确定要将 "${point.name}" 的{sideText}数据更新为当前位置吗？`,
       '更新点位',
       {
         confirmButtonText: '确定',
@@ -970,7 +970,7 @@ async function updatePointJoints(side: 'left' | 'right' | 'both') {
 async function deletePoint(point: ArmPoint) {
   try {
     await ElMessageBox.confirm(
-      `确定要删除点�?"${point.name}" 吗？`,
+      `确定要删除点位 "${point.name}" 吗？`,
       '删除点位',
       {
         confirmButtonText: '确定',
@@ -985,7 +985,7 @@ async function deletePoint(point: ArmPoint) {
   try {
     const data = await apiClient.delete(`/api/v1/arm/points/${point.id}`)
     if (data.success) {
-      ElMessage.success('点位已删�?)
+      ElMessage.success('点位已删除')
       if (selectedPointId.value === point.id) {
         selectedPointId.value = null
       }
@@ -998,7 +998,7 @@ async function deletePoint(point: ArmPoint) {
   }
 }
 
-// 获取机械臂状�?
+// 获取机械臂状态
 async function fetchArmState() {
   try {
     const data = await apiClient.get('/api/v1/arm/state')
@@ -1013,7 +1013,7 @@ async function fetchArmState() {
     if (typeof data.servo_mode_enabled !== 'boolean') data.servo_mode_enabled = !!data.servo_mode_enabled
     Object.assign(armState, data)
   } catch (error) {
-    console.warn('获取机械臂状态失�?', error)
+    console.warn('获取机械臂状态失败', error)
     // Mark as disconnected / not powered when fetch fails to avoid stale "connected" UI
     Object.assign(armState, {
       connected: false,
@@ -1026,17 +1026,17 @@ async function fetchArmState() {
   }
 }
 
-// 获取伺服状�?
+// 获取伺服状态
 async function fetchServoStatus() {
   try {
     const data = await apiClient.get('/api/v1/arm/servo/status')
     Object.assign(servoStatus, data)
   } catch (error) {
-    console.warn('获取伺服状态失�?', error)
+    console.warn('获取伺服状态失败', error)
   }
 }
 
-// 获取关节状�?(用于实时显示)
+// 获取关节状态(用于实时显示)
 async function fetchJointStates() {
   try {
     const data = await apiClient.get('/api/v1/robot-model/joint_states')
@@ -1048,7 +1048,7 @@ async function fetchJointStates() {
       currentJoints.right = data.right
     }
   } catch (error) {
-    console.warn('获取关节状态失�?', error)
+    console.warn('获取关节状态失败', error)
   }
 }
 
@@ -1106,19 +1106,19 @@ async function enableArm() {
   }
 }
 
-// 去使�?
+// 去使能
 async function disableArm() {
   loading.enable = true
   try {
     const data = await apiClient.post('/api/v1/arm/disable')
     if (data.success) {
-      ElMessage.success('机械臂已去使�?)
+      ElMessage.success('机械臂已去使能')
       await fetchArmState()
     } else {
-      ElMessage.error(data.message || '去使能失�?)
+      ElMessage.error(data.message || '去使能失败)
     }
   } catch (error: any) {
-    ElMessage.error(error.response?.data?.detail || '去使能失�?)
+    ElMessage.error(error.response?.data?.detail || '去使能失败)
   } finally {
     loading.enable = false
   }
@@ -1130,7 +1130,7 @@ async function startServo() {
   try {
     const data = await apiClient.post('/api/v1/arm/servo/start')
     if (data.success) {
-      ElMessage.success('伺服模式已启�?)
+      ElMessage.success('伺服模式已启动')
       await fetchServoStatus()
     } else {
       ElMessage.error(data.message || '启动失败')
@@ -1148,7 +1148,7 @@ async function stopServo() {
   try {
     const data = await apiClient.post('/api/v1/arm/servo/stop')
     if (data.success) {
-      ElMessage.success('伺服模式已停�?)
+      ElMessage.success('伺服模式已停止')
       await fetchServoStatus()
     } else {
       ElMessage.error(data.message || '停止失败')
@@ -1166,7 +1166,7 @@ async function motionAbort() {
   try {
     const data = await apiClient.post('/api/v1/arm/motion_abort')
     if (data.success) {
-      ElMessage.warning('急停已执�?)
+      ElMessage.warning('急停已执行')
       await fetchArmState()
       await fetchServoStatus()
     } else {
@@ -1185,7 +1185,7 @@ async function clearError() {
   try {
     const data = await apiClient.post('/api/v1/arm/clear_error')
     if (data.success) {
-      ElMessage.success('错误已清�?)
+      ElMessage.success('错误已清除')
       await fetchArmState()
     } else {
       ElMessage.error(data.message || '清除失败')
@@ -1219,7 +1219,7 @@ async function saveGripperConfig() {
       right_gripper_mass: payloadConfig.rightGripperMass
     })
     if (data.success) {
-      ElMessage.success('夹爪配置已保�?)
+      ElMessage.success('夹爪配置已保存')
     } else {
       ElMessage.error(data.message || '保存失败')
     }
@@ -1283,7 +1283,7 @@ async function clearObjectPayload(robotId: number) {
 
 // ========== 点动控制 (Jog) ==========
 
-// 格式化关节值显�?
+// 格式化关节值显
 function formatJointValue(robotId: number, jointIdx: number): string {
   const joints = robotId === 0 ? currentJoints.left : currentJoints.right
   const rad = joints[jointIdx] || 0
@@ -1291,29 +1291,29 @@ function formatJointValue(robotId: number, jointIdx: number): string {
   return `${deg.toFixed(1)}°`
 }
 
-// 格式化笛卡尔位置值显�?
+// 格式化笛卡尔位置值显
 function formatCartesianValue(_robotId: number, _idx: number): string {
-  // TODO: 获取当前笛卡尔位�?
+  // TODO: 获取当前笛卡尔位置
   return '--'
 }
 
-// 格式化旋转值显�?
+// 格式化旋转值显
 function formatRotationValue(_robotId: number, _idx: number): string {
-  // TODO: 获取当前笛卡尔姿�?
+  // TODO: 获取当前笛卡尔姿态
   return '--'
 }
 
-// 开�?Jog
+// 开始 Jog
 async function startJog(axisNum: number, direction: number) {
-  // 只支持关节空�?
+  // 只支持关节空间
   if (jogParams.coordType !== 1) {
-    ElMessage.warning('目前只支持关节空间点�?)
+    ElMessage.warning('目前只支持关节空间点动')
     return
   }
   
-  // 状态检查：必须使能且未在伺服模�?
+  // 状态检查：必须使能且未在伺服模式
   if (!armState.enabled) {
-    ElMessage.warning('机械臂未使能，无法点�?)
+    ElMessage.warning('机械臂未使能，无法点动')
     return
   }
   
@@ -1322,7 +1322,7 @@ async function startJog(axisNum: number, direction: number) {
     return
   }
   
-  // 如果已有点动在运行，先停�?
+  // 如果已有点动在运行，先停止
   if (activeJogAxis.value !== null) {
     await stopJog()
   }
@@ -1336,26 +1336,26 @@ async function startJog(axisNum: number, direction: number) {
   // 计算位置增量
   const position = jogParams.stepSize * direction
   
-  // 步进模式：单次执�?
+  // 步进模式：单次执行
   if (jogParams.moveMode === 1) {
     await executeJog(axisNum, position)
   } else {
-    // 连续模式：发送启动命令，然后持续发送心�?
-    // 后端收到后会发送大目标位置，持续运�?
-    // 后端�?00ms超时检测，如果没收到心跳会自动停止
+    // 连续模式：发送启动命令，然后持续发送心跳
+    // 后端收到后会发送大目标位置，持续运行
+    // 后端有300ms超时检测，如果没收到心跳会自动停止
     await sendJogHeartbeat(axisNum, direction)
     
-    // 设置定时器持续发送心�?
+    // 设置定时器持续发送心跳
     jogIntervalId.value = window.setInterval(async () => {
-      // 检查是否超过最大运行时�?
+      // 检查是否超过最大运行时器
       const runningTime = Date.now() - jogStartTime.value
       if (runningTime > JOG_CONFIG.MAX_CONTINUOUS_TIME) {
-        ElMessage.warning(`点动已运�?${JOG_CONFIG.MAX_CONTINUOUS_TIME / 1000}秒，自动停止`)
+        ElMessage.warning(`点动已运行${JOG_CONFIG.MAX_CONTINUOUS_TIME / 1000}秒，自动停止`)
         await stopJog()
         return
       }
       
-      // 检查机械臂状态是否变�?
+      // 检查机械臂状态是否变化
       if (!armState.enabled || isServoRunning.value) {
         console.log('机械臂状态变化，自动停止点动')
         await stopJog()
@@ -1365,28 +1365,28 @@ async function startJog(axisNum: number, direction: number) {
       await sendJogHeartbeat(axisNum, direction)
     }, JOG_CONFIG.HEARTBEAT_INTERVAL_MS)
     
-    // 设置最大运行时间保�?
+    // 设置最大运行时间保护
     jogTimeoutId.value = window.setTimeout(async () => {
-      ElMessage.warning(`点动超时 (${JOG_CONFIG.MAX_CONTINUOUS_TIME / 1000}�?，强制停止`)
+      ElMessage.warning(`点动超时 (${JOG_CONFIG.MAX_CONTINUOUS_TIME / 1000}秒)，强制停止`)
       await stopJog()
     }, JOG_CONFIG.MAX_CONTINUOUS_TIME)
   }
 }
 
-// 发送连续模式心�?
+// 发送连续模式心跳
 async function sendJogHeartbeat(axisNum: number, direction: number) {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), JOG_CONFIG.REQUEST_TIMEOUT)
     
-    // 发送心�? move_mode=0 表示连续模式, velocity 的正负表示方�?
+    // 发送心跳 move_mode=0 表示连续模式, velocity 的正负表示方向
     await apiClient.post('/api/v1/arm/jog', {
       robot_id: jogParams.robotId,
       axis_num: axisNum,
       move_mode: 0,  // 连续模式
       coord_type: jogParams.coordType,
-      velocity: jogParams.velocity * direction,  // 速度带方�?
-      position: 0  // 连续模式不需�?position
+      velocity: jogParams.velocity * direction,  // 速度带方向
+      position: 0  // 连续模式不需要 position
     }, {
       signal: controller.signal
     })
@@ -1400,7 +1400,7 @@ async function sendJogHeartbeat(axisNum: number, direction: number) {
     if (error.name === 'AbortError' || error.code === 'ECONNABORTED') {
       console.warn(`心跳超时, 失败次数: ${jogFailureCount.value}`)
     } else if (error.code === 'ERR_NETWORK') {
-      console.warn('网络连接失败，停止点�?)
+      console.warn('网络连接失败，停止点动')
       ElMessage.error('网络连接失败')
       await stopJog()
       return
@@ -1432,7 +1432,7 @@ async function executeJog(axisNum: number, position: number) {
     })
     
     clearTimeout(timeoutId)
-    jogFailureCount.value = 0  // 成功后重置失败计�?
+    jogFailureCount.value = 0  // 成功后重置失败计数
     
   } catch (error: any) {
     jogFailureCount.value++
@@ -1441,7 +1441,7 @@ async function executeJog(axisNum: number, position: number) {
     if (error.name === 'AbortError' || error.code === 'ECONNABORTED') {
       console.warn(`Jog请求超时 (${JOG_CONFIG.REQUEST_TIMEOUT}ms), 失败次数: ${jogFailureCount.value}`)
     } else if (error.code === 'ERR_NETWORK') {
-      console.warn('网络连接失败，停止点�?)
+      console.warn('网络连接失败，停止点动')
       ElMessage.error('网络连接失败')
       await stopJog()
       return
@@ -1449,7 +1449,7 @@ async function executeJog(axisNum: number, position: number) {
       console.warn('Jog command failed:', error.message)
     }
     
-    // 连续失败次数过多，停止点�?
+    // 连续失败次数过多，停止点位
     if (jogFailureCount.value >= JOG_CONFIG.MAX_FAILURES) {
       ElMessage.error(`点动连续失败 ${JOG_CONFIG.MAX_FAILURES} 次，已停止`)
       await stopJog()
@@ -1471,11 +1471,11 @@ async function stopJog() {
     jogTimeoutId.value = null
   }
   
-  // 保存当前轴号用于发送停止命�?
+  // 保存当前轴号用于发送停止命令
   const axisToStop = activeJogAxis.value
   const robotToStop = jogParams.robotId
   
-  // 立即重置状�?
+  // 立即重置状态
   activeJogAxis.value = null
   jogDirection.value = 0
   jogStartTime.value = 0
@@ -1484,9 +1484,9 @@ async function stopJog() {
   // 发送停止命令（在连续模式下确保机械臂停止运动）
   if (axisToStop !== null) {
     try {
-      // 停止命令也设置超�?
+      // 停止命令也设置超时
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 1000)  // 1秒超�?
+      const timeoutId = setTimeout(() => controller.abort(), 1000)  // 1秒超时
       
       await apiClient.post('/api/v1/arm/jog_stop', {
         robot_id: robotToStop,
@@ -1498,12 +1498,12 @@ async function stopJog() {
       clearTimeout(timeoutId)
     } catch (error) {
       console.warn('Jog stop failed:', error)
-      // 停止命令失败不影响前端状态清�?
+      // 停止命令失败不影响前端状态清理
     }
   }
 }
 
-// 开始轮�?
+// 开始轮询
 function startPolling() {
   fetchArmState()
   fetchServoStatus()
@@ -1528,7 +1528,7 @@ onMounted(() => {
   fetchArmPoints()
   loadGripperConfig()
   
-  // 添加页面关闭前的紧急停止处�?
+  // 添加页面关闭前的紧急停止处理
   window.addEventListener('beforeunload', handleBeforeUnload)
 })
 
@@ -1539,7 +1539,7 @@ onUnmounted(() => {
   stopPolling()
   // 组件卸载时停止所有Jog操作
   if (activeJogAxis.value !== null) {
-    // 使用同步方式发送停止命�?
+    // 使用同步方式发送停止命令
     sendJogStopSync()
   }
 })
@@ -1547,7 +1547,7 @@ onUnmounted(() => {
 // 页面关闭前的处理
 function handleBeforeUnload(event: BeforeUnloadEvent) {
   if (activeJogAxis.value !== null) {
-    // 使用 sendBeacon 确保停止命令发�?
+    // 使用 sendBeacon 确保停止命令发送
     sendJogStopSync()
     
     // 可选：显示警告（但现代浏览器可能不显示自定义消息）
@@ -1556,14 +1556,14 @@ function handleBeforeUnload(event: BeforeUnloadEvent) {
   }
 }
 
-// 同步发�?Jog 停止命令（使�?sendBeacon �?Fetch keepalive�?
+// 同步发送 Jog 停止命令（使用 sendBeacon 或 Fetch keepalive)
 function sendJogStopSync() {
   if (activeJogAxis.value === null) return
   
   const axisToStop = activeJogAxis.value
   const robotToStop = jogParams.robotId
   
-  // 清理定时�?
+  // 清理定时器
   if (jogIntervalId.value) {
     clearInterval(jogIntervalId.value)
     jogIntervalId.value = null
@@ -1573,7 +1573,7 @@ function sendJogStopSync() {
     jogTimeoutId.value = null
   }
   
-  // 重置状�?
+  // 重置状态
   activeJogAxis.value = null
   jogDirection.value = 0
   jogStartTime.value = 0
@@ -1589,11 +1589,11 @@ function sendJogStopSync() {
     
     // 方法1: 使用 sendBeacon（浏览器关闭时也会发送）
     if (navigator.sendBeacon) {
-      // sendBeacon 只支�?POST，但不支持自定义 header
-      // 所以需要在 URL 中带 token 或后端允许这种情�?
+      // sendBeacon 只支持 POST，但不支持自定义 header
+      // 所以需要在 URL 中带 token 或后端允许这种情况
       const blob = new Blob([data], { type: 'application/json' })
       
-      // 尝试使用 Beacon，如果失败则降级�?Fetch
+      // 尝试使用 Beacon，如果失败则降级为 Fetch
       const beaconUrl = token ? `${url}?_emergency_stop=1&_token=${encodeURIComponent(token)}` : url
       const sent = navigator.sendBeacon(beaconUrl, blob)
       
@@ -1611,7 +1611,7 @@ function sendJogStopSync() {
         'Authorization': token ? `Bearer ${token}` : ''
       },
       body: data,
-      keepalive: true  // 关键：即使页面关闭也会完成请�?
+      keepalive: true  // 关键：即使页面关闭也会完成请求
     }).then(() => {
       console.log('Emergency jog stop sent via Fetch')
     }).catch(err => {
@@ -1678,7 +1678,7 @@ function sendJogStopSync() {
   color: var(--color-primary);
 }
 
-/* 状态卡�?- Glassmorphism */
+/* 状态卡片 - Glassmorphism */
 .status-card {
   display: flex;
   align-items: center;
@@ -1777,7 +1777,7 @@ function sendJogStopSync() {
   font-family: var(--font-heading);
 }
 
-/* 控制按钮�?*/
+/* 控制按钮*/
 .control-row {
   display: flex;
   gap: var(--spacing-sm);
@@ -1794,7 +1794,7 @@ function sendJogStopSync() {
   box-shadow: var(--shadow-lg);
 }
 
-/* 伺服状�?*/
+/* 伺服状态 */
 .servo-status {
   display: flex;
   align-items: center;
@@ -1985,7 +1985,7 @@ function sendJogStopSync() {
   flex: 1;
 }
 
-/* 紧急按�?*/
+/* 紧急按钮 */
 .emergency-buttons {
   display: flex;
   gap: 8px;
@@ -2016,7 +2016,7 @@ function sendJogStopSync() {
   font-size: 12px;
 }
 
-/* 关节控制标签�?*/
+/* 关节控制标签页 */
 .joint-control-tabs :deep(.el-tabs__header) {
   margin-bottom: 8px;
   background-color: var(--color-bg-secondary, #252526);
@@ -2093,7 +2093,7 @@ function sendJogStopSync() {
   min-width: 100px;
 }
 
-/* 笛卡尔输�?*/
+/* 笛卡尔输入 */
 .cartesian-inputs {
   display: flex;
   flex-direction: column;
