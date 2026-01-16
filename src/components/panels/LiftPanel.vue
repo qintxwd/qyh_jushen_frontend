@@ -960,6 +960,8 @@ onUnmounted(() => {
 .point-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-rows: min-content;
+  align-content: start;
   gap: 12px;
   overflow-y: auto;
   padding: 6px;
