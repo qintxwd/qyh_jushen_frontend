@@ -30,13 +30,13 @@
               <div class="info-item">
                 <span class="label">连接</span>
                 <el-tag :type="state.connected ? 'success' : 'danger'" size="small">
-                  {{ state.connected ? '已连�? : '断开' }}
+                  {{ state.connected ? '已连接' : '断开' }}
                 </el-tag>
               </div>
               <div class="info-item">
                 <span class="label">使能</span>
                 <el-tag :type="state.enabled ? 'success' : 'info'" size="small">
-                  {{ state.enabled ? '使能' : '未使�? }}
+                  {{ state.enabled ? '使能' : '未使能' }}
                 </el-tag>
               </div>
               <div class="info-item">
@@ -48,9 +48,9 @@
                 <span class="value">{{ state.currentSpeed }}</span>
               </div>
               <div class="info-item">
-                <span class="label">状�?/span>
+                <span class="label">状态</span>
                 <el-tag :type="state.positionReached ? 'success' : 'warning'" size="small">
-                  {{ state.positionReached ? '到位' : '运动�? }}
+                  {{ state.positionReached ? '到位' : '运动中' }}
                 </el-tag>
               </div>
             </div>
@@ -70,7 +70,7 @@
             >
               <SvgIcon v-if="state.enabled" name="disable" :size="14" />
               <SvgIcon v-else name="enable" :size="14" />
-              {{ state.enabled ? '下使�? : '上使�? }}
+              {{ state.enabled ? '下使能' : '上使能' }}
             </el-button>
             <div class="speed-mini">
               <el-input-number
@@ -169,7 +169,7 @@
               :disabled="!state.connected || !state.enabled"
             >
               <SvgIcon name="top" :size="16" />
-              前�?
+              前倾
             </el-button>
             <el-button
               type="success"
@@ -252,10 +252,10 @@
     >
       <el-form label-width="80px">
         <el-form-item label="点位名称">
-          <el-input v-model="newPointForm.name" placeholder="请输入点位名�? />
+          <el-input v-model="newPointForm.name" placeholder="请输入点位名称" />
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="newPointForm.description" placeholder="可�? />
+          <el-input v-model="newPointForm.description" placeholder="可选" />
         </el-form-item>
         <el-form-item label="角度">
           <el-input-number
@@ -282,10 +282,10 @@
     >
       <el-form label-width="80px">
         <el-form-item label="点位名称">
-          <el-input v-model="editPointForm.name" placeholder="请输入点位名�? />
+          <el-input v-model="editPointForm.name" placeholder="请输入点位名称" />
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="editPointForm.description" placeholder="可�? />
+          <el-input v-model="editPointForm.description" placeholder="可选" />
         </el-form-item>
         <el-form-item label="角度">
           <el-input-number
@@ -381,7 +381,7 @@ const editPointForm = reactive({
 // 获取点位列表
 async function fetchWaistPoints() {
   try {
-    const data = await apiClient.get(`/api/v1/waist/points`)
+    const data: any = await apiClient.get(`/api/v1/waist/points`)
     waistPoints.value = data.points || data || []
   } catch (error) {
     console.error('获取腰部点位列表失败:', error)
@@ -399,7 +399,7 @@ function handleAddPoint() {
 // 确认添加点位
 async function confirmAddPoint() {
   if (!newPointForm.name.trim()) {
-    ElMessage.warning('请输入点位名�?)
+    ElMessage.warning('请输入点位名称')
     return
   }
   
@@ -431,7 +431,7 @@ function openEditDialog(point: WaistPoint) {
 // 确认编辑点位
 async function confirmEditPoint() {
   if (!editPointForm.name.trim()) {
-    ElMessage.warning('请输入点位名�?)
+    ElMessage.warning('请输入点位名称')
     return
   }
   
@@ -459,7 +459,7 @@ async function deletePoint(point: WaistPoint) {
   
   try {
     await ElMessageBox.confirm(
-      `确定要删除点�?"${point.name}" 吗？`,
+      `确定要删除点位 "${point.name}" 吗？`,
       '删除确认',
       {
         confirmButtonText: '确定',
@@ -511,7 +511,7 @@ async function updatePointAngle(point: WaistPoint) {
       description: point.description,
       angle: state.currentAngle
     })
-    ElMessage.success('点位角度已更�?)
+    ElMessage.success('点位角度已更新')
     await fetchWaistPoints()
   } catch (error: any) {
     if (error !== 'cancel') {
@@ -550,7 +550,7 @@ async function toggleEnable() {
   loading.enable = true
   try {
     const command = state.enabled ? CMD.DISABLE : CMD.ENABLE
-    const result = await sendCommand(command)
+    const result: any = await sendCommand(command)
     if (result.success) {
       ElMessage.success(result.message)
     } else {
@@ -567,7 +567,7 @@ async function toggleEnable() {
 async function setSpeed() {
   loading.speed = true
   try {
-    const result = await sendCommand(CMD.SET_SPEED, inputSpeed.value)
+    const result: any = await sendCommand(CMD.SET_SPEED, inputSpeed.value)
     if (result.success) {
       ElMessage.success('速度设置成功')
     } else {
@@ -584,9 +584,9 @@ async function setSpeed() {
 async function goToAngle() {
   loading.angle = true
   try {
-    const result = await sendCommand(CMD.GO_ANGLE, inputAngle.value)
+    const result: any = await sendCommand(CMD.GO_ANGLE, inputAngle.value)
     if (result.success) {
-      ElMessage.success('开始移�?)
+      ElMessage.success('开始移动')
     } else {
       ElMessage.error(result.message)
     }
@@ -601,7 +601,7 @@ async function goToAngle() {
 async function goUpright() {
   loading.upright = true
   try {
-    const result = await sendCommand(CMD.GO_UPRIGHT)
+    const result: any = await sendCommand(CMD.GO_UPRIGHT)
     if (result.success) {
       ElMessage.success('回到竖直位置')
     } else {
@@ -618,9 +618,9 @@ async function goUpright() {
 async function stopMove() {
   loading.stop = true
   try {
-    const result = await sendCommand(CMD.STOP)
+    const result: any = await sendCommand(CMD.STOP)
     if (result.success) {
-      ElMessage.warning('运动已停�?)
+      ElMessage.warning('运动已停止')
     } else {
       ElMessage.error(result.message)
     }
@@ -667,9 +667,9 @@ async function stopManualMove() {
 async function resetAlarm() {
   loading.reset = true
   try {
-    const result = await sendCommand(CMD.RESET_ALARM)
+    const result: any = await sendCommand(CMD.RESET_ALARM)
     if (result.success) {
-      ElMessage.success('报警已复�?)
+      ElMessage.success('报警已复位')
     } else {
       ElMessage.error(result.message)
     }
@@ -683,7 +683,7 @@ async function resetAlarm() {
 // 获取状�?
 async function fetchState() {
   try {
-    const data = await apiClient.get(`/api/v1/waist/state`)
+    const data: any = await apiClient.get(`/api/v1/waist/state`)
     
     if (data) {
       state.connected = data.connected ?? false
@@ -695,7 +695,7 @@ async function fetchState() {
       state.alarm = data.alarm ?? false
     }
   } catch (error) {
-    console.error('获取状态失�?', error)
+    console.error('获取状态失败', error)
     state.connected = false
   }
 }

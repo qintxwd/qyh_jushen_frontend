@@ -580,7 +580,7 @@
     <!-- 添加点位对话框-->
     <el-dialog
       v-model="addPointDialogVisible"
-      title="采集新点位
+      title="采集新点位"
       width="400px"
       :close-on-click-modal="false"
     >
@@ -810,7 +810,7 @@ const statusIcon = computed(() => {
 const statusText = computed(() => {
   if (armState.in_estop) return '急停中'
   if (armState.in_error) return '故障'
-  if (isServoRunning.value) return '伺服运行
+  if (isServoRunning.value) return '伺服运行'
   if (armState.enabled) return '已使能'
   if (armState.powered_on) return '已上电'
   if (armState.connected) return '已连接'
@@ -938,7 +938,7 @@ async function updatePointJoints(side: 'left' | 'right' | 'both') {
   
   try {
     await ElMessageBox.confirm(
-      `确定要将 "${point.name}" 的{sideText}数据更新为当前位置吗？`,
+      `确定要将 "${point.name}" 的${sideText}数据更新为当前位置吗？`,
       '更新点位',
       {
         confirmButtonText: '确定',
@@ -1002,16 +1002,16 @@ async function deletePoint(point: ArmPoint) {
 async function fetchArmState() {
   try {
     const data = await apiClient.get('/api/v1/arm/state')
-    const data = data || {}
+    const safeData = data || {}
     // Validate connected flag is boolean
-    if (typeof data.connected !== 'boolean') data.connected = false
+    if (typeof safeData.connected !== 'boolean') safeData.connected = false
     // Ensure other expected boolean flags are present
-    if (typeof data.powered_on !== 'boolean') data.powered_on = !!data.powered_on
-    if (typeof data.enabled !== 'boolean') data.enabled = !!data.enabled
-    if (typeof data.in_estop !== 'boolean') data.in_estop = !!data.in_estop
-    if (typeof data.in_error !== 'boolean') data.in_error = !!data.in_error
-    if (typeof data.servo_mode_enabled !== 'boolean') data.servo_mode_enabled = !!data.servo_mode_enabled
-    Object.assign(armState, data)
+    if (typeof safeData.powered_on !== 'boolean') safeData.powered_on = !!safeData.powered_on
+    if (typeof safeData.enabled !== 'boolean') safeData.enabled = !!safeData.enabled
+    if (typeof safeData.in_estop !== 'boolean') safeData.in_estop = !!safeData.in_estop
+    if (typeof safeData.in_error !== 'boolean') safeData.in_error = !!safeData.in_error
+    if (typeof safeData.servo_mode_enabled !== 'boolean') safeData.servo_mode_enabled = !!safeData.servo_mode_enabled
+    Object.assign(armState, safeData)
   } catch (error) {
     console.warn('获取机械臂状态失败', error)
     // Mark as disconnected / not powered when fetch fails to avoid stale "connected" UI
@@ -1040,7 +1040,6 @@ async function fetchServoStatus() {
 async function fetchJointStates() {
   try {
     const data = await apiClient.get('/api/v1/robot-model/joint_states')
-    const data = data
     
     if (data.source === 'ros2' && data.left && data.right) {
       // 更新实时关节数据 (弧度)
@@ -1115,10 +1114,10 @@ async function disableArm() {
       ElMessage.success('机械臂已去使能')
       await fetchArmState()
     } else {
-      ElMessage.error(data.message || '去使能失败)
+      ElMessage.error(data.message || '去使能失败')
     }
   } catch (error: any) {
-    ElMessage.error(error.response?.data?.detail || '去使能失败)
+    ElMessage.error(error.response?.data?.detail || '去使能失败')
   } finally {
     loading.enable = false
   }
