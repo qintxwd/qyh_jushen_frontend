@@ -58,7 +58,7 @@ const reconnect = () => {
 .terminal-wrapper {
   flex: 1;
   margin: 20px;
-  background-color: #1e1e1e;
+  background-color: var(--color-bg-secondary, #1e1e1e);
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   overflow: hidden;

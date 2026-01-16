@@ -1645,9 +1645,9 @@ function sendJogStopSync() {
 
 /* 全局深色主题 tabs 样式 */
 .arm-control-panel :deep(.el-tabs__header) {
-  background: rgba(30, 41, 59, 0.5);
+  background: var(--color-surface, rgba(30, 41, 59, 0.5));
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  border-bottom: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
 }
 
 .arm-control-panel :deep(.el-tabs__nav) {
@@ -1655,7 +1655,7 @@ function sendJogStopSync() {
 }
 
 .arm-control-panel :deep(.el-tabs__item) {
-  color: rgba(148, 163, 184, 0.8);
+  color: var(--color-text-muted, rgba(148, 163, 184, 0.8));
   border: none;
   background-color: transparent;
   transition: all 0.3s var(--transition-smooth);
@@ -1699,9 +1699,9 @@ function sendJogStopSync() {
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
   border-radius: var(--radius-lg);
-  background: rgba(30, 41, 59, 0.4);
+  background: var(--color-surface, rgba(30, 41, 59, 0.4));
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
   transition: all 0.3s var(--transition-smooth);
   position: relative;
   overflow: hidden;
@@ -1714,7 +1714,7 @@ function sendJogStopSync() {
   top: 0;
   bottom: 0;
   width: 4px;
-  background: rgba(148, 163, 184, 0.3);
+  background: var(--color-border, rgba(148, 163, 184, 0.3));
   transition: all 0.3s var(--transition-smooth);
 }
 
@@ -1815,9 +1815,9 @@ function sendJogStopSync() {
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-md);
   padding: var(--spacing-sm) var(--spacing-md);
-  background: rgba(30, 41, 59, 0.4);
+  background: var(--color-surface, rgba(30, 41, 59, 0.4));
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
   border-radius: var(--radius-md);
 }
 
@@ -1874,7 +1874,7 @@ function sendJogStopSync() {
 .param-label {
   width: 50px;
   font-size: 12px;
-  color: #909399;
+  color: var(--color-text-muted, #909399);
 }
 
 .param-row :deep(.el-slider) {
@@ -1893,10 +1893,10 @@ function sendJogStopSync() {
 .points-list {
   max-height: 200px;
   overflow-y: auto;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-md);
-  background: rgba(15, 23, 42, 0.4);
+  background: var(--color-surface, rgba(15, 23, 42, 0.4));
   backdrop-filter: blur(10px);
 }
 
@@ -1978,7 +1978,7 @@ function sendJogStopSync() {
 
 /* 更新点位区域 */
 .update-point-section {
-  background-color: #2d2d2d;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
   border-radius: 6px;
   padding: 10px;
 }
@@ -1986,7 +1986,7 @@ function sendJogStopSync() {
 .update-label {
   display: block;
   font-size: 11px;
-  color: #909399;
+  color: var(--color-text-muted, #909399);
   margin-bottom: 8px;
 }
 
@@ -2033,8 +2033,8 @@ function sendJogStopSync() {
 /* 关节控制标签页 */
 .joint-control-tabs :deep(.el-tabs__header) {
   margin-bottom: 8px;
-  background-color: #252526;
-  border-bottom: 1px solid #3c3c3c;
+  background-color: var(--color-bg-secondary, #252526);
+  border-bottom: 1px solid var(--color-border, #3c3c3c);
 }
 
 .joint-control-tabs :deep(.el-tabs__nav) {
@@ -2044,19 +2044,19 @@ function sendJogStopSync() {
 .joint-control-tabs :deep(.el-tabs__item) {
   font-size: 12px;
   padding: 0 12px;
-  color: #909399;
+  color: var(--color-text-muted, #909399);
   border: none;
   background-color: transparent;
   transition: all 0.2s;
 }
 
 .joint-control-tabs :deep(.el-tabs__item:hover) {
-  color: #c0c4cc;
+  color: var(--color-text-secondary, #c0c4cc);
 }
 
 .joint-control-tabs :deep(.el-tabs__item.is-active) {
   color: #409eff;
-  background-color: #2d2d2d;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
 }
 
 /* 关节输入 */
@@ -2091,7 +2091,7 @@ function sendJogStopSync() {
 .joint-unit {
   width: 16px;
   font-size: 11px;
-  color: #909399;
+  color: var(--color-text-muted, #909399);
 }
 
 /* MoveJ 操作按钮 */
@@ -2115,7 +2115,7 @@ function sendJogStopSync() {
 }
 
 .cartesian-group {
-  background-color: #2d2d2d;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
   border-radius: 6px;
   padding: 10px;
 }
@@ -2123,7 +2123,7 @@ function sendJogStopSync() {
 .group-label {
   display: block;
   font-size: 11px;
-  color: #909399;
+  color: var(--color-text-muted, #909399);
   margin-bottom: 8px;
 }
 
@@ -2166,7 +2166,7 @@ function sendJogStopSync() {
 
 :deep(.el-divider) {
   margin: 16px 0;
-  border-color: #3c3c3c;
+  border-color: var(--color-border, #3c3c3c);
 }
 
 /* Jog 控制样式 */
@@ -2176,9 +2176,9 @@ function sendJogStopSync() {
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-lg);
   padding: var(--spacing-md);
-  background: rgba(30, 41, 59, 0.4);
+  background: var(--color-surface, rgba(30, 41, 59, 0.4));
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
   border-radius: var(--radius-lg);
 }
 
@@ -2211,9 +2211,9 @@ function sendJogStopSync() {
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-lg);
   padding: var(--spacing-md);
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--color-surface, rgba(15, 23, 42, 0.5));
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.15));
   border-radius: var(--radius-lg);
 }
 
@@ -2249,22 +2249,22 @@ function sendJogStopSync() {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  background: rgba(30, 41, 59, 0.4);
+  background: var(--color-surface, rgba(30, 41, 59, 0.4));
   backdrop-filter: blur(10px);
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.1));
   transition: all 0.3s var(--transition-smooth);
 }
 
 .jog-axis-row:hover {
-  background: rgba(30, 41, 59, 0.6);
-  border-color: rgba(148, 163, 184, 0.2);
+  background: var(--color-surface-hover, rgba(30, 41, 59, 0.6));
+  border-color: var(--color-border, rgba(148, 163, 184, 0.2));
 }
 
 .axis-label {
   min-width: 40px;
-  color: #fff;
+  color: var(--color-text-primary, #fff);
   font-weight: 600;
   font-size: 13px;
 }

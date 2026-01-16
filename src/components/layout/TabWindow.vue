@@ -298,9 +298,9 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   height: 38px;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--color-surface, rgba(15, 23, 42, 0.6));
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  border-bottom: 1px solid var(--color-border, rgba(148, 163, 184, 0.15));
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -327,7 +327,7 @@ onUnmounted(() => {
   gap: 8px;
   padding: 0 16px;
   height: 38px;
-  border-right: 1px solid rgba(148, 163, 184, 0.1);
+  border-right: 1px solid var(--color-border, rgba(148, 163, 184, 0.1));
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.3s ease;
@@ -335,7 +335,7 @@ onUnmounted(() => {
   user-select: none;
   position: relative;
   background: transparent;
-  color: #CBD5E1;
+  color: var(--color-text-secondary, #CBD5E1);
 }
 
 .tab-item::after {
@@ -350,12 +350,12 @@ onUnmounted(() => {
 }
 
 .tab-item:hover {
-  background: rgba(30, 41, 59, 0.5);
-  color: #F8FAFC;
+  background: var(--color-surface-hover, rgba(30, 41, 59, 0.5));
+  color: var(--color-text-primary, #F8FAFC);
 }
 
 .tab-item.active {
-  background: rgba(30, 41, 59, 0.7);
+  background: var(--color-surface-hover, rgba(30, 41, 59, 0.7));
   color: #F59E0B;
 }
 
@@ -395,7 +395,7 @@ onUnmounted(() => {
   margin-left: 4px;
   opacity: 0;
   transition: all 0.3s ease;
-  color: #94A3B8;
+  color: var(--color-text-muted, #94A3B8);
 }
 
 .tab-item:hover .tab-close {
@@ -432,7 +432,7 @@ onUnmounted(() => {
 }
 
 .tab-panel::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.3);
+  background: var(--color-bg-tertiary, rgba(15, 23, 42, 0.3));
 }
 
 .tab-panel::-webkit-scrollbar-thumb {
@@ -451,12 +451,12 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #64748B;
+  color: var(--color-text-disabled, #64748B);
 }
 
 .empty-state .el-icon {
   margin-bottom: 16px;
-  color: #475569;
+  color: var(--color-text-muted, #475569);
   font-size: 48px;
 }
 
@@ -464,12 +464,12 @@ onUnmounted(() => {
   margin: 6px 0;
   font-size: 15px;
   font-weight: 500;
-  color: #94A3B8;
+  color: var(--color-text-muted, #94A3B8);
 }
 
 .empty-state .hint {
   font-size: 13px;
-  color: #64748B;
+  color: var(--color-text-disabled, #64748B);
 }
 
 /* 拖拽覆盖层 */
@@ -494,7 +494,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 12px;
   padding: 32px;
-  background: rgba(30, 41, 59, 0.8);
+  background: var(--color-surface, rgba(30, 41, 59, 0.8));
   backdrop-filter: blur(20px);
   border: 2px dashed #F59E0B;
   border-radius: 16px;
@@ -508,9 +508,9 @@ onUnmounted(() => {
 .context-menu {
   position: fixed;
   z-index: 1000;
-  background: rgba(30, 41, 59, 0.95);
+  background: var(--color-surface, rgba(30, 41, 59, 0.95));
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
   border-radius: 10px;
   padding: 6px 0;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -523,7 +523,7 @@ onUnmounted(() => {
   gap: 10px;
   padding: 10px 16px;
   cursor: pointer;
-  color: #CBD5E1;
+  color: var(--color-text-secondary, #CBD5E1);
   font-size: 13px;
   font-weight: 500;
   transition: all 0.2s ease;
@@ -540,7 +540,7 @@ onUnmounted(() => {
 
 .context-menu-divider {
   height: 1px;
-  background: rgba(148, 163, 184, 0.2);
+  background: var(--color-border, rgba(148, 163, 184, 0.2));
   margin: 6px 0;
 }
 </style>

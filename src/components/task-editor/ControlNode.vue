@@ -118,7 +118,7 @@ const statusClass = computed(() => {
 <style scoped>
 .control-node {
   min-width: 180px;
-  background-color: #252526;
+  background-color: var(--color-bg-secondary, #252526);
   border: 2px solid #409EFF;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -240,7 +240,7 @@ const statusClass = computed(() => {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background-color: #252526;
+  background-color: var(--color-bg-secondary, #252526);
   border: 2px solid;
   font-size: 14px;
 }

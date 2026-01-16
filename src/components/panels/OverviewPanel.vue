@@ -319,10 +319,10 @@ onUnmounted(() => {
   align-items: center;
   gap: 14px;
   padding: 16px;
-  background: rgba(30, 41, 59, 0.4);
+  background: var(--color-surface, rgba(30, 41, 59, 0.4));
   backdrop-filter: blur(10px);
   border-radius: 12px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -335,7 +335,7 @@ onUnmounted(() => {
   top: 0;
   bottom: 0;
   width: 3px;
-  background: rgba(148, 163, 184, 0.3);
+  background: var(--color-border, rgba(148, 163, 184, 0.3));
   transition: all 0.3s ease;
 }
 
@@ -352,7 +352,7 @@ onUnmounted(() => {
 
 .status-card.online {
   border-color: rgba(16, 185, 129, 0.3);
-  background: rgba(30, 41, 59, 0.5);
+  background: var(--color-surface-hover, rgba(30, 41, 59, 0.5));
 }
 
 .status-card.online .status-icon {
@@ -360,7 +360,7 @@ onUnmounted(() => {
 }
 
 .status-icon {
-  color: #64748B;
+  color: var(--color-text-disabled, #64748B);
 }
 
 .status-info {
@@ -371,14 +371,14 @@ onUnmounted(() => {
 
 .status-label {
   font-size: 12px;
-  color: #94A3B8;
+  color: var(--color-text-muted, #94A3B8);
   font-weight: 500;
 }
 
 .status-value {
   font-size: 15px;
   font-weight: 600;
-  color: #F8FAFC;
+  color: var(--color-text-primary, #F8FAFC);
   font-family: var(--font-body);
 }
 
@@ -393,22 +393,22 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: rgba(30, 41, 59, 0.4);
+  background: var(--color-surface, rgba(30, 41, 59, 0.4));
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.15));
   border-radius: 10px;
   transition: all 0.3s ease;
 }
 
 .data-item:hover {
-  background: rgba(30, 41, 59, 0.6);
+  background: var(--color-surface-hover, rgba(30, 41, 59, 0.6));
   border-color: rgba(245, 158, 11, 0.2);
   transform: translateX(4px);
 }
 
 .data-label {
   font-size: 14px;
-  color: #CBD5E1;
+  color: var(--color-text-secondary, #CBD5E1);
   font-weight: 500;
 }
 
@@ -483,7 +483,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  background-color: #2d2d2d;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
   border-radius: 6px;
 }
 

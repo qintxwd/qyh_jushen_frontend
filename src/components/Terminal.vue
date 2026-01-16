@@ -153,6 +153,6 @@ const handleResize = () => {
   width: 100%;
   height: 100%;
   padding: 10px;
-  background-color: #1e1e1e;
+  background-color: var(--color-bg-secondary, #1e1e1e);
 }
 </style>

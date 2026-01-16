@@ -51,15 +51,10 @@ onMounted(() => {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 默认暗色模式背景 */
+/* 使用 CSS 变量，自动跟随主题 */
 body {
-  background-color: #1a1a1a;
-  color: #e0e0e0;
-}
-
-/* 明亮模式背景 */
-html.light body {
-  background-color: #f0f2f5;
-  color: #333;
+  background-color: var(--color-bg-primary, #1a1a1a);
+  color: var(--color-text-primary, #e0e0e0);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 </style>

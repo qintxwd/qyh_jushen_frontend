@@ -105,8 +105,8 @@ const displayParams = computed(() => {
 <style scoped>
 .skill-node {
   min-width: 160px;
-  background-color: #2d2d2d;
-  border: 2px solid #555;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
+  border: 2px solid var(--color-border, #555);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;

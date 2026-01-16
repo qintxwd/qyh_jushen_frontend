@@ -203,9 +203,9 @@ onUnmounted(() => {
   font-size: 10px;
   font-family: 'Consolas', 'Monaco', monospace;
   padding: 2px 6px;
-  background-color: #2d2d2d;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
   border-radius: 4px;
-  color: #909399;
+  color: var(--color-text-muted, #909399);
   min-width: 36px;
   text-align: center;
   transition: all 0.2s;

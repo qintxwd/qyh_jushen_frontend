@@ -477,8 +477,8 @@ onUnmounted(() => {
   justify-content: space-between;
   height: 48px;
   padding: 0 16px;
-  background-color: #252526;
-  border-bottom: 1px solid #3c3c3c;
+  background-color: var(--color-bg-secondary, #252526);
+  border-bottom: 1px solid var(--color-border, #3c3c3c);
 }
 
 .toolbar-left,
@@ -581,16 +581,16 @@ onUnmounted(() => {
 }
 
 :deep(.el-divider--vertical) {
-  border-color: #3c3c3c;
+  border-color: var(--color-border, #3c3c3c);
   height: 24px;
 }
 
 :deep(.el-input__wrapper) {
-  background-color: #2d2d2d;
-  border-color: #3c3c3c;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
+  border-color: var(--color-border, #3c3c3c);
 }
 
 :deep(.el-input__inner) {
-  color: #ccc;
+  color: var(--color-text-secondary, #ccc);
 }
 </style>

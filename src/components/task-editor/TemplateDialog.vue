@@ -143,16 +143,16 @@ function confirm() {
   display: flex;
   gap: 12px;
   padding: 12px;
-  border: 1px solid #3c3c3c;
+  border: 1px solid var(--color-border, #3c3c3c);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  background-color: #2d2d2d;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
 }
 
 .template-card:hover {
-  border-color: #555;
-  background-color: #333;
+  border-color: var(--color-border-secondary, #555);
+  background-color: var(--color-surface-hover, #333);
 }
 
 .template-card.selected {
@@ -192,14 +192,14 @@ function confirm() {
 }
 
 .template-preview {
-  background-color: #1e1e1e;
+  background-color: var(--color-bg-secondary, #1e1e1e);
   border-radius: 8px;
   padding: 12px;
 }
 
 .template-preview h4 {
   margin: 0 0 8px;
-  color: #ccc;
+  color: var(--color-text-secondary, #ccc);
   font-size: 14px;
 }
 

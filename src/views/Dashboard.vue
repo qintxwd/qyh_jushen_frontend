@@ -89,15 +89,15 @@ const handleLogout = () => {
 <style scoped>
 .dashboard {
   height: 100vh;
-  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  background: linear-gradient(135deg, var(--color-bg-primary, #0F172A) 0%, var(--color-bg-secondary, #1E293B) 100%);
   font-family: 'DM Sans', sans-serif;
 }
 
 .el-header {
-  background: rgba(30, 41, 59, 0.6);
+  background: var(--color-surface, rgba(30, 41, 59, 0.6));
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(248, 250, 252, 0.1);
-  color: #F8FAFC;
+  border-bottom: 1px solid var(--color-border, rgba(248, 250, 252, 0.1));
+  color: var(--color-text-primary, #F8FAFC);
   display: flex;
   align-items: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
@@ -115,7 +115,7 @@ const handleLogout = () => {
   font-size: 24px;
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  background: linear-gradient(135deg, #F8FAFC 0%, #F59E0B 100%);
+  background: linear-gradient(135deg, var(--color-text-primary, #F8FAFC) 0%, #F59E0B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -123,7 +123,7 @@ const handleLogout = () => {
 }
 
 .header-content span {
-  color: #CBD5E1;
+  color: var(--color-text-secondary, #CBD5E1);
   font-weight: 500;
   font-size: 15px;
 }
@@ -134,9 +134,9 @@ const handleLogout = () => {
 }
 
 :deep(.el-card) {
-  background: rgba(30, 41, 59, 0.5);
+  background: var(--color-surface, rgba(30, 41, 59, 0.5));
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
@@ -150,22 +150,22 @@ const handleLogout = () => {
 }
 
 :deep(.el-card__header) {
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  border-bottom: 1px solid var(--color-border, rgba(148, 163, 184, 0.15));
   padding: 18px 24px;
-  background: rgba(15, 23, 42, 0.3);
+  background: var(--color-surface, rgba(15, 23, 42, 0.3));
 }
 
 :deep(.card-header span) {
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 600;
   font-size: 18px;
-  color: #F8FAFC;
+  color: var(--color-text-primary, #F8FAFC);
   letter-spacing: -0.3px;
 }
 
 :deep(.el-card__body) {
   padding: 24px;
-  color: #CBD5E1;
+  color: var(--color-text-secondary, #CBD5E1);
   font-size: 15px;
   line-height: 1.8;
 }

@@ -131,20 +131,20 @@ function onNodeClick(type: NodeType) {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #1e1e1e;
-  border-right: 1px solid #3c3c3c;
+  background-color: var(--color-bg-secondary, #1e1e1e);
+  border-right: 1px solid var(--color-border, #3c3c3c);
 }
 
 .palette-header {
   padding: 12px;
-  border-bottom: 1px solid #3c3c3c;
+  border-bottom: 1px solid var(--color-border, #3c3c3c);
 }
 
 .palette-title {
   display: block;
   font-size: 13px;
   font-weight: 500;
-  color: #ccc;
+  color: var(--color-text-secondary, #ccc);
   margin-bottom: 8px;
 }
 
@@ -186,7 +186,7 @@ function onNodeClick(type: NodeType) {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  background-color: #2d2d2d;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
   border-left: 3px solid;
   border-radius: 6px;
   cursor: grab;
@@ -194,7 +194,7 @@ function onNodeClick(type: NodeType) {
 }
 
 .palette-node:hover {
-  background-color: #3c3c3c;
+  background-color: var(--color-surface-hover, #3c3c3c);
   transform: translateX(4px);
 }
 
@@ -238,7 +238,7 @@ function onNodeClick(type: NodeType) {
 
 .palette-footer {
   padding: 10px 12px;
-  border-top: 1px solid #3c3c3c;
+  border-top: 1px solid var(--color-border, #3c3c3c);
 }
 
 .hint-text {
@@ -246,7 +246,7 @@ function onNodeClick(type: NodeType) {
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: #666;
+  color: var(--color-text-muted, #666);
 }
 
 /* Element Plus 样式覆盖 */
@@ -258,13 +258,13 @@ function onNodeClick(type: NodeType) {
 
 :deep(.el-collapse-item__header) {
   background-color: transparent;
-  border-bottom: 1px solid #333;
-  color: #ccc;
+  border-bottom: 1px solid var(--color-border, #333);
+  color: var(--color-text-secondary, #ccc);
   height: 40px;
 }
 
 :deep(.el-collapse-item__header:hover) {
-  background-color: #2a2a2a;
+  background-color: var(--color-surface-hover, #2a2a2a);
 }
 
 :deep(.el-collapse-item__content) {
@@ -276,15 +276,15 @@ function onNodeClick(type: NodeType) {
 }
 
 :deep(.el-input__wrapper) {
-  background-color: #2d2d2d;
-  border-color: #3c3c3c;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
+  border-color: var(--color-border, #3c3c3c);
 }
 
 :deep(.el-input__inner) {
-  color: #ccc;
+  color: var(--color-text-secondary, #ccc);
 }
 
 :deep(.el-input__inner::placeholder) {
-  color: #666;
+  color: var(--color-text-muted, #666);
 }
 </style>

@@ -127,7 +127,7 @@ onUnmounted(() => {
 
 <style scoped>
 .camera-view {
-  background-color: #1e1e1e;
+  background-color: var(--color-bg-secondary, #1e1e1e);
   border-radius: 8px;
   overflow: hidden;
   display: flex;
@@ -143,9 +143,9 @@ onUnmounted(() => {
   align-items: center;
   gap: 6px;
   padding: 8px 12px;
-  background-color: #2d2d2d;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
   font-size: 12px;
-  color: #b0b0b0;
+  color: var(--color-text-secondary, #b0b0b0);
 }
 
 .camera-header .el-icon {

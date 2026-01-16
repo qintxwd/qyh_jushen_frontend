@@ -91,7 +91,7 @@ function closeTab(tabId: number) {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #1e1e1e;
+  background-color: var(--color-bg-secondary, #1e1e1e);
 }
 
 /* 标签栏 */
@@ -99,8 +99,8 @@ function closeTab(tabId: number) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #252526;
-  border-bottom: 1px solid #3c3c3c;
+  background-color: var(--color-bg-secondary, #252526);
+  border-bottom: 1px solid var(--color-border, #3c3c3c);
   flex-shrink: 0;
   min-height: 36px;
 }
@@ -128,9 +128,9 @@ function closeTab(tabId: number) {
   gap: 8px;
   padding: 8px 12px;
   font-size: 13px;
-  color: #888;
+  color: var(--color-text-muted, #888);
   background-color: transparent;
-  border-right: 1px solid #3c3c3c;
+  border-right: 1px solid var(--color-border, #3c3c3c);
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
@@ -138,13 +138,13 @@ function closeTab(tabId: number) {
 }
 
 .tab:hover {
-  background-color: #2a2d2e;
-  color: #ccc;
+  background-color: var(--color-surface-hover, #2a2d2e);
+  color: var(--color-text-secondary, #ccc);
 }
 
 .tab.active {
-  background-color: #1e1e1e;
-  color: #fff;
+  background-color: var(--color-bg-secondary, #1e1e1e);
+  color: var(--color-text-primary, #fff);
   border-bottom: 2px solid #409eff;
 }
 

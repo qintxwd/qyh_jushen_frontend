@@ -172,7 +172,7 @@ function resetZoom() {
 .task-editor-canvas {
   width: 100%;
   height: 100%;
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-primary, #1a1a1a);
 }
 
 .empty-hint-panel {
@@ -185,9 +185,9 @@ function resetZoom() {
   align-items: center;
   gap: 12px;
   padding: 24px 32px;
-  background-color: rgba(45, 45, 45, 0.9);
+  background-color: var(--color-surface, rgba(45, 45, 45, 0.9));
   border-radius: 12px;
-  color: #888;
+  color: var(--color-text-muted, #888);
 }
 
 .empty-hint p {
@@ -217,11 +217,11 @@ function resetZoom() {
 }
 
 :deep(.vue-flow__background) {
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-primary, #1a1a1a);
 }
 
 :deep(.vue-flow__minimap) {
-  background-color: #252526;
+  background-color: var(--color-bg-secondary, #252526);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -231,23 +231,23 @@ function resetZoom() {
 }
 
 :deep(.vue-flow__controls) {
-  background-color: #2d2d2d;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 :deep(.vue-flow__controls-button) {
-  background-color: #2d2d2d;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
   border: none;
-  color: #ccc;
+  color: var(--color-text-secondary, #ccc);
   width: 32px;
   height: 32px;
 }
 
 :deep(.vue-flow__controls-button:hover) {
-  background-color: #3c3c3c;
-  color: #fff;
+  background-color: var(--color-surface-hover, #3c3c3c);
+  color: var(--color-text-primary, #fff);
 }
 
 :deep(.vue-flow__controls-button svg) {

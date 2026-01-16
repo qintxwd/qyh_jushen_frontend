@@ -92,7 +92,7 @@ function toggleFullscreen() {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-primary, #1a1a1a);
 }
 
 .scene-toolbar {
@@ -100,8 +100,8 @@ function toggleFullscreen() {
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background-color: #252526;
-  border-bottom: 1px solid #3c3c3c;
+  background-color: var(--color-bg-secondary, #252526);
+  border-bottom: 1px solid var(--color-border, #3c3c3c);
   flex-shrink: 0;
 }
 
@@ -128,7 +128,7 @@ function toggleFullscreen() {
 
 /* 全屏样式 */
 .scene-content:fullscreen {
-  background-color: #1a1a1a;
+  background-color: var(--color-bg-primary, #1a1a1a);
 }
 
 .scene-content:fullscreen .joint-overlay {

@@ -861,8 +861,8 @@ onUnmounted(() => {
   height: 100%;
   padding: 16px;
   overflow-y: auto;
-  background-color: #1a1a1a;
-  color: #e0e0e0;
+  background-color: var(--color-bg-primary, #1a1a1a);
+  color: var(--color-text-primary, #e0e0e0);
 }
 
 /* 顶部状态栏 */
@@ -870,9 +870,9 @@ onUnmounted(() => {
   display: flex;
   gap: 16px;
   padding: 16px;
-  background: linear-gradient(135deg, #2c2c2c 0%, #1e1e1e 100%);
+  background: var(--color-surface, linear-gradient(135deg, #2c2c2c 0%, #1e1e1e 100%));
   border-radius: 8px;
-  border: 1px solid #3c3c3c;
+  border: 1px solid var(--color-border, #3c3c3c);
   flex-wrap: wrap;
 }
 
@@ -895,13 +895,13 @@ onUnmounted(() => {
 
 .status-label {
   font-size: 13px;
-  color: #888;
+  color: var(--color-text-muted, #888);
   font-weight: 500;
 }
 
 .status-value {
   font-size: 13px;
-  color: #e0e0e0;
+  color: var(--color-text-primary, #e0e0e0);
   font-family: 'Consolas', monospace;
 }
 
@@ -915,9 +915,9 @@ onUnmounted(() => {
 .battery-mini-bar {
   width: 80px;
   height: 24px;
-  background-color: #2c2c2c;
+  background-color: var(--color-bg-tertiary, #2c2c2c);
   border-radius: 4px;
-  border: 1px solid #3c3c3c;
+  border: 1px solid var(--color-border, #3c3c3c);
   overflow: hidden;
   position: relative;
 }
@@ -948,7 +948,7 @@ onUnmounted(() => {
 
 .battery-voltage {
   font-size: 12px;
-  color: #888;
+  color: var(--color-text-muted, #888);
   font-family: 'Consolas', monospace;
 }
 
@@ -969,16 +969,16 @@ onUnmounted(() => {
 
 /* 面板区块 */
 .panel-section {
-  background-color: #252526;
+  background-color: var(--color-bg-secondary, #252526);
   padding: 18px;
   border-radius: 8px;
-  border: 1px solid #3c3c3c;
+  border: 1px solid var(--color-border, #3c3c3c);
 }
 
 .section-title {
   font-size: 15px;
   font-weight: 600;
-  color: #e0e0e0;
+  color: var(--color-text-primary, #e0e0e0);
   margin: 0 0 12px 0;
   display: flex;
   align-items: center;
@@ -1014,10 +1014,10 @@ onUnmounted(() => {
   align-items: center;
   gap: 6px;
   padding: 10px;
-  background-color: #1e1e1e;
+  background-color: var(--color-bg-secondary, #1e1e1e);
   border-radius: 6px;
-  border: 1px solid #3c3c3c;
-  color: #666;
+  border: 1px solid var(--color-border, #3c3c3c);
+  color: var(--color-text-muted, #666);
   font-size: 12px;
   transition: all 0.3s;
 }
@@ -1074,9 +1074,9 @@ onUnmounted(() => {
 .station-list-compact {
   max-height: 200px;
   overflow-y: auto;
-  border: 1px solid #3c3c3c;
+  border: 1px solid var(--color-border, #3c3c3c);
   border-radius: 6px;
-  background-color: #1e1e1e;
+  background-color: var(--color-bg-secondary, #1e1e1e);
 }
 
 .station-item-compact {
@@ -1085,7 +1085,7 @@ onUnmounted(() => {
   gap: 8px;
   padding: 10px 14px;
   cursor: pointer;
-  border-bottom: 1px solid #2c2c2c;
+  border-bottom: 1px solid var(--color-bg-tertiary, #2c2c2c);
   transition: all 0.2s;
   font-size: 13px;
 }
@@ -1095,7 +1095,7 @@ onUnmounted(() => {
 }
 
 .station-item-compact:hover {
-  background-color: #2a2d2e;
+  background-color: var(--color-surface-hover, #2a2d2e);
 }
 
 .station-item-compact.selected {
@@ -1105,12 +1105,12 @@ onUnmounted(() => {
 
 .station-name {
   flex: 1;
-  color: #e0e0e0;
+  color: var(--color-text-primary, #e0e0e0);
   font-weight: 500;
 }
 
 .station-coord {
-  color: #888;
+  color: var(--color-text-muted, #888);
   font-size: 11px;
   font-family: 'Consolas', monospace;
 }
@@ -1118,7 +1118,7 @@ onUnmounted(() => {
 .station-empty {
   padding: 28px;
   text-align: center;
-  color: #666;
+  color: var(--color-text-muted, #666);
   font-size: 13px;
 }
 
@@ -1139,12 +1139,12 @@ onUnmounted(() => {
 
 .param-label {
   font-size: 13px;
-  color: #888;
+  color: var(--color-text-muted, #888);
 }
 
 .param-value {
   font-size: 13px;
-  color: #e0e0e0;
+  color: var(--color-text-primary, #e0e0e0);
   text-align: right;
   font-family: 'Consolas', monospace;
 }
@@ -1155,14 +1155,14 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 10px;
-  background-color: #1e1e1e;
+  background-color: var(--color-bg-secondary, #1e1e1e);
   border-radius: 6px;
-  border: 1px solid #3c3c3c;
+  border: 1px solid var(--color-border, #3c3c3c);
 }
 
 .map-label {
   font-size: 13px;
-  color: #888;
+  color: var(--color-text-muted, #888);
 }
 
 .map-name {
@@ -1256,7 +1256,7 @@ onUnmounted(() => {
 
 .chassis-panel::-webkit-scrollbar-track,
 .station-list-compact::-webkit-scrollbar-track {
-  background-color: #2c2c2c;
+  background-color: var(--color-bg-tertiary, #2c2c2c);
 }
 
 /* 响应式布局 */

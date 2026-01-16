@@ -777,8 +777,8 @@ onUnmounted(() => {
 
 /* 紧凑状态栏 */
 .status-compact {
-  background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: var(--color-surface, rgba(30, 41, 59, 0.4));
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
   border-radius: 8px;
   padding: 12px;
 }
@@ -793,7 +793,7 @@ onUnmounted(() => {
 .status-header h3 {
   font-size: 14px;
   font-weight: 600;
-  color: #e0e0e0;
+  color: var(--color-text-primary, #e0e0e0);
   margin: 0;
 }
 
@@ -815,10 +815,10 @@ onUnmounted(() => {
 .height-track-mini {
   width: 20px;
   height: 80px;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--color-bg-tertiary, rgba(15, 23, 42, 0.6));
   border-radius: 4px;
   position: relative;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
   overflow: hidden;
 }
 
@@ -864,14 +864,14 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 4px 8px;
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--color-bg-tertiary, rgba(15, 23, 42, 0.6));
   border-radius: 4px;
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.1));
 }
 
 .value-item .label {
   font-size: 12px;
-  color: #888;
+  color: var(--color-text-muted, #888);
 }
 
 .value-item .value {
@@ -904,12 +904,12 @@ onUnmounted(() => {
 
 .unit {
   font-size: 12px;
-  color: #888;
+  color: var(--color-text-muted, #888);
 }
 
 .position-compact {
-  background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: var(--color-surface, rgba(30, 41, 59, 0.4));
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.2));
   border-radius: 6px;
   padding: 10px;
   display: flex;
@@ -1002,8 +1002,8 @@ onUnmounted(() => {
 }
 
 .point-card {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(30, 41, 59, 0.4));
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: var(--color-surface, linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(30, 41, 59, 0.4)));
+  border: 1px solid var(--color-border, rgba(148, 163, 184, 0.3));
   border-radius: 10px;
   padding: 12px;
   cursor: pointer;
@@ -1028,7 +1028,7 @@ onUnmounted(() => {
 }
 
 .point-card:hover {
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.6));
+  background: var(--color-surface-hover, linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.6)));
   border-color: var(--color-primary);
   transform: translateY(-3px);
   box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
@@ -1059,7 +1059,7 @@ onUnmounted(() => {
 .point-name {
   font-size: 14px;
   font-weight: 700;
-  color: #f0f0f0;
+  color: var(--color-text-primary, #f0f0f0);
   display: flex;
   align-items: center;
   gap: 5px;

@@ -366,8 +366,8 @@ watch(
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #1e1e1e;
-  border-left: 1px solid #3c3c3c;
+  background-color: var(--color-bg-secondary, #1e1e1e);
+  border-left: 1px solid var(--color-border, #3c3c3c);
 }
 
 .property-panel.empty {
@@ -380,7 +380,7 @@ watch(
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  color: #666;
+  color: var(--color-text-muted, #666);
 }
 
 .empty-content p {
@@ -393,7 +393,7 @@ watch(
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  border-bottom: 1px solid #3c3c3c;
+  border-bottom: 1px solid var(--color-border, #3c3c3c);
 }
 
 .header-title {
@@ -402,7 +402,7 @@ watch(
   gap: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #e0e0e0;
+  color: var(--color-text-primary, #e0e0e0);
 }
 
 .panel-body {
@@ -413,7 +413,7 @@ watch(
 
 .panel-footer {
   padding: 12px 16px;
-  border-top: 1px solid #3c3c3c;
+  border-top: 1px solid var(--color-border, #3c3c3c);
 }
 
 .panel-footer .el-button {
@@ -426,13 +426,13 @@ watch(
   justify-content: center;
   gap: 8px;
   padding: 20px;
-  color: #666;
+  color: var(--color-text-muted, #666);
   font-size: 13px;
 }
 
 .param-hint {
   font-size: 11px;
-  color: #888;
+  color: var(--color-text-muted, #888);
   margin-top: 4px;
 }
 
@@ -447,32 +447,32 @@ watch(
 
 /* Element Plus 样式覆盖 */
 :deep(.el-form-item__label) {
-  color: #999;
+  color: var(--color-text-muted, #999);
   font-size: 12px;
 }
 
 :deep(.el-input__wrapper),
 :deep(.el-select .el-input__wrapper),
 :deep(.el-input-number) {
-  background-color: #2d2d2d;
-  border-color: #3c3c3c;
+  background-color: var(--color-bg-tertiary, #2d2d2d);
+  border-color: var(--color-border, #3c3c3c);
 }
 
 :deep(.el-input__inner) {
-  color: #ccc;
+  color: var(--color-text-secondary, #ccc);
 }
 
 :deep(.el-input.is-disabled .el-input__wrapper) {
-  background-color: #252526;
+  background-color: var(--color-bg-secondary, #252526);
 }
 
 :deep(.el-input.is-disabled .el-input__inner) {
-  color: #666;
+  color: var(--color-text-muted, #666);
 }
 
 :deep(.el-divider) {
   margin: 16px 0;
-  border-color: #3c3c3c;
+  border-color: var(--color-border, #3c3c3c);
 }
 
 :deep(.el-select) {
