@@ -298,11 +298,7 @@
 import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import axios from 'axios'
-import { getApiV1BaseUrl } from '@/utils/apiUrl'
-
-// API 基础 URL - 动态获取
-const getApiBase = () => getApiV1BaseUrl()
+import apiClient from '@/api/client'
 
 // 最大高度 (mm)
 const maxHeight = 500
@@ -379,8 +375,8 @@ const editPointForm = reactive({
 // 获取点位列表
 async function fetchLiftPoints() {
   try {
-    const response = await axios.get(`${getApiBase()}/lift/points`)
-    liftPoints.value = response.data
+    const data = await apiClient.get('/api/v1/lift/points')
+    liftPoints.value = data
   } catch (error) {
     console.error('获取升降点位列表失败:', error)
   }
@@ -402,7 +398,7 @@ async function confirmAddPoint() {
   }
   
   try {
-    await axios.post(`${getApiBase()}/lift/points`, newPointForm)
+    await apiClient.post('/api/v1/lift/points', newPointForm)
     ElMessage.success('点位添加成功')
     addPointDialogVisible.value = false
     await fetchLiftPoints()
@@ -434,7 +430,7 @@ async function confirmEditPoint() {
   }
   
   try {
-    await axios.put(`${getApiBase()}/lift/points/${editPointForm.id}`, {
+    await apiClient.put(`/api/v1/lift/points/${editPointForm.id}`, {
       name: editPointForm.name,
       description: editPointForm.description,
       height: editPointForm.height
@@ -466,7 +462,7 @@ async function deletePoint(point: LiftPoint) {
       }
     )
     
-    await axios.delete(`${getApiBase()}/lift/points/${point.id}`)
+    await apiClient.delete(`/api/v1/lift/points/${point.id}`)
     ElMessage.success('点位删除成功')
     if (selectedPointId.value === point.id) {
       selectedPointId.value = ''
@@ -504,7 +500,7 @@ async function updatePointPosition(point: LiftPoint) {
       }
     )
     
-    await axios.put(`${getApiBase()}/lift/points/${point.id}`, {
+    await apiClient.put(`/api/v1/lift/points/${point.id}`, {
       name: point.name,
       description: point.description,
       height: state.currentPosition
@@ -534,16 +530,7 @@ const CMD = {
 // 发送控制命令
 async function sendCommand(command: number, value: number = 0, hold: boolean = false) {
   try {
-    const response = await axios.post(
-      `${getApiBase()}/lift/control`,
-      { command, value, hold },
-      {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-    )
-    return response.data
+    return apiClient.post('/api/v1/lift/control', { command, value, hold })
   } catch (error: any) {
     console.error('Lift control error:', error)
     throw error
@@ -673,16 +660,7 @@ async function toggleElectromagnet() {
   loading.electromagnet = true
   try {
     const enable = !state.electromagnetOn
-    const response = await axios.post(
-      `${getApiBase()}/lift/electromagnet`,
-      { enable },
-      {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-    )
-    const result = response.data
+    const result = await apiClient.post('/api/v1/lift/electromagnet', { enable })
     if (result?.success) {
       state.electromagnetOn = enable
       ElMessage.success(result.message || (enable ? '电磁铁已开启' : '电磁铁已关闭'))
@@ -699,20 +677,16 @@ async function toggleElectromagnet() {
 // 获取状态
 async function fetchState() {
   try {
-    const response = await axios.get(`${getApiBase()}/lift/state`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    const data = await apiClient.get('/api/v1/lift/state')
     
-    if (response.data) {
-      state.connected = response.data.connected ?? false
-      state.enabled = response.data.enabled ?? false
-      state.currentPosition = response.data.current_position ?? 0
-      state.currentSpeed = response.data.current_speed ?? 20
-      state.positionReached = response.data.position_reached ?? true
-      state.alarm = response.data.alarm ?? false
-      state.electromagnetOn = response.data.electromagnet_on ?? false
+    if (data) {
+      state.connected = data.connected ?? false
+      state.enabled = data.enabled ?? false
+      state.currentPosition = data.current_position ?? 0
+      state.currentSpeed = data.current_speed ?? 20
+      state.positionReached = data.position_reached ?? true
+      state.alarm = data.alarm ?? false
+      state.electromagnetOn = data.electromagnet_on ?? false
     }
   } catch (error) {
     console.error('获取状态失败:', error)

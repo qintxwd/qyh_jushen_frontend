@@ -273,7 +273,7 @@
 import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import apiClient from '@/api/client'
 import CameraView from '@/components/CameraView.vue'
 import { listActions, getActionTopics, type ActionSummary } from '@/api/actions'
 
@@ -390,12 +390,6 @@ const allRecordingTopics = [
 ]
 
 // ==================== 工具函数 ====================
-function getAuthHeaders() {
-  const token = localStorage.getItem('token')
-  return {
-    headers: { 'Authorization': `Bearer ${token}` }
-  }
-}
 
 function addLog(message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info') {
   const now = new Date()
@@ -425,8 +419,8 @@ function selectDefaultTopics() {
 
 async function fetchAvailableTopics() {
   try {
-    const response = await axios.get('/api/v1/recording/topics', getAuthHeaders())
-    availableTopics.value = response.data.topics || []
+    const response = await apiClient.get('/api/v1/recording/topics')
+    availableTopics.value = response.topics || []
   } catch (error) {
     availableTopics.value = allRecordingTopics
   }
@@ -434,9 +428,9 @@ async function fetchAvailableTopics() {
 
 async function fetchElectromagnetState() {
   try {
-    const response = await axios.get('/api/v1/lift/state', getAuthHeaders())
-    if (response.data) {
-      electromagnetOn.value = response.data.electromagnet_on ?? false
+    const response = await apiClient.get('/api/v1/lift/state')
+    if (response) {
+      electromagnetOn.value = response.electromagnet_on ?? false
     }
   } catch (error) {
     // ignore
@@ -448,12 +442,12 @@ async function toggleElectromagnet() {
   electromagnetLoading.value = true
   try {
     const enable = !electromagnetOn.value
-    const response = await axios.post('/api/v1/lift/electromagnet', { enable }, getAuthHeaders())
-    if (response.data?.success) {
+    const response = await apiClient.post('/api/v1/lift/electromagnet', { enable })
+    if (response?.success) {
       electromagnetOn.value = enable
       addLog(enable ? '电磁铁已开启' : '电磁铁已关闭', 'success')
     } else {
-      addLog(response.data?.message || '电磁铁操作失败', 'warning')
+      addLog(response?.message || '电磁铁操作失败', 'warning')
     }
   } catch (error: any) {
     addLog(`电磁铁操作失败: ${error.response?.data?.detail || error.message}`, 'error')
@@ -494,16 +488,16 @@ async function startRecording() {
     addLog(`开始录制: ${recordingForm.actionName}`, 'info')
     addLog(`录制话题: ${recordingForm.topics.join(', ')}`, 'info')
     
-    const response = await axios.post('/api/v1/recording/start', {
+    const response = await apiClient.post('/api/v1/recording/start', {
       action_name: selectedActionId.value || recordingForm.actionName,
       user_name: localStorage.getItem('username') || 'user',
       version: 'v1',
       topics: recordingForm.topics
-    }, getAuthHeaders())
+    })
     
-    if (response.data.success) {
+    if (response.success) {
       currentActionName.value = recordingForm.actionName
-      currentBagPath.value = response.data.bag_path || ''
+      currentBagPath.value = response.bag_path || ''
       collectionState.value = 'recording'
       recordingDuration.value = 0
       
@@ -512,10 +506,10 @@ async function startRecording() {
       }, 1000)
       
       startDialogVisible.value = false
-      addLog(`录制已开始，保存路径: ${response.data.bag_path}`, 'success')
+      addLog(`录制已开始，保存路径: ${response.bag_path}`, 'success')
       ElMessage.success('开始录制')
     } else {
-      throw new Error(response.data.message || '启动录制失败')
+      throw new Error(response.message || '启动录制失败')
     }
   } catch (error: any) {
     addLog(`启动录制失败: ${error.response?.data?.detail || error.message}`, 'error')
@@ -534,17 +528,17 @@ async function stopRecording() {
   }
   
   try {
-    const response = await axios.post('/api/v1/recording/stop', {}, getAuthHeaders())
+    const response = await apiClient.post('/api/v1/recording/stop', {})
     
-    if (response.data.success) {
+    if (response.success) {
       collectionState.value = 'stopped'
-      addLog(`录制已停止，时长: ${formatDuration(Math.floor(response.data.duration_sec || recordingDuration.value))}`, 'success')
-      addLog(`数据保存于: ${response.data.bag_path}`, 'info')
-      currentBagPath.value = response.data.bag_path || ''
+      addLog(`录制已停止，时长: ${formatDuration(Math.floor(response.duration_sec || recordingDuration.value))}`, 'success')
+      addLog(`数据保存于: ${response.bag_path}`, 'info')
+      currentBagPath.value = response.bag_path || ''
       ElMessage.info('录制已停止，请选择保存或丢弃')
     } else {
       collectionState.value = 'stopped'
-      addLog(`停止录制: ${response.data.message}`, 'warning')
+      addLog(`停止录制: ${response.message}`, 'warning')
     }
   } catch (error: any) {
     collectionState.value = 'stopped'
@@ -585,7 +579,7 @@ async function confirmDiscard() {
   addLog('丢弃录制数据...', 'warning')
   
   try {
-    await axios.post('/api/v1/recording/discard', {}, getAuthHeaders())
+    await apiClient.post('/api/v1/recording/discard', {})
     addLog('数据已丢弃', 'warning')
     ElMessage.warning('录制数据已丢弃')
     resetState()

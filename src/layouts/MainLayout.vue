@@ -292,18 +292,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import apiClient from '@/api/client'
 import { useLayoutStore, PANEL_DEFINITIONS } from '@/stores/layout'
 import { useAuthStore } from '@/stores/auth'
 import TabWindow from '@/components/layout/TabWindow.vue'
 import SvgIcon from '@/components/SvgIcon.vue'
-import { getApiV1BaseUrl } from '@/utils/apiUrl'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { chassisApi } from '@/api/chassis'
-import { normalizeApiResponse } from '@/api/client'
-
-// API 配置 - 动态获取，支持远程访问
-const getApiBase = () => getApiV1BaseUrl()
 
 const router = useRouter()
 const layoutStore = useLayoutStore()
@@ -435,13 +430,7 @@ function stopResize() {
 // 获取升降电机状态
 async function fetchLiftStatus() {
   try {
-    const response = await axios.get(`${getApiBase()}/lift/state`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      timeout: 2000
-    })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/lift/state')
     if (data) {
       layoutStore.updateLiftStatus({
         connected: data.connected ?? false,
@@ -461,13 +450,7 @@ async function fetchLiftStatus() {
 // 获取机械臂状态
 async function fetchArmStatus() {
   try {
-    const response = await axios.get(`${getApiBase()}/arm/state`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      timeout: 2000
-    })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/arm/state')
     if (data) {
       layoutStore.updateArmStatus({
         connected: data.connected ?? false,
@@ -486,13 +469,7 @@ async function fetchArmStatus() {
 // 获取相机状态
 async function fetchCameraStatus() {
   try {
-    const response = await axios.get(`${getApiBase()}/camera/status`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      timeout: 2000
-    })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/camera/status')
     if (data?.cameras) {
       const cameras = data.cameras
       layoutStore.updateCameraStatus('head', { 
@@ -516,13 +493,7 @@ async function fetchCameraStatus() {
 // 获取夹爪状态
 async function fetchGripperStatus() {
   try {
-    const response = await axios.get(`${getApiBase()}/gripper/state`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      timeout: 2000
-    })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/gripper/state')
     if (data) {
       layoutStore.updateGripperStatus('left', {
         communication_ok: data.left?.communication_ok ?? false,
@@ -543,13 +514,7 @@ async function fetchGripperStatus() {
 // 获取头部状态
 async function fetchHeadStatus() {
   try {
-    const response = await axios.get(`${getApiBase()}/head/state`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      timeout: 2000
-    })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/head/state')
     if (data) {
       layoutStore.updateHeadStatus({
         connected: data.connected ?? false,
@@ -593,13 +558,7 @@ async function fetchChassisStatus() {
 // 获取腰部状态
 async function fetchWaistStatus() {
   try {
-    const response = await axios.get(`${getApiBase()}/waist/state`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      timeout: 2000
-    })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/waist/state')
     if (data) {
       layoutStore.updateWaistStatus({
         connected: data.connected ?? false,
@@ -615,13 +574,7 @@ async function fetchWaistStatus() {
 // 获取 VR 状态
 async function fetchVRStatus() {
   try {
-    const response = await axios.get(`${getApiBase()}/vr/status`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      timeout: 2000
-    })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/vr/status')
     if (data) {
       layoutStore.updateVRStatus({
         connected: data.connected ?? false,
@@ -638,8 +591,7 @@ async function fetchVRStatus() {
 // 获取 ROS 连接状态
 async function fetchRosStatus() {
   try {
-    const response = await axios.get(`${getApiBase()}/health`, { timeout: 2000 })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/health')
     layoutStore.updateConnectionStatus({
       ros: data?.ros2_connected ?? false
     })
@@ -652,13 +604,7 @@ async function fetchRosStatus() {
 let lastShutdownInProgress = false
 async function fetchShutdownStatus() {
   try {
-    const response = await axios.get(`${getApiBase()}/shutdown/state`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      timeout: 2000
-    })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/shutdown/state')
     if (data) {
       const shutdownInProgress = data.shutdown_in_progress ?? false
       // 检测新的关机请求（硬件按钮触发 trigger_source=1）

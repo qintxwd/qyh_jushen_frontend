@@ -7,13 +7,11 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 import URDFLoader from 'urdf-loader'
 import type { URDFRobot } from 'urdf-loader'
-import axios from 'axios'
+import apiClient from '@/api/client'
 import { getApiBaseUrl } from '@/utils/apiUrl'
-import { normalizeApiResponse } from '@/api/client'
 
 // API 配置 - 动态获取，支持远程访问
 const getApiBase = () => getApiBaseUrl()
-const getRobotModelApi = () => `${getApiBase()}/api/v1/robot-model`
 
 // 底盘尺寸 (m)
 const CHASSIS_LENGTH = 0.95
@@ -151,19 +149,8 @@ class SceneManager {
     try {
       this.onLoadStatusChange?.('正在获取 URDF 文件...')
       
-      const api = axios.create({
-        baseURL: getRobotModelApi(),
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-        }
-      })
-      api.interceptors.response.use((response) => ({
-        ...response,
-        data: normalizeApiResponse(response.data)
-      }))
-      
-      const response = await api.get('/urdf')
-      const { urdf, source } = response.data
+      const data = await apiClient.get('/api/v1/robot-model/urdf')
+      const { urdf, source } = data
       
       console.log('[SceneManager] URDF source:', source)
       this.onLoadStatusChange?.('正在解析 URDF...')

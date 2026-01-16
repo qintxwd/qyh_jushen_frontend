@@ -217,12 +217,7 @@
 import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import axios from 'axios'
-import { normalizeApiResponse } from '@/api/client'
-import { getApiV1BaseUrl } from '@/utils/apiUrl'
-
-// API 基础 URL - 动态获取
-const getApiBase = () => getApiV1BaseUrl()
+import apiClient from '@/api/client'
 
 const loading = ref(false)
 const loadingReset = ref(false)
@@ -284,16 +279,7 @@ async function sendControl(pan: number | null, tilt: number | null, speed: numbe
   if (speed !== null) {
     payload.speed = speed
   }
-  const response = await axios.post(
-    `${getApiBase()}/head/control`,
-    payload,
-    {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    }
-  )
-  return normalizeApiResponse(response.data)
+  return apiClient.post('/api/v1/head/control', payload)
 }
 
 // 执行移动
@@ -317,16 +303,7 @@ async function executeMove() {
 async function resetHead() {
   loadingReset.value = true
   try {
-    const response = await axios.post(
-      `${getApiBase()}/head/reset`,
-      {},
-      {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-    )
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.post('/api/v1/head/reset', {})
     if (data.success) {
       targetPan.value = 0
       targetTilt.value = 0
@@ -351,13 +328,7 @@ function goToPreset(preset: { name: string; pan: number; tilt: number }) {
 // 获取状态
 async function fetchState() {
   try {
-    const response = await axios.get(`${getApiBase()}/head/state`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      timeout: 2000
-    })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/head/state')
     if (data) {
       state.connected = data.connected ?? false
       state.panPosition = data.pan_position ?? 500
@@ -414,12 +385,7 @@ const editPointForm = reactive({
 // 获取点位列表
 const fetchHeadPoints = async () => {
   try {
-    const response = await axios.get(`${getApiBase()}/head/points`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/head/points')
     headPoints.value = data?.points || data || []
   } catch (error) {
     console.error('获取头部点位列表失败:', error)
@@ -445,7 +411,7 @@ const confirmAddPoint = async () => {
   }
   
   try {
-    await axios.post(`${getApiBase()}/head/points`, newPointForm)
+    await apiClient.post('/api/v1/head/points', newPointForm)
     ElMessage.success('点位添加成功')
     addPointDialogVisible.value = false
     await fetchHeadPoints()
@@ -478,7 +444,7 @@ const confirmEditPoint = async () => {
   }
   
   try {
-    await axios.put(`${getApiBase()}/head/points/${editPointForm.id}`, {
+    await apiClient.put(`/api/v1/head/points/${editPointForm.id}`, {
       name: editPointForm.name,
       description: editPointForm.description,
       pan: editPointForm.pan,
@@ -511,7 +477,7 @@ const deletePoint = async (point: HeadPoint) => {
       }
     )
     
-    await axios.delete(`${getApiBase()}/head/points/${point.id}`)
+    await apiClient.delete(`/api/v1/head/points/${point.id}`)
     ElMessage.success('点位删除成功')
     if (selectedPointId.value === point.id) {
       selectedPointId.value = ''
@@ -567,7 +533,7 @@ const updatePointPosition = async (point: HeadPoint) => {
       }
     )
     
-    await axios.put(`${getApiBase()}/head/points/${point.id}`, {
+    await apiClient.put(`/api/v1/head/points/${point.id}`, {
       name: point.name,
       description: point.description,
       pan: state.panNormalized,

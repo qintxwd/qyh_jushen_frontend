@@ -192,8 +192,7 @@
 import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
-import { normalizeApiResponse } from '@/api/client'
+import apiClient from '@/api/client'
 
 interface GripperState {
   is_activated: boolean
@@ -257,21 +256,10 @@ const force = ref(150)
 
 let pollTimer: number | null = null
 
-// 获取 token
-function getAuthHeaders() {
-  const token = localStorage.getItem('token')
-  return {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  }
-}
-
 // 获取夹爪状态
 async function fetchGripperState() {
   try {
-    const response = await axios.get('/api/v1/gripper/state', getAuthHeaders())
-    const data = normalizeApiResponse(response.data)
+    const data = await apiClient.get('/api/v1/gripper/state')
     if (data) {
       Object.assign(leftState, data.left)
       Object.assign(rightState, data.right)
@@ -285,11 +273,10 @@ async function fetchGripperState() {
 async function activateGripper() {
   activating.value = true
   try {
-    const response = await axios.post('/api/v1/gripper/activate', {
+    const data = await apiClient.post('/api/v1/gripper/activate', {
       side: selectedGripper.value
-    }, getAuthHeaders())
+    })
 
-    const data = normalizeApiResponse(response.data)
     if (data.success) {
       ElMessage.success(data.message)
       await fetchGripperState()
@@ -307,13 +294,11 @@ async function activateGripper() {
 async function quickAction(action: string) {
   loading.value = true
   try {
-    const response = await axios.post(
+    const data = await apiClient.post(
       `/api/v1/gripper/${selectedGripper.value}/${action}`,
-      {},
-      getAuthHeaders()
+      {}
     )
 
-    const data = normalizeApiResponse(response.data)
     if (data.success) {
       const actionNames: Record<string, string> = {
         'open': '全开',
@@ -336,14 +321,13 @@ async function quickAction(action: string) {
 async function executeMove() {
   loading.value = true
   try {
-    const response = await axios.post('/api/v1/gripper/move', {
+    const data = await apiClient.post('/api/v1/gripper/move', {
       side: selectedGripper.value,
       position: targetPosition.value,
       speed: speed.value,
       force: force.value
-    }, getAuthHeaders())
+    })
 
-    const data = normalizeApiResponse(response.data)
     if (data.success) {
       ElMessage.success('夹爪移动命令已发送')
     } else {

@@ -10,7 +10,7 @@
     </div>
 
     <div class="panel-layout">
-      <!-- 状态 + 控制区 -->
+      <!-- 状�?+ 控制�?-->
       <div class="top-section">
         <!-- 状态栏 -->
         <div class="status-compact">
@@ -30,13 +30,13 @@
               <div class="info-item">
                 <span class="label">连接</span>
                 <el-tag :type="state.connected ? 'success' : 'danger'" size="small">
-                  {{ state.connected ? '已连接' : '断开' }}
+                  {{ state.connected ? '已连�? : '断开' }}
                 </el-tag>
               </div>
               <div class="info-item">
                 <span class="label">使能</span>
                 <el-tag :type="state.enabled ? 'success' : 'info'" size="small">
-                  {{ state.enabled ? '使能' : '未使能' }}
+                  {{ state.enabled ? '使能' : '未使�? }}
                 </el-tag>
               </div>
               <div class="info-item">
@@ -48,16 +48,16 @@
                 <span class="value">{{ state.currentSpeed }}</span>
               </div>
               <div class="info-item">
-                <span class="label">状态</span>
+                <span class="label">状�?/span>
                 <el-tag :type="state.positionReached ? 'success' : 'warning'" size="small">
-                  {{ state.positionReached ? '到位' : '运动中' }}
+                  {{ state.positionReached ? '到位' : '运动�? }}
                 </el-tag>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 控制区 -->
+        <!-- 控制�?-->
         <div class="control-compact">
           <!-- 使能 + 速度 -->
           <div class="control-row">
@@ -70,7 +70,7 @@
             >
               <SvgIcon v-if="state.enabled" name="disable" :size="14" />
               <SvgIcon v-else name="enable" :size="14" />
-              {{ state.enabled ? '下使能' : '上使能' }}
+              {{ state.enabled ? '下使�? : '上使�? }}
             </el-button>
             <div class="speed-mini">
               <el-input-number
@@ -169,7 +169,7 @@
               :disabled="!state.connected || !state.enabled"
             >
               <SvgIcon name="top" :size="16" />
-              前倾
+              前�?
             </el-button>
             <el-button
               type="success"
@@ -244,7 +244,7 @@
       </div>
     </div>
     
-    <!-- 添加点位对话框 -->
+    <!-- 添加点位对话�?-->
     <el-dialog
       v-model="addPointDialogVisible"
       title="添加腰部点位"
@@ -252,10 +252,10 @@
     >
       <el-form label-width="80px">
         <el-form-item label="点位名称">
-          <el-input v-model="newPointForm.name" placeholder="请输入点位名称" />
+          <el-input v-model="newPointForm.name" placeholder="请输入点位名�? />
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="newPointForm.description" placeholder="可选" />
+          <el-input v-model="newPointForm.description" placeholder="可�? />
         </el-form-item>
         <el-form-item label="角度">
           <el-input-number
@@ -274,7 +274,7 @@
       </template>
     </el-dialog>
 
-    <!-- 编辑点位对话框 -->
+    <!-- 编辑点位对话�?-->
     <el-dialog
       v-model="editPointDialogVisible"
       title="编辑腰部点位"
@@ -282,10 +282,10 @@
     >
       <el-form label-width="80px">
         <el-form-item label="点位名称">
-          <el-input v-model="editPointForm.name" placeholder="请输入点位名称" />
+          <el-input v-model="editPointForm.name" placeholder="请输入点位名�? />
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="editPointForm.description" placeholder="可选" />
+          <el-input v-model="editPointForm.description" placeholder="可�? />
         </el-form-item>
         <el-form-item label="角度">
           <el-input-number
@@ -310,16 +310,12 @@
 import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import axios from 'axios'
-import { getApiV1BaseUrl } from '@/utils/apiUrl'
+import apiClient from '@/api/client'
 
-// API 基础 URL - 动态获取
-const getApiBase = () => getApiV1BaseUrl()
-
-// 最大角度
+// 最大角�?
 const maxAngle = 45
 
-// 状态 - 对应 WaistState
+// 状�?- 对应 WaistState
 const state = reactive({
   connected: false,
   enabled: false,
@@ -330,11 +326,11 @@ const state = reactive({
   alarm: false
 })
 
-// 输入值
+// 输入�?
 const inputSpeed = ref(1000)
 const inputAngle = ref(0)
 
-// 加载状态
+// 加载状�?
 const loading = reactive({
   enable: false,
   speed: false,
@@ -352,7 +348,7 @@ const quickAngles = [
   { label: '45°', value: 45 }
 ]
 
-// 手动移动状态
+// 手动移动状�?
 let isManualMoving = false
 
 // ==================== 点位管理 ====================
@@ -385,18 +381,14 @@ const editPointForm = reactive({
 // 获取点位列表
 async function fetchWaistPoints() {
   try {
-    const response = await axios.get(`${getApiBase()}/waist/points`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
-    waistPoints.value = response.data.points || response.data || []
+    const data = await apiClient.get(`/api/v1/waist/points`)
+    waistPoints.value = data.points || data || []
   } catch (error) {
     console.error('获取腰部点位列表失败:', error)
   }
 }
 
-// 打开添加点位对话框
+// 打开添加点位对话�?
 function handleAddPoint() {
   newPointForm.name = ''
   newPointForm.description = ''
@@ -407,12 +399,12 @@ function handleAddPoint() {
 // 确认添加点位
 async function confirmAddPoint() {
   if (!newPointForm.name.trim()) {
-    ElMessage.warning('请输入点位名称')
+    ElMessage.warning('请输入点位名�?)
     return
   }
   
   try {
-    await axios.post(`${getApiBase()}/waist/points`, newPointForm)
+    await apiClient.post(`/api/v1/waist/points`, newPointForm)
     ElMessage.success('点位添加成功')
     addPointDialogVisible.value = false
     await fetchWaistPoints()
@@ -422,7 +414,7 @@ async function confirmAddPoint() {
   }
 }
 
-// 打开编辑点位对话框
+// 打开编辑点位对话�?
 function openEditDialog(point: WaistPoint) {
   if (point.is_builtin) {
     ElMessage.warning('内置点位无法编辑')
@@ -439,12 +431,12 @@ function openEditDialog(point: WaistPoint) {
 // 确认编辑点位
 async function confirmEditPoint() {
   if (!editPointForm.name.trim()) {
-    ElMessage.warning('请输入点位名称')
+    ElMessage.warning('请输入点位名�?)
     return
   }
   
   try {
-    await axios.put(`${getApiBase()}/waist/points/${editPointForm.id}`, {
+    await apiClient.put(`/api/v1/waist/points/${editPointForm.id}`, {
       name: editPointForm.name,
       description: editPointForm.description,
       angle: editPointForm.angle
@@ -467,7 +459,7 @@ async function deletePoint(point: WaistPoint) {
   
   try {
     await ElMessageBox.confirm(
-      `确定要删除点位 "${point.name}" 吗？`,
+      `确定要删除点�?"${point.name}" 吗？`,
       '删除确认',
       {
         confirmButtonText: '确定',
@@ -476,7 +468,7 @@ async function deletePoint(point: WaistPoint) {
       }
     )
     
-    await axios.delete(`${getApiBase()}/waist/points/${point.id}`)
+    await apiClient.delete(`/api/v1/waist/points/${point.id}`)
     ElMessage.success('点位删除成功')
     if (selectedPointId.value === point.id) {
       selectedPointId.value = ''
@@ -514,12 +506,12 @@ async function updatePointAngle(point: WaistPoint) {
       }
     )
     
-    await axios.put(`${getApiBase()}/waist/points/${point.id}`, {
+    await apiClient.put(`/api/v1/waist/points/${point.id}`, {
       name: point.name,
       description: point.description,
       angle: state.currentAngle
     })
-    ElMessage.success('点位角度已更新')
+    ElMessage.success('点位角度已更�?)
     await fetchWaistPoints()
   } catch (error: any) {
     if (error !== 'cancel') {
@@ -543,19 +535,10 @@ const CMD = {
   GO_UPRIGHT: 10
 }
 
-// 发送控制命令
+// 发送控制命�?
 async function sendCommand(command: number, value: number = 0, hold: boolean = false) {
   try {
-    const response = await axios.post(
-      `${getApiBase()}/waist/control`,
-      { command, value, hold },
-      {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-    )
-    return response.data
+    return apiClient.post('/api/v1/waist/control', { command, value, hold })
   } catch (error: any) {
     console.error('Waist control error:', error)
     throw error
@@ -597,13 +580,13 @@ async function setSpeed() {
   }
 }
 
-// 去目标角度
+// 去目标角�?
 async function goToAngle() {
   loading.angle = true
   try {
     const result = await sendCommand(CMD.GO_ANGLE, inputAngle.value)
     if (result.success) {
-      ElMessage.success('开始移动')
+      ElMessage.success('开始移�?)
     } else {
       ElMessage.error(result.message)
     }
@@ -637,7 +620,7 @@ async function stopMove() {
   try {
     const result = await sendCommand(CMD.STOP)
     if (result.success) {
-      ElMessage.warning('运动已停止')
+      ElMessage.warning('运动已停�?)
     } else {
       ElMessage.error(result.message)
     }
@@ -654,14 +637,14 @@ function setQuickAngle(value: number) {
   goToAngle()
 }
 
-// 开始手动移动
+// 开始手动移�?
 async function startManualMove(direction: 'forward' | 'back') {
   if (!state.enabled || !state.connected || isManualMoving) return
   
   isManualMoving = true
   try {
     const command = direction === 'forward' ? CMD.LEAN_FORWARD : CMD.LEAN_BACK
-    await sendCommand(command, 0, true)  // hold=true 开始运动
+    await sendCommand(command, 0, true)  // hold=true 开始运�?
   } catch (error) {
     console.error('Manual move start error:', error)
     isManualMoving = false
@@ -686,7 +669,7 @@ async function resetAlarm() {
   try {
     const result = await sendCommand(CMD.RESET_ALARM)
     if (result.success) {
-      ElMessage.success('报警已复位')
+      ElMessage.success('报警已复�?)
     } else {
       ElMessage.error(result.message)
     }
@@ -697,31 +680,27 @@ async function resetAlarm() {
   }
 }
 
-// 获取状态
+// 获取状�?
 async function fetchState() {
   try {
-    const response = await axios.get(`${getApiBase()}/waist/state`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    const data = await apiClient.get(`/api/v1/waist/state`)
     
-    if (response.data) {
-      state.connected = response.data.connected ?? false
-      state.enabled = response.data.enabled ?? false
-      state.currentPosition = response.data.current_position ?? 230715
-      state.currentAngle = response.data.current_angle ?? 0
-      state.currentSpeed = response.data.current_speed ?? 1000
-      state.positionReached = response.data.position_reached ?? true
-      state.alarm = response.data.alarm ?? false
+    if (data) {
+      state.connected = data.connected ?? false
+      state.enabled = data.enabled ?? false
+      state.currentPosition = data.current_position ?? 230715
+      state.currentAngle = data.current_angle ?? 0
+      state.currentSpeed = data.current_speed ?? 1000
+      state.positionReached = data.position_reached ?? true
+      state.alarm = data.alarm ?? false
     }
   } catch (error) {
-    console.error('获取状态失败:', error)
+    console.error('获取状态失�?', error)
     state.connected = false
   }
 }
 
-// 定时刷新状态
+// 定时刷新状�?
 let stateInterval: number | null = null
 
 onMounted(() => {
@@ -887,7 +866,7 @@ onUnmounted(() => {
   font-weight: 600;
 }
 
-/* 控制区 */
+/* 控制�?*/
 .control-compact {
   display: flex;
   flex-direction: column;
@@ -1141,3 +1120,5 @@ onUnmounted(() => {
   opacity: 1;
 }
 </style>
+
+

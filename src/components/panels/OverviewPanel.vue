@@ -130,23 +130,7 @@ import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useLayoutStore } from '@/stores/layout'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
-import { getApiBaseUrl } from '@/utils/apiUrl'
-import { normalizeApiResponse } from '@/api/client'
-
-// API 配置 - 动态获取，支持远程访问
-const getRobotModelApi = () => `${getApiBaseUrl()}/api/v1/robot-model`
-
-const api = axios.create({
-  baseURL: getRobotModelApi(),
-  headers: {
-    'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-  }
-})
-api.interceptors.response.use((response) => ({
-  ...response,
-  data: normalizeApiResponse(response.data)
-}))
+import apiClient from '@/api/client'
 
 const layoutStore = useLayoutStore()
 
@@ -205,8 +189,7 @@ function refreshStatus() {
 
 async function fetchJointStates() {
   try {
-    const response = await api.get('/joint_states')
-    const data = response.data
+    const data = await apiClient.get('/api/v1/robot-model/joint_states')
     
     // 判断是否是真实的 ROS2 数据
     const isRealData = data.source === 'ros2'
@@ -245,8 +228,7 @@ async function fetchJointStates() {
 async function fetchStatus() {
   // 从 API 获取机械臂状态
   try {
-    const response = await api.get('/joint_states')
-    const data = response.data
+    const data = await apiClient.get('/api/v1/robot-model/joint_states')
     const isRealData = data.source === 'ros2'
     
     status.ros = isRealData

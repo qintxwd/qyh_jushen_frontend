@@ -212,7 +212,7 @@
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
 import { reactive, onMounted, onUnmounted } from 'vue'
-import axios from 'axios'
+import apiClient from '@/api/client'
 
 const vrStatus = reactive({
   connected: false,
@@ -241,15 +241,10 @@ const vrStatus = reactive({
 
 let pollTimer: number | null = null
 
-function getAuthHeaders() {
-  const token = localStorage.getItem('token')
-  return { headers: { 'Authorization': `Bearer ${token}` } }
-}
-
 async function fetchVRStatus() {
   try {
-    const response = await axios.get('/api/v1/vr/status', getAuthHeaders())
-    if (response.data) Object.assign(vrStatus, response.data)
+    const data = await apiClient.get('/api/v1/vr/status')
+    if (data) Object.assign(vrStatus, data)
   } catch (error) {
     // 静默失败
   }

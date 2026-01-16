@@ -375,7 +375,7 @@ import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import apiClient from '@/api/client'
 import URDFViewer from '@/components/URDFViewer.vue'
 
 const router = useRouter()
@@ -412,23 +412,13 @@ const commands = reactive({
   }
 })
 
-import { getApiV1BaseUrl } from '@/utils/apiUrl'
-import { normalizeApiResponse } from '@/api/client'
-// API 基础 URL - 动态获取
-const getApiBase = () => getApiV1BaseUrl()
-
 // 启动/停止 GUI
 const toggleGUI = async (guiType: string) => {
   loading[guiType] = true
   try {
     const action = guiStatus[guiType] === 'running' ? 'stop' : 'start'
-    const response = await axios.post(`${getApiBase()}/ros-gui/${guiType}/${action}`, {}, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    const data = await apiClient.post(`/api/v1/ros-gui/${guiType}/${action}`, {})
 
-    const data = normalizeApiResponse(response.data)
     if (data.success) {
       guiStatus[guiType] = action === 'start' ? 'running' : 'stopped'
       ElMessage.success(data.message || `${guiType} GUI ${action === 'start' ? '启动' : '停止'}成功`)
@@ -481,13 +471,8 @@ const stopAllGUI = async () => {
 // 快捷命令
 const sendQuickCommand = async (command: string) => {
   try {
-    const response = await axios.post(`${getApiBase()}/robot/${command}`, {}, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    const data = await apiClient.post(`/api/v1/robot/${command}`, {})
 
-    const data = normalizeApiResponse(response.data)
     if (data.success) {
       ElMessage.success(data.message || '命令执行成功')
     } else {
@@ -518,13 +503,8 @@ const handleTabChange = (tabName: string) => {
 // 获取 GUI 状态
 const fetchGUIStatus = async () => {
   try {
-    const response = await axios.get(`${getApiBase()}/ros-gui/status`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    const data = await apiClient.get('/api/v1/ros-gui/status')
 
-    const data = normalizeApiResponse(response.data)
     if (data) {
       Object.assign(guiStatus, data)
     }

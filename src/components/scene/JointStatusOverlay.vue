@@ -39,23 +39,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import axios from 'axios'
-import { getApiBaseUrl } from '@/utils/apiUrl'
-import { normalizeApiResponse } from '@/api/client'
-
-// API 配置 - 动态获取，支持远程访问
-const getRobotModelApi = () => `${getApiBaseUrl()}/api/v1/robot-model`
-
-const api = axios.create({
-  baseURL: getRobotModelApi(),
-  headers: {
-    'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-  }
-})
-api.interceptors.response.use((response) => ({
-  ...response,
-  data: normalizeApiResponse(response.data)
-}))
+import apiClient from '@/api/client'
 
 const isCollapsed = ref(false)
 const connected = ref(false)
@@ -78,8 +62,7 @@ let jointStateInterval: number | null = null
 
 async function fetchJointStates() {
   try {
-    const response = await api.get('/joint_states')
-    const data = response.data
+    const data = await apiClient.get('/api/v1/robot-model/joint_states')
     
     // 判断是否是真实的 ROS2 数据
     const isRealData = data.source === 'ros2'

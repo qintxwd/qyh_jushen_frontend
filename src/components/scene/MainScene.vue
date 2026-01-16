@@ -40,11 +40,10 @@ import { ref, onMounted, onUnmounted, onActivated, onDeactivated, defineExpose }
 import * as THREE from 'three'
 import { sceneManager } from './sceneManager'
 import { useLayoutStore } from '@/stores/layout'
-import axios from 'axios'
+import apiClient from '@/api/client'
 import { chassisApi, type MapData, type MapMeta, type MapEdge, type MapStation } from '@/api/chassis'
 import { eventBus, EVENTS } from '@/utils/eventBus'
 import { getApiBaseUrl } from '@/utils/apiUrl'
-import { normalizeApiResponse } from '@/api/client'
 
 const layoutStore = useLayoutStore()
 
@@ -132,22 +131,10 @@ function retryLoad() {
 function startPolling() {
   if (jointStateInterval) return // 已经在轮询
   
-  const api = axios.create({
-    baseURL: `${getApiBase()}/api/v1/robot-model`,
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-    }
-  })
-  api.interceptors.response.use((response) => ({
-    ...response,
-    data: normalizeApiResponse(response.data)
-  }))
-  
   // 关节状态轮询
   const fetchJointStates = async () => {
     try {
-      const response = await api.get('/joint_states')
-      const data = response.data
+      const data = await apiClient.get('/api/v1/robot-model/joint_states')
       
       // 只要有有效数据就更新（无论是 ros2 还是 mock）
       if (data.left && data.right) {
@@ -191,10 +178,7 @@ function startPolling() {
     } catch { /* 忽略 */ }
     
     try {
-      const liftResponse = await axios.get(`${getApiBase()}/api/v1/lift/state`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token') || ''}` }
-      })
-      const liftData = normalizeApiResponse(liftResponse.data)
+      const liftData = await apiClient.get('/api/v1/lift/state')
       if (liftData?.current_position !== undefined) {
         sceneManager.liftHeight = liftData.current_position
         sceneManager.updateArmPosition()

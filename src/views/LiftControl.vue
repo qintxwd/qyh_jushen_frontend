@@ -273,14 +273,9 @@ import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
-import { normalizeApiResponse } from '@/api/client'
-import { getApiV1BaseUrl } from '@/utils/apiUrl'
+import apiClient from '@/api/client'
 
 const router = useRouter()
-
-// API 基础 URL - 动态获取
-const getApiBase = () => getApiV1BaseUrl()
 
 // 最大高度 (mm)
 const maxHeight = ref(500)
@@ -327,16 +322,7 @@ let isManualMoving = false
 // 发送控制命令
 const sendCommand = async (command: number, value: number = 0, hold: boolean = false) => {
   try {
-    const response = await axios.post(
-      `${getApiBase()}/lift/control`,
-      { command, value, hold },
-      {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-    )
-    return normalizeApiResponse(response.data)
+    return apiClient.post('/api/v1/lift/control', { command, value, hold })
   } catch (error: any) {
     console.error('Lift control error:', error)
     throw error
@@ -441,13 +427,8 @@ const resetAlarm = async () => {
 // 获取状态
 const fetchState = async () => {
   try {
-    const response = await axios.get(`${getApiBase()}/lift/state`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    })
+    const data = await apiClient.get('/api/v1/lift/state')
 
-    const data = normalizeApiResponse(response.data)
     if (data) {
       state.connected = data.connected ?? false
       state.enabled = data.enabled ?? false

@@ -91,10 +91,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 import URDFLoader from 'urdf-loader'
 import type { URDFRobot } from 'urdf-loader'
-import axios from 'axios'
+import apiClient from '@/api/client'
 import { chassisApi, type MapData, type MapMeta, type MapEdge, type MapStation } from '@/api/chassis'
 import { eventBus, EVENTS } from '@/utils/eventBus'
-import { normalizeApiResponse } from '@/api/client'
 
 interface Props {
   apiBaseUrl?: string
@@ -112,20 +111,6 @@ const emit = defineEmits<{
 
 import { getApiBaseUrl } from '@/utils/apiUrl'
 
-// API 配置 - 动态获取，支持远程访问
-const getRobotModelApi = () => `${getApiBaseUrl()}/api/v1/robot-model`
-
-// 创建带认证的 axios 实例
-const api = axios.create({
-  baseURL: getRobotModelApi(),
-  headers: {
-    'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-  }
-})
-api.interceptors.response.use((response) => ({
-  ...response,
-  data: normalizeApiResponse(response.data)
-}))
 // Refs
 const containerRef = ref<HTMLElement>()
 const canvasRef = ref<HTMLElement>()
@@ -246,8 +231,8 @@ const initScene = () => {
 const loadRobotModel = async () => {
   try {
     // 1. 从后端获取处理过的 URDF
-    const response = await api.get('/urdf')
-    const { urdf, source } = response.data
+    const data = await apiClient.get('/api/v1/robot-model/urdf')
+    const { urdf, source } = data
     
     urdfSource.value = source
     console.log('URDF source:', source)
@@ -365,8 +350,7 @@ const startJointStatePolling = () => {
   
   const fetchJointStates = async () => {
     try {
-      const response = await api.get('/joint_states')
-      const data = response.data
+      const data = await apiClient.get('/api/v1/robot-model/joint_states')
       
       // 判断是否是真实的 ROS2 数据
       const isRealData = data.source === 'ros2'

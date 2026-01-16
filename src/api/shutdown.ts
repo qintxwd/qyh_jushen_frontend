@@ -20,7 +20,7 @@ export interface ShutdownState {
  * 获取关机状态
  */
 export async function getShutdownState(): Promise<ShutdownState> {
-  return client.get<ShutdownState>('/api/v1/shutdown/state')
+  return client.get('/api/v1/shutdown/state')
 }
 
 /**
@@ -28,7 +28,7 @@ export async function getShutdownState(): Promise<ShutdownState> {
  * 通过PLC实现：写M100线圈 -> 系统shutdown -> PLC断电
  */
 export async function shutdownSystem(): Promise<ShutdownResponse> {
-  return client.post<ShutdownResponse>('/api/v1/shutdown')
+  return client.post('/api/v1/shutdown')
 }
 
 export default {

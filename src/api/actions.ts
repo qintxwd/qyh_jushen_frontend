@@ -7,27 +7,7 @@
  * 
  * 目录结构：model_actions/{robot_name}/{version}/{action_id}/
  */
-import axios from 'axios'
-import { normalizeApiResponse } from './client'
-import { getApiV1BaseUrl } from '@/utils/apiUrl'
-
-const api = axios.create({
-  baseURL: `${getApiV1BaseUrl()}/actions`,
-})
-
-// 添加认证头
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
-// 响应拦截器（统一响应格式扁平化）
-api.interceptors.response.use((response) => {
-  return { ...response, data: normalizeApiResponse(response.data) }
-})
+import apiClient from './client'
 
 // 动作状态类型
 export type ActionStatus = 'collecting' | 'trained'
@@ -48,11 +28,11 @@ export async function getRobotInfo(): Promise<RobotInfo> {
   if (cachedRobotInfo) {
     return cachedRobotInfo
   }
-  const response = await api.get('/robot-info')
-  if (response.data.success) {
+  const data = await apiClient.get('/api/v1/actions/robot-info')
+  if (data.success) {
     cachedRobotInfo = {
-      name: response.data.robot_name,
-      version: response.data.robot_version
+      name: data.robot_name,
+      version: data.robot_version
     }
     return cachedRobotInfo
   }
@@ -119,53 +99,53 @@ export interface ActionDetail {
  */
 export async function listActions(status?: ActionStatus): Promise<ActionSummary[]> {
   const params = status ? { status } : {}
-  const response = await api.get('/list', { params })
-  if (response.data.success) {
-    return response.data.actions
+  const data = await apiClient.get('/api/v1/actions/list', { params })
+  if (data.success) {
+    return data.actions
   }
-  throw new Error(response.data.message || 'Failed to list actions')
+  throw new Error(data.message || 'Failed to list actions')
 }
 
 /**
  * 获取已训练的动作列表（可用于执行推理）
  */
 export async function listTrainedActions(): Promise<ActionSummary[]> {
-  const response = await api.get('/trained')
-  if (response.data.success) {
-    return response.data.actions
+  const data = await apiClient.get('/api/v1/actions/trained')
+  if (data.success) {
+    return data.actions
   }
-  throw new Error(response.data.message || 'Failed to list trained actions')
+  throw new Error(data.message || 'Failed to list trained actions')
 }
 
 /**
  * 获取数据采集中的动作列表
  */
 export async function listCollectingActions(): Promise<ActionSummary[]> {
-  const response = await api.get('/collecting')
-  if (response.data.success) {
-    return response.data.actions
+  const data = await apiClient.get('/api/v1/actions/collecting')
+  if (data.success) {
+    return data.actions
   }
-  throw new Error(response.data.message || 'Failed to list collecting actions')
+  throw new Error(data.message || 'Failed to list collecting actions')
 }
 
 /**
  * 获取动作详情
  */
 export async function getAction(actionId: string): Promise<ActionDetail> {
-  const response = await api.get(`/${actionId}`)
-  if (response.data.success) {
-    return response.data.action
+  const data = await apiClient.get(`/api/v1/actions/${actionId}`)
+  if (data.success) {
+    return data.action
   }
-  throw new Error(response.data.message || 'Failed to get action')
+  throw new Error(data.message || 'Failed to get action')
 }
 
 /**
  * 获取动作需要录制的话题列表
  */
 export async function getActionTopics(actionId: string): Promise<string[]> {
-  const response = await api.get(`/${actionId}/topics`)
-  if (response.data.success) {
-    return response.data.topics
+  const data = await apiClient.get(`/api/v1/actions/${actionId}/topics`)
+  if (data.success) {
+    return data.topics
   }
   throw new Error('Failed to get topics')
 }
@@ -179,27 +159,27 @@ export async function createAction(params: {
   description?: string
   template?: string
 }): Promise<ActionSummary> {
-  const response = await api.post('/create', params)
-  if (response.data.success) {
-    return response.data.action
+  const data = await apiClient.post('/api/v1/actions/create', params)
+  if (data.success) {
+    return data.action
   }
-  throw new Error(response.data.message || 'Failed to create action')
+  throw new Error(data.message || 'Failed to create action')
 }
 
 /**
  * 删除动作
  */
 export async function deleteAction(actionId: string, deleteData: boolean = false): Promise<void> {
-  await api.delete(`/${actionId}`, { params: { delete_data: deleteData } })
+  await apiClient.delete(`/api/v1/actions/${actionId}`, { params: { delete_data: deleteData } })
 }
 
 /**
  * 更新动作的轨迹数量统计
  */
 export async function updateEpisodeCount(actionId: string): Promise<number> {
-  const response = await api.post(`/${actionId}/update-episode-count`)
-  if (response.data.success) {
-    return response.data.episode_count
+  const data = await apiClient.post(`/api/v1/actions/${actionId}/update-episode-count`)
+  if (data.success) {
+    return data.episode_count
   }
   throw new Error('Failed to update episode count')
 }
@@ -208,10 +188,10 @@ export async function updateEpisodeCount(actionId: string): Promise<number> {
  * 标记动作为已训练状态
  */
 export async function markActionTrained(actionId: string, modelVersion: string = '1.0.0'): Promise<void> {
-  const response = await api.post(`/${actionId}/mark-trained`, null, {
+  const data = await apiClient.post(`/api/v1/actions/${actionId}/mark-trained`, null, {
     params: { model_version: modelVersion }
   })
-  if (!response.data.success) {
+  if (!data.success) {
     throw new Error('Failed to mark action as trained')
   }
 }
@@ -220,9 +200,9 @@ export async function markActionTrained(actionId: string, modelVersion: string =
  * 获取推理配置（仅适用于已训练的动作）
  */
 export async function getInferenceConfig(actionId: string): Promise<Record<string, any>> {
-  const response = await api.get(`/${actionId}/inference-config`)
-  if (response.data.success) {
-    return response.data.config
+  const data = await apiClient.get(`/api/v1/actions/${actionId}/inference-config`)
+  if (data.success) {
+    return data.config
   }
   throw new Error('Failed to get inference config')
 }
