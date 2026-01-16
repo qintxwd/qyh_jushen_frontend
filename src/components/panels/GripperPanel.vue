@@ -1,14 +1,14 @@
 <template>
   <div class="gripper-panel">
-    <!-- 夹爪选择 -->
-    <div class="panel-section">
+    <!-- 夹爪选择 + 状态一行显示 -->
+    <div class="header-row">
       <div class="gripper-tabs">
         <div 
           class="gripper-tab" 
           :class="{ active: selectedGripper === 'left' }"
           @click="selectedGripper = 'left'"
         >
-          <SvgIcon name="gripper" :size="16" />
+          <SvgIcon name="gripper" :size="14" />
           左夹爪
         </div>
         <div 
@@ -16,172 +16,117 @@
           :class="{ active: selectedGripper === 'right' }"
           @click="selectedGripper = 'right'"
         >
-          <SvgIcon name="gripper" :size="16" />
+          <SvgIcon name="gripper" :size="14" />
           右夹爪
         </div>
       </div>
+      <div class="status-badges">
+        <span class="badge" :class="currentGripperState.is_activated ? 'success' : 'danger'">
+          {{ currentGripperState.is_activated ? '已激活' : '未激活' }}
+        </span>
+        <span class="badge" :class="currentGripperState.communication_ok ? 'success' : 'danger'">
+          {{ currentGripperState.communication_ok ? '通信正常' : '通信断开' }}
+        </span>
+        <span class="badge info">{{ currentGripperState.object_status_text }}</span>
+        <span v-if="currentGripperState.fault_code !== 0" class="badge danger">
+          {{ currentGripperState.fault_message }}
+        </span>
+      </div>
     </div>
 
-    <!-- 当前状态 -->
-    <div class="panel-section">
-      <h3 class="section-title">当前状态</h3>
-      <div class="status-display">
-        <div class="status-row">
-          <span class="status-label">激活状态</span>
-          <el-tag :type="currentGripperState.is_activated ? 'success' : 'danger'" size="small">
-            {{ currentGripperState.is_activated ? '已激活' : '未激活' }}
-          </el-tag>
+    <!-- 实时反馈：位置 + 力 -->
+    <div class="feedback-section">
+      <div class="feedback-item">
+        <div class="feedback-header">
+          <span class="feedback-label">当前位置</span>
+          <span class="feedback-value position">{{ currentGripperState.current_position }}<small>/255</small></span>
         </div>
-        <div class="status-row">
-          <span class="status-label">通信状态</span>
-          <el-tag :type="currentGripperState.communication_ok ? 'success' : 'danger'" size="small">
-            {{ currentGripperState.communication_ok ? '正常' : '断开' }}
-          </el-tag>
+        <div class="progress-bar">
+          <div class="progress-fill position" :style="{ width: (currentGripperState.current_position / 255 * 100) + '%' }"></div>
         </div>
-        <div class="status-row">
-          <span class="status-label">物体检测</span>
-          <el-tag :type="currentGripperState.object_status === 2 ? 'success' : 'info'" size="small">
-            {{ currentGripperState.object_status_text }}
-          </el-tag>
+      </div>
+      <div class="feedback-item">
+        <div class="feedback-header">
+          <span class="feedback-label">力反馈</span>
+          <span class="feedback-value force">{{ currentGripperState.current_force }}<small>/255</small></span>
         </div>
-        <div class="status-row">
-          <span class="status-label">当前位置</span>
-          <span class="status-value">{{ currentGripperState.current_position }}</span>
-        </div>
-        <el-progress 
-          :percentage="Math.round(currentGripperState.current_position / 255 * 100)" 
-          :stroke-width="14"
-          :format="() => currentGripperState.current_position + ' / 255'"
-        />
-        <div class="status-row" style="margin-top: 8px;">
-          <span class="status-label">力反馈</span>
-          <span class="status-value force">{{ currentGripperState.current_force }}</span>
-        </div>
-        <el-progress 
-          :percentage="Math.round(currentGripperState.current_force / 255 * 100)" 
-          :stroke-width="14"
-          status="warning"
-          :format="() => currentGripperState.current_force + ' / 255'"
-        />
-        <div class="status-row" v-if="currentGripperState.fault_code !== 0" style="margin-top: 8px;">
-          <span class="status-label">故障信息</span>
-          <el-tag type="danger" size="small">{{ currentGripperState.fault_message }}</el-tag>
+        <div class="progress-bar">
+          <div class="progress-fill force" :style="{ width: (currentGripperState.current_force / 255 * 100) + '%' }"></div>
         </div>
       </div>
     </div>
 
-    <el-divider />
-
-    <!-- 激活按钮 -->
-    <div class="panel-section">
+    <!-- 快捷操作 -->
+    <div class="quick-section">
       <el-button 
         type="success" 
-        style="width: 100%"
-        @click="activateGripper"
-        :loading="activating"
-        :disabled="currentGripperState.is_activated"
+        @click="currentGripperState.is_activated ? quickAction('open') : activateGripper()"
+        :loading="loading || activating"
       >
-        <SvgIcon name="circlecheck" :size="16" />
-        {{ currentGripperState.is_activated ? '已激活' : '激活夹爪' }}
+        <SvgIcon name="gripper-open" :size="14" />
+        {{ currentGripperState.is_activated ? '全开' : '激活' }}
+      </el-button>
+      <el-button 
+        type="danger" 
+        @click="quickAction('close')"
+        :loading="loading"
+        :disabled="!currentGripperState.is_activated"
+      >
+        <SvgIcon name="gripper-close" :size="14" />
+        全闭
+      </el-button>
+      <el-button 
+        type="warning"
+        @click="quickAction('half')"
+        :loading="loading"
+        :disabled="!currentGripperState.is_activated"
+      >
+        半开
+      </el-button>
+      <el-button 
+        type="info" 
+        @click="quickAction('soft')"
+        :loading="loading"
+        :disabled="!currentGripperState.is_activated"
+      >
+        <SvgIcon name="orange" :size="14" />
+        轻抓
       </el-button>
     </div>
 
-    <el-divider />
-
-    <!-- 快捷操作 -->
-    <div class="panel-section">
-      <h3 class="section-title">快捷操作</h3>
-      <div class="quick-buttons">
-        <el-button 
-          type="success" 
-          @click="quickAction('open')"
-          :loading="loading"
-          :disabled="!currentGripperState.is_activated"
-        >
-          <SvgIcon name="gripper-open" :size="16" />
-          全开
-        </el-button>
-        <el-button 
-          type="danger" 
-          @click="quickAction('close')"
-          :loading="loading"
-          :disabled="!currentGripperState.is_activated"
-        >
-          <SvgIcon name="gripper-close" :size="16" />
-          全闭
-        </el-button>
-        <el-button 
-          type="warning"
-          @click="quickAction('half')"
-          :loading="loading"
-          :disabled="!currentGripperState.is_activated"
-        >
-          一半开
-        </el-button>
-        <el-button 
-          type="info" 
-          @click="quickAction('soft')"
-          :loading="loading"
-          :disabled="!currentGripperState.is_activated"
-        >
-          <SvgIcon name="orange" :size="16" />
-          轻抓
-        </el-button>
-      </div>
-    </div>
-
-    <el-divider />
-
     <!-- 精确控制 -->
-    <div class="panel-section">
-      <h3 class="section-title">精确控制</h3>
-      <div class="control-sliders">
+    <div class="control-section">
+      <div class="control-grid">
         <div class="control-item">
-          <div class="control-header">
-            <span class="control-label">目标位置 (0=开, 255=闭)</span>
-            <span class="control-value">{{ targetPosition }}</span>
+          <span class="control-label">目标位置</span>
+          <div class="slider-wrapper">
+            <el-slider v-model="targetPosition" :min="0" :max="255" :show-tooltip="true" />
           </div>
-          <el-slider 
-            v-model="targetPosition" 
-            :min="0" 
-            :max="255"
-            size="default"
-          />
+          <span class="control-value">{{ targetPosition }}</span>
         </div>
         <div class="control-item">
-          <div class="control-header">
-            <span class="control-label">速度 (0-255)</span>
-            <span class="control-value">{{ speed }}</span>
+          <span class="control-label">速度</span>
+          <div class="slider-wrapper">
+            <el-slider v-model="speed" :min="0" :max="255" :show-tooltip="true" />
           </div>
-          <el-slider 
-            v-model="speed" 
-            :min="0" 
-            :max="255"
-            size="default"
-          />
+          <span class="control-value">{{ speed }}</span>
         </div>
         <div class="control-item">
-          <div class="control-header">
-            <span class="control-label">力限制 (0-255)</span>
-            <span class="control-value">{{ force }}</span>
+          <span class="control-label">力限制</span>
+          <div class="slider-wrapper">
+            <el-slider v-model="force" :min="0" :max="255" :show-tooltip="true" />
           </div>
-          <el-slider 
-            v-model="force" 
-            :min="0" 
-            :max="255"
-            size="default"
-          />
+          <span class="control-value">{{ force }}</span>
         </div>
       </div>
-      
       <el-button 
         type="primary" 
-        style="width: 100%; margin-top: 12px"
+        class="execute-btn"
         @click="executeMove"
         :loading="loading"
         :disabled="!currentGripperState.is_activated"
       >
-        <SvgIcon name="execute-move" :size="16" />
+        <SvgIcon name="execute-move" :size="14" />
         执行移动
       </el-button>
     </div>
@@ -356,170 +301,392 @@ onUnmounted(() => {
 
 <style scoped>
 .gripper-panel {
-  padding: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.panel-section {
-  margin-bottom: var(--spacing-sm);
-}
-
-.section-title {
-  margin: 0 0 var(--spacing-md) 0;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+/* 头部：夹爪选择 + 状态标签 */
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .gripper-tabs {
   display: flex;
-  gap: var(--spacing-sm);
+  gap: 8px;
 }
 
 .gripper-tab {
-  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--spacing-sm);
-  padding: 16px;
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(20px);
+  gap: 6px;
+  padding: 10px 16px;
+  background: rgba(30, 41, 59, 0.5);
   border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s var(--transition-smooth);
-  font-size: 14px;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .gripper-tab:hover {
-  background: rgba(30, 41, 59, 0.6);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  background: rgba(30, 41, 59, 0.7);
 }
 
 .gripper-tab.active {
   background: rgba(245, 158, 11, 0.15);
   border-color: var(--color-primary);
   color: var(--color-primary);
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
 }
 
-.status-display {
+.status-badges {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+  justify-content: flex-end;
 }
 
-.status-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.status-label {
-  font-size: 13px;
-  color: var(--color-text-tertiary);
-  min-width: 60px;
+.badge {
+  padding: 5px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 
-.status-value {
-  font-size: 16px;
-  font-family: 'Consolas', monospace;
+.badge.success {
+  background: rgba(16, 185, 129, 0.15);
   color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge.danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge.info {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* 实时反馈区 - 两列卡片 */
+.feedback-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.feedback-item {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.feedback-label {
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+}
+
+.feedback-value {
+  font-size: 22px;
+  font-family: 'Consolas', 'Monaco', monospace;
   font-weight: 700;
 }
 
-.status-value.force {
+.feedback-value small {
+  font-size: 12px;
+  opacity: 0.6;
+  font-weight: 400;
+}
+
+.feedback-value.position {
+  color: #10b981;
+}
+
+.feedback-value.force {
   color: var(--color-primary);
 }
 
-.quick-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-sm);
+.progress-bar {
+  height: 10px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 5px;
+  overflow: hidden;
 }
 
-.control-sliders {
+.progress-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.progress-fill.position {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.progress-fill.force {
+  background: linear-gradient(90deg, var(--color-primary), #fbbf24);
+}
+
+/* 快捷操作 */
+.quick-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.quick-section .el-button {
+  height: 44px;
+  font-size: 14px;
+  padding: 0 12px;
+  font-weight: 500;
+}
+
+/* 精确控制区 - 滑动条单独一行 */
+.control-section {
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.control-grid {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: 16px;
 }
 
 .control-item {
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(148, 163, 184, 0.15);
-  padding: var(--spacing-md);
-  border-radius: var(--radius-md);
-}
-
-.control-header {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-sm);
+  align-items: center;
+  gap: 12px;
 }
 
 .control-label {
   font-size: 13px;
-  color: var(--color-text-secondary);
-  font-weight: 600;
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.slider-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.slider-wrapper :deep(.el-slider) {
+  width: 100%;
+}
+
+.slider-wrapper :deep(.el-slider__runway) {
+  height: 6px;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.slider-wrapper :deep(.el-slider__bar) {
+  height: 6px;
+  background: linear-gradient(90deg, var(--color-primary), #fbbf24);
+}
+
+.slider-wrapper :deep(.el-slider__button-wrapper) {
+  z-index: 1;
+}
+
+.slider-wrapper :deep(.el-slider__button) {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-primary);
+  background: #fff;
 }
 
 .control-value {
-  font-size: 13px;
+  font-size: 14px;
   font-family: 'Consolas', monospace;
   color: var(--color-primary);
-  font-weight: 700;
+  font-weight: 600;
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
 }
 
-.quick-buttons .el-button {
+.execute-btn {
+  width: 100%;
   height: 44px;
   font-size: 14px;
+  font-weight: 500;
+  margin-top: 14px;
 }
 
-.panel-section > .el-button {
-  height: 46px;
-  font-size: 15px;
+/* ===== 浅色主题适配 ===== */
+:global(html.light) .gripper-panel {
+  background: linear-gradient(135deg, #fafbfc 0%, #f1f5f9 100%);
 }
 
-.settings-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  background: rgba(30, 41, 59, 0.4);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: var(--radius-lg);
+:global(html.light) .gripper-tab {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #475569;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.setting-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  color: var(--color-text-primary);
+:global(html.light) .gripper-tab:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
 }
 
-:deep(.el-divider) {
-  margin: var(--spacing-lg) 0;
-  border-color: rgba(148, 163, 184, 0.2);
+:global(html.light) .gripper-tab.active {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  color: #c2410c;
+  border-color: #fb923c;
+  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.2);
 }
 
-:deep(.el-progress-bar__outer) {
-  background: rgba(15, 23, 42, 0.6);
+:global(html.light) .badge.success {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #059669;
+  border-color: #6ee7b7;
 }
 
-:deep(.el-progress-bar__inner) {
+:global(html.light) .badge.danger {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+:global(html.light) .badge.info {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #2563eb;
+  border-color: #93c5fd;
+}
+
+:global(html.light) .feedback-item {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+:global(html.light) .feedback-label {
+  color: #64748b;
+}
+
+:global(html.light) .feedback-value.position {
+  color: #059669;
+}
+
+:global(html.light) .feedback-value.force {
+  color: #d97706;
+}
+
+:global(html.light) .progress-bar {
+  background: #e2e8f0;
+}
+
+:global(html.light) .progress-fill.position {
   background: linear-gradient(90deg, #10b981, #34d399);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+:global(html.light) .progress-fill.force {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+}
+
+:global(html.light) .control-section {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+:global(html.light) .control-label {
+  color: #64748b;
+}
+
+:global(html.light) .control-value {
+  color: #d97706;
+}
+
+:global(html.light) .slider-wrapper :deep(.el-slider__runway) {
+  background: #e2e8f0;
+}
+
+:global(html.light) .slider-wrapper :deep(.el-slider__bar) {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+:global(html.light) .slider-wrapper :deep(.el-slider__button) {
+  border-color: #f59e0b;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+}
+
+/* 亮色主题按钮优化 */
+:global(html.light) .quick-section .el-button--success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+:global(html.light) .quick-section .el-button--success:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+:global(html.light) .quick-section .el-button--danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+:global(html.light) .quick-section .el-button--danger:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+:global(html.light) .quick-section .el-button--warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  color: #ffffff;
+}
+
+:global(html.light) .quick-section .el-button--warning:hover {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+}
+
+:global(html.light) .quick-section .el-button--info {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(100, 116, 139, 0.3);
+}
+
+:global(html.light) .quick-section .el-button--info:hover {
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+}
+
+:global(html.light) .execute-btn {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+}
+
+:global(html.light) .execute-btn:hover {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
 }
 </style>

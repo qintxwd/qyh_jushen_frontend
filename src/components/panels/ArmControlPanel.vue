@@ -2388,16 +2388,23 @@ function sendJogStopSync() {
 }
 
 .payload-status {
-  background: #252525;
-  border-radius: 6px;
-  padding: 10px 12px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .payload-status .status-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(30, 41, 59, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.12);
 }
 
 .payload-status .status-row:last-child {
@@ -2405,14 +2412,179 @@ function sendJogStopSync() {
 }
 
 .payload-status .status-label {
-  color: #aaa;
+  color: var(--color-text-secondary);
   font-size: 12px;
+  font-weight: 600;
 }
 
 .payload-status .status-value {
-  color: #67c23a;
-  font-weight: 600;
+  color: #34d399;
+  font-weight: 700;
   font-family: 'Consolas', monospace;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+/* ==================== Light Mode Refinements ==================== */
+:global(html.light) .arm-control-panel {
+  background: transparent;
+}
+
+:global(html.light) .arm-control-panel .section-title {
+  color: var(--color-text-secondary);
+}
+
+:global(html.light) .arm-control-panel .status-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+:global(html.light) .arm-control-panel .status-indicator {
+  background: rgba(15, 23, 42, 0.06);
+}
+
+:global(html.light) .arm-control-panel .servo-status,
+:global(html.light) .arm-control-panel .jog-config,
+:global(html.light) .arm-control-panel .jog-speed-config,
+:global(html.light) .arm-control-panel .jog-axis-row,
+:global(html.light) .arm-control-panel .payload-config,
+:global(html.light) .arm-control-panel .payload-object {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+:global(html.light) .arm-control-panel .points-list,
+:global(html.light) .arm-control-panel .update-point-section,
+:global(html.light) .arm-control-panel .cartesian-group,
+:global(html.light) .arm-control-panel .payload-status {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+:global(html.light) .arm-control-panel .point-item {
+  border-bottom-color: rgba(15, 23, 42, 0.06);
+}
+
+:global(html.light) .arm-control-panel .point-item:hover {
+  background: rgba(15, 23, 42, 0.04);
+  transform: translateX(2px);
+}
+
+:global(html.light) .arm-control-panel .point-item.selected {
+  background: rgba(245, 158, 11, 0.12);
+  border-left-color: var(--color-primary);
+}
+
+:global(html.light) .arm-control-panel .point-name {
+  color: var(--color-text-primary);
+}
+
+:global(html.light) .arm-control-panel .point-desc,
+:global(html.light) .arm-control-panel .update-label,
+:global(html.light) .arm-control-panel .param-label,
+:global(html.light) .arm-control-panel .payload-label,
+:global(html.light) .arm-control-panel .payload-unit,
+:global(html.light) .arm-control-panel .group-label {
+  color: var(--color-text-muted);
+}
+
+:global(html.light) .arm-control-panel .axis-label,
+:global(html.light) .arm-control-panel .speed-label,
+:global(html.light) .arm-control-panel .config-label {
+  color: var(--color-text-secondary);
+}
+
+:global(html.light) .arm-control-panel .axis-value,
+:global(html.light) .arm-control-panel .speed-value,
+:global(html.light) .arm-control-panel .param-value,
+:global(html.light) .arm-control-panel .payload-status .status-value {
+  color: #0f766e;
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+:global(html.light) .arm-control-panel .error-message {
+  background-color: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+:global(html.light) .arm-control-panel .jog-btn.minus {
+  background: #f87171 !important;
+  border-color: #f87171 !important;
+}
+
+:global(html.light) .arm-control-panel .jog-btn.plus {
+  background: #4ade80 !important;
+  border-color: #4ade80 !important;
+}
+
+:global(html.light) .arm-control-panel .jog-btn.minus:hover {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+}
+
+:global(html.light) .arm-control-panel .jog-btn.plus:hover {
+  background: #22c55e !important;
+  border-color: #22c55e !important;
+}
+
+:global(html.light) .arm-control-panel :deep(.el-divider) {
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+/* ==================== Dark Mode Refinements ==================== */
+:global(html.dark) .arm-control-panel .status-card {
+  background: rgba(17, 24, 39, 0.6);
+  border-color: rgba(148, 163, 184, 0.18);
+  box-shadow: var(--shadow-md);
+}
+
+:global(html.dark) .arm-control-panel .servo-status,
+:global(html.dark) .arm-control-panel .jog-config,
+:global(html.dark) .arm-control-panel .jog-speed-config,
+:global(html.dark) .arm-control-panel .jog-axis-row,
+:global(html.dark) .arm-control-panel .payload-config,
+:global(html.dark) .arm-control-panel .payload-object {
+  background: rgba(17, 24, 39, 0.6);
+  border-color: rgba(148, 163, 184, 0.18);
+}
+
+:global(html.dark) .arm-control-panel .points-list {
+  background: rgba(15, 23, 42, 0.55);
+  border-color: rgba(148, 163, 184, 0.18);
+}
+
+:global(html.dark) .arm-control-panel .point-item:hover {
+  background: rgba(30, 41, 59, 0.65);
+}
+
+:global(html.dark) .arm-control-panel .update-point-section,
+:global(html.dark) .arm-control-panel .cartesian-group,
+:global(html.dark) .arm-control-panel .payload-status {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+:global(html.light) .arm-control-panel .payload-status .status-row {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+:global(html.dark) .arm-control-panel .payload-status .status-row {
+  background: rgba(30, 41, 59, 0.55);
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+:global(html.dark) .arm-control-panel .payload-label,
+:global(html.dark) .arm-control-panel .payload-unit,
+:global(html.dark) .arm-control-panel .group-label {
+  color: var(--color-text-secondary);
 }
 </style>
 

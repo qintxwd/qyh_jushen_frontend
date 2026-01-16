@@ -170,6 +170,10 @@ export const useLayoutStore = defineStore('layout', () => {
     lift: false
   })
 
+  // ROS 连接状态去抖（避免瞬时抖动）
+  const rosLastTrueAt = ref(0)
+  const rosHoldMs = 5000
+
   // ========== 各设备详细状态 ==========
   
   // 双臂状态（合并为一个控制器）
@@ -663,6 +667,20 @@ export const useLayoutStore = defineStore('layout', () => {
   }
 
   function updateConnectionStatus(status: Partial<typeof connectionStatus.value>) {
+    const now = Date.now()
+
+    if (status.ros === true) {
+      rosLastTrueAt.value = now
+    }
+
+    if (status.ros === false) {
+      // 如果最近刚连上，保持为 true，避免闪断
+      if (now - rosLastTrueAt.value < rosHoldMs) {
+        status = { ...status }
+        delete status.ros
+      }
+    }
+
     Object.assign(connectionStatus.value, status)
   }
 

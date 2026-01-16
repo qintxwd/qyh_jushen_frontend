@@ -141,8 +141,6 @@
           </div>
         </div>
 
-        <el-divider />
-
         <!-- 充电控制 -->
         <div class="panel-section">
           <h3 class="section-title">充电控制</h3>
@@ -223,34 +221,34 @@
           </el-button>
         </div>
 
-        <el-divider />
-
         <!-- 导航参数 -->
         <div class="panel-section">
           <h3 class="section-title">导航参数</h3>
           <div class="nav-params-compact">
             <div class="param-item-compact">
               <span class="param-label">速度</span>
-              <el-slider 
-                v-model="navParams.speedLevel" 
-                :min="1" 
-                :max="100" 
-                :step="1"
-                size="small"
-                @change="setSpeedLevel"
-              />
+              <div class="slider-wrapper">
+                <el-slider 
+                  v-model="navParams.speedLevel" 
+                  :min="1" 
+                  :max="100" 
+                  :step="1"
+                  @change="setSpeedLevel"
+                />
+              </div>
               <span class="param-value">{{ navParams.speedLevel }}</span>
             </div>
             <div class="param-item-compact">
               <span class="param-label">音量</span>
-              <el-slider 
-                v-model="navParams.volume" 
-                :min="0" 
-                :max="100" 
-                :step="1"
-                size="small"
-                @change="setVolume"
-              />
+              <div class="slider-wrapper">
+                <el-slider 
+                  v-model="navParams.volume" 
+                  :min="0" 
+                  :max="100" 
+                  :step="1"
+                  @change="setVolume"
+                />
+              </div>
               <span class="param-value">{{ navParams.volume }}</span>
             </div>
           </div>
@@ -269,8 +267,6 @@
             </el-button>
           </div>
         </div>
-
-        <el-divider />
 
         <!-- 手动控制 -->
         <div class="panel-section">
@@ -293,24 +289,26 @@
           <div class="speed-controls" v-if="manualMode">
             <div class="speed-item">
               <span class="speed-label">线速度</span>
-              <el-slider 
-                v-model="manualSpeeds.linear" 
-                :min="0" 
-                :max="1.5" 
-                :step="0.1"
-                size="small"
-              />
+              <div class="slider-wrapper">
+                <el-slider 
+                  v-model="manualSpeeds.linear" 
+                  :min="0" 
+                  :max="1.5" 
+                  :step="0.1"
+                />
+              </div>
               <span class="speed-value">{{ manualSpeeds.linear.toFixed(1) }} m/s</span>
             </div>
             <div class="speed-item">
               <span class="speed-label">角速度</span>
-              <el-slider 
-                v-model="manualSpeeds.angular" 
-                :min="0" 
-                :max="1.5" 
-                :step="0.1"
-                size="small"
-              />
+              <div class="slider-wrapper">
+                <el-slider 
+                  v-model="manualSpeeds.angular" 
+                  :min="0" 
+                  :max="1.5" 
+                  :step="0.1"
+                />
+              </div>
               <span class="speed-value">{{ manualSpeeds.angular.toFixed(1) }} rad/s</span>
             </div>
           </div>
@@ -964,7 +962,7 @@ onUnmounted(() => {
 .right-panel {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 /* 面板区块 */
@@ -1131,15 +1129,16 @@ onUnmounted(() => {
 }
 
 .param-item-compact {
-  display: grid;
-  grid-template-columns: 50px 1fr 40px;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .param-label {
   font-size: 13px;
   color: var(--color-text-muted, #888);
+  width: 40px;
+  flex-shrink: 0;
 }
 
 .param-value {
@@ -1147,6 +1146,35 @@ onUnmounted(() => {
   color: var(--color-text-primary, #e0e0e0);
   text-align: right;
   font-family: 'Consolas', monospace;
+  width: 32px;
+  flex-shrink: 0;
+}
+
+/* 通用滑动条包装器 */
+.slider-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.slider-wrapper :deep(.el-slider) {
+  width: 100%;
+}
+
+.slider-wrapper :deep(.el-slider__runway) {
+  height: 6px;
+  background: rgba(100, 100, 100, 0.3);
+}
+
+.slider-wrapper :deep(.el-slider__bar) {
+  height: 6px;
+  background: linear-gradient(90deg, #e6a23c, #f5b461);
+}
+
+.slider-wrapper :deep(.el-slider__button) {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #e6a23c;
+  background: #fff;
 }
 
 /* 地图信息 */
@@ -1184,15 +1212,16 @@ onUnmounted(() => {
 }
 
 .speed-item {
-  display: grid;
-  grid-template-columns: 60px 1fr 70px;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .speed-label {
   font-size: 13px;
   color: #888;
+  width: 50px;
+  flex-shrink: 0;
 }
 
 .speed-value {
@@ -1200,6 +1229,8 @@ onUnmounted(() => {
   color: #e0e0e0;
   text-align: right;
   font-family: 'Consolas', monospace;
+  width: 70px;
+  flex-shrink: 0;
 }
 
 .keyboard-hint {

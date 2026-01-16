@@ -65,12 +65,12 @@
 
 /* Light Mode Overrides */
 html.light {
-  --color-bg-primary: #F8FAFC;
-  --color-bg-secondary: #EEF2F7;
-  --color-bg-tertiary: #E2E8F0;
+  --color-bg-primary: #F6F8FB;
+  --color-bg-secondary: #F1F5F9;
+  --color-bg-tertiary: #E8EEF7;
 
-  --color-surface: rgba(255, 255, 255, 0.8);
-  --color-surface-hover: rgba(255, 255, 255, 0.95);
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F7F9FC;
 
   --color-primary: #F59E0B;
   --color-primary-light: #FBBF24;
@@ -89,8 +89,14 @@ html.light {
   --color-text-muted: #64748B;
   --color-text-disabled: #94A3B8;
 
-  --color-border: rgba(15, 23, 42, 0.12);
-  --color-border-hover: rgba(245, 158, 11, 0.35);
+  --color-border: rgba(15, 23, 42, 0.08);
+  --color-border-hover: rgba(245, 158, 11, 0.3);
+
+  /* Light mode shadows */
+  --shadow-sm: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.12);
+  --shadow-lg: 0 14px 36px rgba(15, 23, 42, 0.14);
+  --shadow-glow: 0 0 0 1px rgba(245, 158, 11, 0.18);
 
   /* Light mode: Override common dark background patterns */
   --dark-surface-override: rgba(255, 255, 255, 0.85);
@@ -1171,6 +1177,26 @@ html.light .app-footer {
   color: var(--color-text-primary);
 }
 
+/* 主布局头部与状态栏 */
+html.light .title-bar,
+html.light .status-bar {
+  background: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text-primary);
+}
+
+html.light .status-item {
+  background: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+}
+
+html.light .status-item.clickable:hover {
+  background: rgba(15, 23, 42, 0.06) !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+  color: var(--color-text-primary);
+}
+
 /* 侧边栏 */
 html.light .sidebar,
 html.light .side-panel,
@@ -1179,6 +1205,24 @@ html.light .right-panel,
 html.light .aside {
   background: var(--color-bg-secondary) !important;
   border-color: var(--color-border) !important;
+  box-shadow: 4px 0 16px rgba(15, 23, 42, 0.06);
+}
+
+/* 3D 场景区域 */
+html.light .scene3d-panel,
+html.light .scene-content {
+  background: var(--color-bg-primary) !important;
+}
+
+html.light .scene-toolbar {
+  background: var(--color-surface) !important;
+  border-color: var(--color-border) !important;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 主工作区轻微装饰更柔和 */
+html.light .workspace-container::before {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
 }
 
 /* 模态和弹出层 */
