@@ -9,6 +9,7 @@
             title="左手相机" 
             camera-id="left_hand" 
             :enabled="true"
+            :rotate="180"
           />
         </div>
         <div class="camera-wrapper center">

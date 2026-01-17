@@ -15,6 +15,7 @@
         @error="handleImageError"
         @load="handleImageLoad"
         :class="{ 'stream-error': streamError }"
+        :style="rotate ? { transform: `rotate(${rotate}deg)` } : {}"
       />
       <div v-if="!streamUrl || streamError" class="no-signal-overlay">
         <el-icon size="48"><VideoCamera /></el-icon>
@@ -31,6 +32,7 @@ const props = defineProps<{
   title: string
   cameraId: string  // 'head', 'left_hand', 'right_hand'
   enabled?: boolean
+  rotate?: number   // 旋转角度，如 180 表示旋转180度（用于左手摄像头上下颠倒的情况）
 }>()
 
 // 基于 ROS2 Topic 的在线状态（更可靠）
