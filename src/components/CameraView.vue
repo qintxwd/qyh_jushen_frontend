@@ -1,23 +1,24 @@
 <template>
-  <div class="camera-view" :class="{ 'no-signal': !hasSignal }">
+  <div class="camera-view" :class="{ 'no-signal': !topicOnline }">
     <div class="camera-header">
       <SvgIcon name="videocamera" :size="16" />
       <span>{{ title }}</span>
-      <div class="camera-status" :class="{ online: hasSignal }">
-        {{ hasSignal ? '在线' : '离线' }}
+      <div class="camera-status" :class="{ online: topicOnline }">
+        {{ topicOnline ? '在线' : '离线' }}
       </div>
     </div>
     <div class="camera-content">
       <img 
-        v-if="hasSignal && streamUrl" 
+        v-if="streamUrl" 
         :src="streamUrl" 
         :alt="title"
         @error="handleImageError"
         @load="handleImageLoad"
+        :class="{ 'stream-error': streamError }"
       />
-      <div v-else class="no-signal-overlay">
+      <div v-if="!streamUrl || streamError" class="no-signal-overlay">
         <el-icon size="48"><VideoCamera /></el-icon>
-        <span>{{ errorMessage || '未连接' }}</span>
+        <span>{{ topicOnline ? '视频流异常 (ROS Topic 正常)' : (errorMessage || '未连接') }}</span>
       </div>
     </div>
   </div>
@@ -32,7 +33,10 @@ const props = defineProps<{
   enabled?: boolean
 }>()
 
-const hasSignal = ref(false)
+// 基于 ROS2 Topic 的在线状态（更可靠）
+const topicOnline = ref(false)
+// 视频流是否有错误
+const streamError = ref(false)
 const errorMessage = ref('')
 const imageLoaded = ref(false)
 
@@ -56,71 +60,71 @@ const streamUrl = computed(() => {
 })
 
 function handleImageError() {
-  hasSignal.value = false
-  errorMessage.value = '视频流连接失败'
+  streamError.value = true
+  // 不再用视频流状态来判断在线，只记录流错误
 }
 
 function handleImageLoad() {
-  hasSignal.value = true
+  streamError.value = false
   imageLoaded.value = true
-  errorMessage.value = ''
 }
 
-// 定期检查连接状态
-let checkTimer: number | null = null
+// 定期检查 ROS2 Topic 状态（更可靠，不依赖 web_video_server）
+let topicCheckTimer: number | null = null
 
-async function checkConnection() {
+async function checkTopicStatus() {
   if (!props.enabled) {
-    hasSignal.value = false
+    topicOnline.value = false
     return
   }
   
   try {
-    // 使用后端 API 检查相机状态
+    // 使用 ROS2 topic 状态接口检查相机是否真正在线
     const host = window.location.hostname
     const baseUrl = import.meta.env.DEV 
       ? `http://${host}:8000` 
       : `${window.location.protocol}//${host}:${window.location.port || '80'}`
     
-    const response = await fetch(`${baseUrl}/api/v1/camera/status`)
+    const response = await fetch(`${baseUrl}/api/v1/camera/topic_status`)
     if (response.ok) {
       const data = await response.json()
       const cameraStatus = data.cameras?.[props.cameraId]
-      hasSignal.value = cameraStatus?.available ?? false
-      if (!hasSignal.value) {
-        errorMessage.value = data.web_video_server_available 
-          ? '相机未连接' 
-          : 'web_video_server 未运行'
+      topicOnline.value = cameraStatus?.available ?? false
+      
+      if (!topicOnline.value) {
+        errorMessage.value = cameraStatus?.error || '相机话题无数据'
+      } else {
+        errorMessage.value = ''
       }
     } else {
-      hasSignal.value = false
+      // API 调用失败时保持之前的状态，避免闪烁
       errorMessage.value = '无法连接后端'
     }
   } catch (e) {
-    hasSignal.value = false
+    // 网络错误时保持之前的状态
     errorMessage.value = '网络错误'
   }
 }
 
 watch(() => props.enabled, (enabled) => {
   if (enabled) {
-    checkConnection()
+    checkTopicStatus()
   } else {
-    hasSignal.value = false
+    topicOnline.value = false
   }
 })
 
 onMounted(() => {
   if (props.enabled) {
-    checkConnection()
+    checkTopicStatus()
   }
-  // 每 5 秒检查一次连接状态
-  checkTimer = window.setInterval(checkConnection, 5000)
+  // 每 2 秒检查一次 ROS2 Topic 状态（比之前的 5 秒更频繁）
+  topicCheckTimer = window.setInterval(checkTopicStatus, 2000)
 })
 
 onUnmounted(() => {
-  if (checkTimer) {
-    clearInterval(checkTimer)
+  if (topicCheckTimer) {
+    clearInterval(topicCheckTimer)
   }
 })
 </script>
@@ -181,16 +185,28 @@ onUnmounted(() => {
   object-fit: contain;
 }
 
+.camera-content img.stream-error {
+  opacity: 0.3;
+}
+
 .no-signal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8px;
   color: #606060;
+  background-color: rgba(13, 13, 13, 0.8);
 }
 
 .no-signal-overlay span {
   font-size: 12px;
+  text-align: center;
+  padding: 0 8px;
 }
 </style>
