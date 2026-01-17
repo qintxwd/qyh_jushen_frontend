@@ -42,23 +42,18 @@ const streamError = ref(false)
 const errorMessage = ref('')
 const imageLoaded = ref(false)
 
+// 获取后端 API 基础 URL
+function getApiBaseUrl() {
+  const host = window.location.hostname
+  // 始终使用 8000 端口访问后端 API
+  return `http://${host}:8000`
+}
+
 // 构建视频流 URL
 // 通过后端 API 代理访问 web_video_server
 const streamUrl = computed(() => {
   if (!props.enabled) return ''
-  
-  // 使用后端代理 API，避免 CORS 问题
-  // 后端会代理到 web_video_server
-  const host = window.location.hostname
-  const port = window.location.port || '80'
-  const protocol = window.location.protocol
-  
-  // 开发环境使用 5173，生产环境使用 /api
-  const baseUrl = import.meta.env.DEV 
-    ? `http://${host}:8000` 
-    : `${protocol}//${host}:${port}`
-  
-  return `${baseUrl}/api/v1/camera/stream/${props.cameraId}?quality=50`
+  return `${getApiBaseUrl()}/api/v1/camera/stream/${props.cameraId}?quality=50`
 })
 
 function handleImageError() {
@@ -69,9 +64,12 @@ function handleImageError() {
 function handleImageLoad() {
   streamError.value = false
   imageLoaded.value = true
+  // 图片加载成功说明相机在线
+  topicOnline.value = true
+  errorMessage.value = ''
 }
 
-// 定期检查 ROS2 Topic 状态（更可靠，不依赖 web_video_server）
+// 定期检查相机状态
 let topicCheckTimer: number | null = null
 
 async function checkTopicStatus() {
@@ -81,13 +79,7 @@ async function checkTopicStatus() {
   }
   
   try {
-    // 使用 ROS2 topic 状态接口检查相机是否真正在线
-    const host = window.location.hostname
-    const baseUrl = import.meta.env.DEV 
-      ? `http://${host}:8000` 
-      : `${window.location.protocol}//${host}:${window.location.port || '80'}`
-    
-    const response = await fetch(`${baseUrl}/api/v1/camera/topic_status`)
+    const response = await fetch(`${getApiBaseUrl()}/api/v1/camera/topic_status`)
     if (response.ok) {
       const data = await response.json()
       const cameraStatus = data.cameras?.[props.cameraId]
