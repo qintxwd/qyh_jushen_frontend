@@ -57,6 +57,7 @@ declare module 'vue' {
     GripperPanel: typeof import('./src/components/panels/GripperPanel.vue')['default']
     HeadPanel: typeof import('./src/components/panels/HeadPanel.vue')['default']
     JointStatusOverlay: typeof import('./src/components/scene/JointStatusOverlay.vue')['default']
+    LEDPanel: typeof import('./src/components/panels/LEDPanel.vue')['default']
     LiftPanel: typeof import('./src/components/panels/LiftPanel.vue')['default']
     MainScene: typeof import('./src/components/scene/MainScene.vue')['default']
     NodePalette: typeof import('./src/components/task-editor/NodePalette.vue')['default']
