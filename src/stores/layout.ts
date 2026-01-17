@@ -54,6 +54,15 @@ export const PANEL_DEFINITIONS: PanelDef[] = [
     defaultWidth: 350
   },
   {
+    id: 'led',
+    name: '灯带',
+    icon: 'lightning',
+    component: 'LEDPanel',
+    closable: true,
+    minWidth: 300,
+    defaultWidth: 380
+  },
+  {
     id: 'chassis',
     name: '底盘',
     icon: 'chassis',
