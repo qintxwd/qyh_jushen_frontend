@@ -496,10 +496,27 @@ async function deletePoint(point: LiftPoint) {
   }
 }
 
-// 前往指定点位
+// 前往指定点位 - 使用预设 apply API
 async function goToPoint(point: LiftPoint) {
-  inputPosition.value = point.height
-  await goToPosition()
+  loading.position = true
+  try {
+    // 优先使用预设 apply API
+    const result = await apiClient.post(`/api/v1/presets/lift_height/${point.id}/apply`, {})
+    if (result.success || result.data?.applied) {
+      ElMessage.success(`正在移动到: ${point.name}`)
+    } else {
+      // 如果 apply 失败，回退到旧方式
+      inputPosition.value = point.height
+      await goToPosition()
+    }
+  } catch (error: any) {
+    // apply API 不可用时回退到旧方式
+    console.warn('预设 apply 失败，使用回退方式:', error)
+    inputPosition.value = point.height
+    await goToPosition()
+  } finally {
+    loading.position = false
+  }
 }
 
 // 使用当前位置更新点位

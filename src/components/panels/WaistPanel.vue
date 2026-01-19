@@ -502,10 +502,27 @@ async function deletePoint(point: WaistPoint) {
   }
 }
 
-// 前往指定点位
+// 前往指定点位 - 使用预设 apply API
 async function goToPoint(point: WaistPoint) {
-  inputAngle.value = point.angle
-  await goToAngle()
+  loading.angle = true
+  try {
+    // 优先使用预设 apply API
+    const result = await apiClient.post(`/api/v1/presets/waist_angle/${point.id}/apply`, {})
+    if (result.success || result.data?.applied) {
+      ElMessage.success(`正在移动到: ${point.name}`)
+    } else {
+      // 如果 apply 失败，回退到旧方式
+      inputAngle.value = point.angle
+      await goToAngle()
+    }
+  } catch (error: any) {
+    // apply API 不可用时回退到旧方式
+    console.warn('预设 apply 失败，使用回退方式:', error)
+    inputAngle.value = point.angle
+    await goToAngle()
+  } finally {
+    loading.angle = false
+  }
 }
 
 // 使用当前角度更新点位

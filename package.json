@@ -23,6 +23,8 @@
     "element-plus": "^2.5.0",
     "lodash-es": "^4.17.21",
     "pinia": "^2.1.0",
+    "protobufjs": "^7.5.4",
+    "protobufjs-cli": "^2.0.0",
     "three": "^0.160.0",
     "urdf-loader": "^0.12.5",
     "vue": "^3.4.0",
