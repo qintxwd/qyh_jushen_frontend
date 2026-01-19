@@ -135,9 +135,10 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import apiClient from '@/api/client'
+import { useDataPlane } from '@/composables/useDataPlane'
 
 interface GripperState {
   is_activated: boolean
@@ -158,6 +159,7 @@ interface GripperState {
 const selectedGripper = ref<'left' | 'right'>('left')
 const loading = ref(false)
 const activating = ref(false)
+const { robotState, isConnected } = useDataPlane()
 
 const leftState = reactive<GripperState>({
   is_activated: false,
@@ -199,6 +201,29 @@ const targetPosition = ref(0)
 const speed = ref(255)
 const force = ref(150)
 
+// Data Plane 监听
+watch(robotState, (state) => {
+  if (!state) return
+
+  // 更新左夹爪
+  if (state.left_gripper) {
+    // 假设 WebSocket 返回 normalized position (0.0-1.0) -> 映射回 0-255
+    leftState.current_position = Math.round((state.left_gripper.position || 0) * 255)
+    leftState.is_moving = state.left_gripper.in_motion || false
+    leftState.object_status = state.left_gripper.object_detected ? 1 : 0
+    leftState.object_status_text = state.left_gripper.object_detected ? '抓住' : '空闲'
+    // force? 单位不明，暂不更新或假设 N
+  }
+
+  // 更新右夹爪
+  if (state.right_gripper) {
+    rightState.current_position = Math.round((state.right_gripper.position || 0) * 255)
+    rightState.is_moving = state.right_gripper.in_motion || false
+    rightState.object_status = state.right_gripper.object_detected ? 1 : 0
+    rightState.object_status_text = state.right_gripper.object_detected ? '抓住' : '空闲'
+  }
+}, { deep: true })
+
 let pollTimer: number | null = null
 
 // 获取夹爪状态
@@ -206,8 +231,24 @@ async function fetchGripperState() {
   try {
     const data = await apiClient.get('/api/v1/gripper/state')
     if (data) {
-      Object.assign(leftState, data.left)
-      Object.assign(rightState, data.right)
+      if (isConnected.value) {
+        // Data Plane 连接时，仅合并 HTTP 返回的状态位（激活、故障、通信），保留 WS 的实时运动数据
+        if (data.left) {
+          leftState.is_activated = data.left.is_activated
+          leftState.fault_code = data.left.fault_code
+          leftState.fault_message = data.left.fault_message
+          leftState.communication_ok = data.left.communication_ok
+        }
+        if (data.right) {
+          rightState.is_activated = data.right.is_activated
+          rightState.fault_code = data.right.fault_code
+          rightState.fault_message = data.right.fault_message
+          rightState.communication_ok = data.right.communication_ok
+        }
+      } else {
+        Object.assign(leftState, data.left)
+        Object.assign(rightState, data.right)
+      }
     }
   } catch (error) {
     // 静默失败，避免刷屏

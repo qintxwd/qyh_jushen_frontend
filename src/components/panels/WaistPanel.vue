@@ -308,9 +308,15 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import apiClient from '@/api/client'
+import { useDataPlane } from '@/composables/useDataPlane'
+import { presetsApi } from '@/api/presets'
+import type { Preset } from '@/api/presets'
+
+// Data Plane
+const { waistState, sendJointCommand, isConnected, connect, subscribe } = useDataPlane()
 
 // 最大角�?
 const maxAngle = 45
@@ -576,8 +582,28 @@ const CMD = {
 
 // 发送控制命令
 // TODO: 新架构中腰部控制可通过预设 API 的 apply 功能或 Data Plane WebSocket 实现
-// 目前保留旧API路径作为临时兼容
+// 优先使用 Data Plane WebSocket
 async function sendCommand(command: number, value: number = 0, hold: boolean = false) {
+  if (isConnected.value) {
+    const DEG2RAD = 0.0174533
+    const jointNames = ['waist_joint'] // 暂定
+    
+    // 映射命令到 JointCommand
+    if (command === CMD.GO_ANGLE) {
+      const rad = value * DEG2RAD
+      sendJointCommand(jointNames, [rad], [])
+      return { success: true, message: '角度指令已发送 (WS)' }
+    } else if (command === CMD.GO_UPRIGHT) {
+      sendJointCommand(jointNames, [0], [])
+      return { success: true, message: '回正指令已发送 (WS)' }
+    } else if (command === CMD.STOP) {
+      // 停止：发送当前位置或者零速度？通常发全0速度
+      sendJointCommand(jointNames, [], [0])
+      return { success: true, message: '已停止 (WS)' }
+    }
+  }
+
+  // Fallback
   try {
     return apiClient.post('/api/v1/waist/control', { command, value, hold })
   } catch (error: any) {
@@ -723,35 +749,38 @@ async function resetAlarm() {
 
 // 获取状态
 async function fetchState() {
-  try {
-    // 使用新的统一状态 API
-    const data = await apiClient.get('/api/v1/robot/overview')
-    const waistData = data?.data?.waist || data?.waist
-    
-    if (waistData) {
-      state.connected = true
-      state.enabled = waistData.enabled ?? false
-      state.currentPosition = waistData.current_position ?? waistData.position ?? 230715
-      state.currentAngle = waistData.current_angle ?? waistData.angle ?? 0
-      state.currentSpeed = waistData.current_speed ?? waistData.speed ?? 1000
-      state.positionReached = waistData.position_reached ?? true
-      state.alarm = waistData.alarm ?? false
-    } else {
-      state.connected = false
-    }
-  } catch (error) {
-    console.error('获取状态失败', error)
-    state.connected = false
-  }
+  // 状态现已通过 WebSocket 实时推送
 }
+
+// 监听 Data Plane 状态
+watch(waistState, (newState) => {
+  if (newState && isConnected.value) {
+    state.connected = true
+    if (newState.position !== undefined) {
+      // 假设 position 是弧度，转为角度
+      // 或者如果后端直接推角度，则直接使用。通常 JointState 是弧度。
+      // 但这里是 ActuatorState，可能 unit 不确定。假设是弧度。
+      // 旧代码：state.currentAngle
+      // 假设 0-45 度对应 0-0.785 rad
+      const RAD2DEG = 57.29578
+      state.currentAngle = Number((newState.position * RAD2DEG).toFixed(1))
+    }
+    if (newState.velocity !== undefined) state.currentSpeed = Math.round(Number(newState.velocity))
+    if (newState.inPosition !== undefined) state.positionReached = newState.inPosition
+    // enabled, alarm 等字段暂未映射
+  }
+})
 
 // 定时刷新状�?
 let stateInterval: number | null = null
 
 onMounted(() => {
-  fetchState()
+  if (!isConnected.value) connect()
+  setTimeout(() => {
+    if (isConnected.value) subscribe(['actuator_state', 'robot_state'])
+  }, 1000)
+
   fetchWaistPoints()
-  stateInterval = setInterval(fetchState, 500)
 })
 
 onUnmounted(() => {

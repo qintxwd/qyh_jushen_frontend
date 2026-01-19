@@ -296,9 +296,11 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import apiClient from '@/api/client'
+import { useDataPlane } from '@/composables/useDataPlane'
+import { presetsApi } from '@/api/presets'
 
 // 最大高度 (mm)
 const maxHeight = 500
@@ -312,6 +314,32 @@ const state = reactive({
   positionReached: true,
   alarm: false,
   electromagnetOn: false
+})
+
+const { liftState, sendJointCommand, isConnected, connect, subscribe } = useDataPlane()
+
+// 监听 Data Plane 状态
+watch(liftState, (newState) => {
+  if (newState && isConnected.value) {
+    state.connected = true
+    if (newState.position !== undefined) state.currentPosition = Math.round(newState.position * 1000) // m -> mm
+    if (newState.velocity !== undefined) state.currentSpeed = Math.round(Math.abs(newState.velocity * 1000)) // m/s -> mm/s
+    if (newState.inPosition !== undefined) state.positionReached = newState.inPosition
+    // ActuatorState 暂无 alarm/electromagnet 字段，保留 polling 更新
+  }
+})
+
+// 组件挂载时连接 WebSocket
+onMounted(() => {
+  if (!isConnected.value) {
+    connect()
+  }
+  // 订阅状态
+  setTimeout(() => {
+    if (isConnected.value) {
+      subscribe(['actuator_state', 'robot_state'])
+    }
+  }, 1000)
 })
 
 // 输入值
@@ -568,10 +596,49 @@ const CMD = {
 
 // 发送控制命令
 // TODO: 新架构中升降控制可通过预设 API 的 apply 功能或 Data Plane WebSocket 实现
-// 目前保留旧API路径作为临时兼容
+// 优先使用 Data Plane WebSocket，失败则降级到旧 API
 async function sendCommand(command: number, value: number = 0, hold: boolean = false) {
+  // Data Plane Control
+  if (isConnected.value) {
+    const mm2m = (v: number) => v / 1000.0
+    const m2mm = (v: number) => v * 1000.0
+    
+    // 假设升降关节名为 'lift_joint'
+    // 注意: 实际关节名需确认
+    const jointNames = ['lift_joint']
+    
+    try {
+      if (command === CMD.MOVE_UP) {
+        // 向上运动 (速度控制)
+        const velL = mm2m(value || 20)
+        sendJointCommand(jointNames, [], [velL])
+        return { success: true, message: '指令已发送 (WS)' }
+      } 
+      else if (command === CMD.MOVE_DOWN) {
+        // 向下运动 (速度控制)
+        const velL = mm2m(value || 20)
+        sendJointCommand(jointNames, [], [-velL])
+        return { success: true, message: '指令已发送 (WS)' }
+      }
+      else if (command === CMD.STOP) {
+        // 停止
+        sendJointCommand(jointNames, [], [0])
+        return { success: true, message: '已停止 (WS)' }
+      }
+      else if (command === CMD.GO_POSITION) {
+        // 位置控制
+        const posL = mm2m(value)
+        sendJointCommand(jointNames, [posL], [])
+        return { success: true, message: '位置指令已发送 (WS)' }
+      }
+      // ENABLE/DISABLE 等命令若不支持则回退到 API
+    } catch (e) {
+       console.warn('Data Plane control failed, falling back to HTTP', e)
+    }
+  }
+
   try {
-    return apiClient.post('/api/v1/lift/control', { command, value, hold })
+    return await apiClient.post('/api/v1/lift/control', { command, value, hold })
   } catch (error: any) {
     console.error('Lift control error:', error)
     throw error

@@ -215,9 +215,14 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import apiClient from '@/api/client'
+import { useDataPlane } from '@/composables/useDataPlane'
+import { presetsApi } from '@/api/presets'
+import type { Preset } from '@/api/presets'
+
+const { headPanState, headTiltState, sendJointCommand, isConnected, connect, subscribe } = useDataPlane()
 
 const loading = ref(false)
 const loadingReset = ref(false)
@@ -274,9 +279,34 @@ const headStyle = computed(() => ({
 }))
 
 // 发送控制命令
-// TODO: 新架构中头部控制需要通过 Data Plane WebSocket 实现
-// 目前保留旧API路径作为临时兼容，后续需要迁移到 WebSocket
+// 使用 Data Plane WebSocket
 async function sendControl(pan: number | null, tilt: number | null, speed: number | null = null) {
+  if (isConnected.value) {
+    const LIMIT_PAN = 1.57
+    const LIMIT_TILT = 0.52 
+    
+    const names: string[] = []
+    const positions: number[] = []
+    
+    if (pan !== null) {
+      names.push('head_pan_joint')
+      positions.push(pan * LIMIT_PAN)
+    }
+    
+    if (tilt !== null) {
+      names.push('head_tilt_joint')
+      positions.push(tilt * LIMIT_TILT)
+    }
+    
+    if (names.length > 0) {
+      // 速度目前作为全局参数并不直接支持，或者需要对应关节的 velocity 数组
+      // 目前只发位置
+      sendJointCommand(names, positions, [])
+      return { success: true, message: '指令已发送 (WS)' }
+    }
+  }
+
+  // Fallback to HTTP
   const payload: { pan: number | null; tilt: number | null; speed?: number | null } = { pan, tilt }
   if (speed !== null) {
     payload.speed = speed
@@ -302,10 +332,17 @@ async function executeMove() {
 }
 
 // 回正
-// TODO: 新架构中头部控制需要通过 Data Plane WebSocket 或预设 API 实现
 async function resetHead() {
   loadingReset.value = true
   try {
+    if (isConnected.value) {
+      sendJointCommand(['head_pan_joint', 'head_tilt_joint'], [0, 0], [])
+      targetPan.value = 0
+      targetTilt.value = 0
+      ElMessage.success('头部已回正 (WS)')
+      return
+    }
+
     const data = await apiClient.post('/api/v1/head/reset', {})
     if (data.success) {
       targetPan.value = 0
@@ -330,37 +367,51 @@ function goToPreset(preset: { name: string; pan: number; tilt: number }) {
 
 // 获取状态
 async function fetchState() {
-  try {
-    // 使用新的统一状态 API
-    const data = await apiClient.get('/api/v1/robot/overview')
-    const headData = data?.data?.head || data?.head
-    if (headData) {
-      state.connected = true
-      // 新API返回格式可能不同，需要适配
-      state.panPosition = headData.pan_position ?? 500
-      state.tiltPosition = headData.tilt_position ?? 500
-      state.panNormalized = headData.pan_normalized ?? headData.pan ?? 0
-      state.tiltNormalized = headData.tilt_normalized ?? headData.tilt ?? 0
-      
-      // 首次加载时，将滑块初始化为当前位置
-      if (!initialized.value) {
-        targetPan.value = state.panNormalized
-        targetTilt.value = state.tiltNormalized
-        initialized.value = true
-      }
-    } else {
-      state.connected = false
-    }
-  } catch (error) {
-    console.error('获取头部状态失败:', error)
-    state.connected = false
-  }
+  // 状态现已通过 WebSocket 实时推送
 }
+
+// 监听 Data Plane 状态
+watch([headPanState, headTiltState], ([pan, tilt]) => {
+  if (isConnected.value) {
+    if (pan.position !== undefined || tilt.position !== undefined) {
+      state.connected = true
+    }
+    
+    // 假设 position 是弧度，需要归一化到 -1~1
+    // 需要知道物理极限。假设范围是 +-90度 (approx +-1.57 rad)
+    const LIMIT_PAN = 1.57
+    const LIMIT_TILT = 0.52 // approx 30 deg
+    
+    if (pan.position !== undefined) {
+       state.panNormalized = pan.position / LIMIT_PAN 
+    }
+    if (tilt.position !== undefined) {
+       state.tiltNormalized = tilt.position / LIMIT_TILT
+    }
+
+    if (!initialized.value && state.connected) {
+       targetPan.value = Number(state.panNormalized.toFixed(2))
+       targetTilt.value = Number(state.tiltNormalized.toFixed(2))
+       initialized.value = true
+    }
+  }
+})
 
 // 定时刷新状态
 let stateInterval: number | null = null
 
-// ==================== 点位管理 ====================
+onMounted(async () => {
+  if (!isConnected.value) {
+    connect()
+  }
+  setTimeout(() => {
+    if (isConnected.value) {
+      subscribe(['actuator_state', 'robot_state'])
+    }
+  }, 1000)
+  
+  await fetchHeadPoints()
+})
 interface HeadPoint {
   id: string
   name: string

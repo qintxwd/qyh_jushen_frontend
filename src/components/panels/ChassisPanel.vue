@@ -402,10 +402,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import SvgIcon from '@/components/SvgIcon.vue'
 import { chassisApi } from '@/api/chassis'
+import { useDataPlane } from '@/composables/useDataPlane'
 
 // ==================== 类型定义 ====================
 interface ChassisStatus {
@@ -454,6 +455,7 @@ interface Station {
 }
 
 // ==================== 响应式数据 ====================
+const { chassisState, sendChassisVelocity, isConnected } = useDataPlane()
 const status = ref<ChassisStatus>({})
 const stations = ref<Station[]>([])
 const selectedStationId = ref<number | null>(null)
@@ -799,6 +801,17 @@ async function updateManualControl() {
 
   if (!moving && !changed) return
 
+  // WebSocket 优先
+  if (isConnected.value) {
+    sendChassisVelocity({
+      linear: { x: linear, y: 0, z: 0 },
+      angular: { x: 0, y: 0, z: angular }
+    })
+    lastManualCommand.linear = linear
+    lastManualCommand.angular = angular
+    return
+  }
+
   try {
     await chassisApi.moveBySpeed(linear, angular)
     lastManualCommand.linear = linear
@@ -813,6 +826,16 @@ async function stopChassis() {
   keyStates.backward = false
   keyStates.left = false
   keyStates.right = false
+  
+  if (isConnected.value) {
+    sendChassisVelocity({
+      linear: { x: 0, y: 0, z: 0 },
+      angular: { x: 0, y: 0, z: 0 }
+    })
+    ElMessage.success('已停止')
+    return
+  }
+
   try {
     await chassisApi.moveBySpeed(0, 0)
     ElMessage.success('已停止')
@@ -821,13 +844,83 @@ async function stopChassis() {
   }
 }
 
+function quaternionToYaw(q: { x: number, y: number, z: number, w: number }): number {
+  if (!q) return 0
+  const siny_cosp = 2 * (q.w * q.z + q.x * q.y)
+  const cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z)
+  return Math.atan2(siny_cosp, cosy_cosp)
+}
+
+// 监听 Data Plane 状态
+watch(chassisState, (newState) => {
+  if (!newState) return
+  
+  // 更新位姿
+  if (newState.odom?.position && newState.odom?.orientation) {
+    if (!status.value.pose) status.value.pose = {}
+    status.value.pose.x = newState.odom.position.x
+    status.value.pose.y = newState.odom.position.y
+    status.value.pose.yaw = quaternionToYaw(newState.odom.orientation)
+    // 注意：Data Plane 目前不提供 confidence，保留旧值或默认为 1.0 (如果 Data Plane 是真值)
+  }
+
+  // 更新速度
+  if (newState.velocity) {
+    if (!status.value.velocity) status.value.velocity = {}
+    status.value.velocity.linear_x = newState.velocity.linear?.x || 0
+    status.value.velocity.angular_z = newState.velocity.angular?.z || 0
+  }
+
+  // 更新电池 (合并电池信息)
+  if (newState.battery_level !== undefined) {
+    if (!status.value.battery) status.value.battery = {}
+    status.value.battery.percentage = newState.battery_level
+    // 如果正在充电，更新状态
+    if (newState.charging !== undefined) {
+       status.value.battery.status = newState.charging ? 2 : 0 // 假设 2 是 Charging
+    }
+  }
+
+  // 更新标志位
+  if (!status.value.flags) status.value.flags = {}
+  if (newState.emergency_stop !== undefined) status.value.flags.is_emergency_stopped = newState.emergency_stop
+  if (newState.charging !== undefined) status.value.flags.is_charging = newState.charging
+})
+
 // ==================== 数据轮询 ====================
 let statusInterval: number | null = null
 
 async function loadStatus() {
   try {
     const response = await chassisApi.getStatus()
-    status.value = response || {}
+    // 如果 Data Plane 已连接，则保留 WebSocket 更新的高频数据（pose, velocity等）
+    // 只从 HTTP 响应中合并低频状态 (status codes, texts, maps)
+    if (isConnected.value && response) {
+      if (!status.value.pose) status.value.pose = {}
+      if (!status.value.velocity) status.value.velocity = {}
+      if (!status.value.battery) status.value.battery = {}
+      
+      status.value.system_status = response.system_status
+      status.value.system_status_text = response.system_status_text
+      status.value.location_status = response.location_status
+      status.value.location_status_text = response.location_status_text
+      status.value.motion_status = response.motion_status
+      status.value.motion_status_text = response.motion_status_text
+      status.value.current_map_name = response.current_map_name
+      
+      // Data Plane 缺少 confidence，所以这里补充
+      if (response.pose) {
+        status.value.pose.confidence = response.pose.confidence
+      }
+      
+      // 补充其他字段
+      status.value.flags = {
+        ...status.value.flags,
+        ...response.flags
+      }
+    } else {
+      status.value = response || {}
+    }
   } catch (e) {
     console.error('加载状态失败', e)
   }

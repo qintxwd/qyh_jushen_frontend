@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "build:check": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "proto:gen": "npx pbjs -t static-module -w es6 -o src/proto/dataplane.js proto/*.proto && npx pbts -o src/proto/dataplane.d.ts src/proto/dataplane.js"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.0",
