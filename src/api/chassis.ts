@@ -195,7 +195,34 @@ export interface Station {
   yaw: number
 }
 
-// ==================== API 函数 ====================
+// ==================== 底盘配置 API (新后端) ====================
+
+export interface ChassisConfig {
+  speed_level: number
+  volume: number
+  obstacle_strategy: number
+}
+
+export const chassisConfigApi = {
+  /** 获取底盘配置 */
+  async getConfig(): Promise<ChassisConfig> {
+    return apiClient.get('/api/v1/chassis/config')
+  },
+
+  /** 更新底盘配置 */
+  async updateConfig(config: Partial<ChassisConfig>): Promise<ChassisConfig> {
+    return apiClient.put('/api/v1/chassis/config', config)
+  },
+
+  /** 重置底盘配置为默认值 */
+  async resetConfig(): Promise<ChassisConfig> {
+    return apiClient.post('/api/v1/chassis/config/reset')
+  }
+}
+
+// ==================== 底盘控制 API (旧后端/Data Plane) ====================
+// 注意：以下 API 可能需要迁移到 Data Plane WebSocket
+// 当前保留兼容性，后续根据实际部署情况调整
 
 export const chassisApi = {
   // 状态获取

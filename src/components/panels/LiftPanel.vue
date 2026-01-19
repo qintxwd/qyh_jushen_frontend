@@ -375,8 +375,19 @@ const editPointForm = reactive({
 // 获取点位列表
 async function fetchLiftPoints() {
   try {
-    const data = await apiClient.get('/api/v1/lift/points')
-    liftPoints.value = data
+    const data = await apiClient.get('/api/v1/presets', {
+      params: { preset_type: 'lift_height' }
+    })
+    // 新API返回格式: { data: { items: [...] } }
+    const items = data?.data?.items || data?.items || []
+    // 转换为旧格式兼容
+    liftPoints.value = items.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      description: item.description || '',
+      height: item.data?.height ?? 0,
+      is_builtin: item.is_builtin ?? false
+    }))
   } catch (error) {
     console.error('获取升降点位列表失败:', error)
   }
@@ -398,13 +409,20 @@ async function confirmAddPoint() {
   }
   
   try {
-    await apiClient.post('/api/v1/lift/points', newPointForm)
+    await apiClient.post('/api/v1/presets', {
+      preset_type: 'lift_height',
+      name: newPointForm.name,
+      description: newPointForm.description,
+      data: {
+        height: newPointForm.height
+      }
+    })
     ElMessage.success('点位添加成功')
     addPointDialogVisible.value = false
     await fetchLiftPoints()
   } catch (error: any) {
     console.error('添加点位失败:', error)
-    ElMessage.error(error.response?.data?.detail || '添加点位失败')
+    ElMessage.error(error.response?.data?.detail || error.response?.data?.message || '添加点位失败')
   }
 }
 
@@ -430,17 +448,19 @@ async function confirmEditPoint() {
   }
   
   try {
-    await apiClient.put(`/api/v1/lift/points/${editPointForm.id}`, {
+    await apiClient.put(`/api/v1/presets/lift_height/${editPointForm.id}`, {
       name: editPointForm.name,
       description: editPointForm.description,
-      height: editPointForm.height
+      data: {
+        height: editPointForm.height
+      }
     })
     ElMessage.success('点位更新成功')
     editPointDialogVisible.value = false
     await fetchLiftPoints()
   } catch (error: any) {
     console.error('更新点位失败:', error)
-    ElMessage.error(error.response?.data?.detail || '更新点位失败')
+    ElMessage.error(error.response?.data?.detail || error.response?.data?.message || '更新点位失败')
   }
 }
 
@@ -462,7 +482,7 @@ async function deletePoint(point: LiftPoint) {
       }
     )
     
-    await apiClient.delete(`/api/v1/lift/points/${point.id}`)
+    await apiClient.delete(`/api/v1/presets/lift_height/${point.id}`)
     ElMessage.success('点位删除成功')
     if (selectedPointId.value === point.id) {
       selectedPointId.value = ''
@@ -500,10 +520,12 @@ async function updatePointPosition(point: LiftPoint) {
       }
     )
     
-    await apiClient.put(`/api/v1/lift/points/${point.id}`, {
+    await apiClient.put(`/api/v1/presets/lift_height/${point.id}`, {
       name: point.name,
       description: point.description,
-      height: state.currentPosition
+      data: {
+        height: state.currentPosition
+      }
     })
     ElMessage.success('点位位置已更新')
     await fetchLiftPoints()
@@ -528,6 +550,8 @@ const CMD = {
 }
 
 // 发送控制命令
+// TODO: 新架构中升降控制可通过预设 API 的 apply 功能或 Data Plane WebSocket 实现
+// 目前保留旧API路径作为临时兼容
 async function sendCommand(command: number, value: number = 0, hold: boolean = false) {
   try {
     return apiClient.post('/api/v1/lift/control', { command, value, hold })
@@ -656,6 +680,8 @@ async function resetAlarm() {
 }
 
 // 切换电磁铁
+// TODO: 新架构中电磁铁控制需要通过 Data Plane WebSocket 或专用API实现
+// 目前保留旧API路径作为临时兼容
 async function toggleElectromagnet() {
   loading.electromagnet = true
   try {
@@ -677,16 +703,20 @@ async function toggleElectromagnet() {
 // 获取状态
 async function fetchState() {
   try {
-    const data = await apiClient.get('/api/v1/lift/state')
+    // 使用新的统一状态 API
+    const data = await apiClient.get('/api/v1/robot/overview')
+    const liftData = data?.data?.lift || data?.lift
     
-    if (data) {
-      state.connected = data.connected ?? false
-      state.enabled = data.enabled ?? false
-      state.currentPosition = data.current_position ?? 0
-      state.currentSpeed = data.current_speed ?? 20
-      state.positionReached = data.position_reached ?? true
-      state.alarm = data.alarm ?? false
-      state.electromagnetOn = data.electromagnet_on ?? false
+    if (liftData) {
+      state.connected = true
+      state.enabled = liftData.enabled ?? false
+      state.currentPosition = liftData.current_position ?? liftData.position ?? 0
+      state.currentSpeed = liftData.current_speed ?? liftData.speed ?? 20
+      state.positionReached = liftData.position_reached ?? true
+      state.alarm = liftData.alarm ?? false
+      state.electromagnetOn = liftData.electromagnet_on ?? liftData.electromagnet ?? false
+    } else {
+      state.connected = false
     }
   } catch (error) {
     console.error('获取状态失败:', error)

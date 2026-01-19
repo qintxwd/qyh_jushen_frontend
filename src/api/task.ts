@@ -486,103 +486,192 @@ export const CATEGORY_NAMES: Record<string, string> = {
 // ==================== API 调用 ====================
 
 /** 获取任务列表 */
-export async function listTasks(category?: string): Promise<TaskDefinition[]> {
-  const params = category ? { category } : {}
-  const response = await apiClient.get('/api/v1/task/list', { params })
-  return response as unknown as TaskDefinition[]
+export async function listTasks(options?: {
+  status_filter?: string
+  page?: number
+  page_size?: number
+}): Promise<{ items: TaskDefinition[]; total: number }> {
+  const params: any = {}
+  if (options?.status_filter) params.status_filter = options.status_filter
+  if (options?.page) params.page = options.page
+  if (options?.page_size) params.page_size = options.page_size
+  
+  const response = await apiClient.get('/api/v1/tasks', { params })
+  return response as unknown as { items: TaskDefinition[]; total: number }
 }
 
 /** 获取任务详情 */
-export async function getTask(taskId: string): Promise<TaskDefinition> {
-  return apiClient.get(`/api/v1/task/${taskId}`)
+export async function getTask(taskId: string | number): Promise<TaskDefinition> {
+  return apiClient.get(`/api/v1/tasks/${taskId}`)
 }
 
 /** 创建任务 */
-export async function createTask(task: TaskDefinition): Promise<TaskDefinition> {
-  return apiClient.post('/api/v1/task/create', task)
+export async function createTask(task: {
+  name: string
+  description?: string
+  program: any[]
+}): Promise<TaskDefinition> {
+  return apiClient.post('/api/v1/tasks', task)
 }
 
 /** 更新任务 */
-export async function updateTask(taskId: string, task: Partial<TaskDefinition>): Promise<TaskDefinition> {
-  return apiClient.put(`/api/v1/task/${taskId}`, task)
+export async function updateTask(taskId: string | number, task: Partial<TaskDefinition>): Promise<TaskDefinition> {
+  return apiClient.put(`/api/v1/tasks/${taskId}`, task)
 }
 
 /** 删除任务 */
-export async function deleteTask(taskId: string): Promise<void> {
-  return apiClient.delete(`/api/v1/task/${taskId}`)
+export async function deleteTask(taskId: string | number): Promise<void> {
+  return apiClient.delete(`/api/v1/tasks/${taskId}`)
 }
 
-/** 执行任务 */
-export async function executeTask(taskId: string): Promise<{ success: boolean; message: string }> {
-  return apiClient.post(`/api/v1/task/${taskId}/execute`)
-}
-
-/** 直接执行任务树 */
-export async function executeTaskTree(taskTree: TaskDefinition): Promise<{ success: boolean; message: string }> {
-  return apiClient.post('/api/v1/task/execute', taskTree)
+/** 启动任务 */
+export async function startTask(taskId: string | number): Promise<{ success: boolean; message: string }> {
+  return apiClient.post(`/api/v1/tasks/${taskId}/start`)
 }
 
 /** 暂停任务 */
-export async function pauseTask(taskId: string): Promise<{ success: boolean; message: string }> {
-  return apiClient.post('/api/v1/task/pause', { task_id: taskId })
+export async function pauseTask(taskId: string | number): Promise<{ success: boolean; message: string }> {
+  return apiClient.post(`/api/v1/tasks/${taskId}/pause`)
 }
 
 /** 恢复任务 */
-export async function resumeTask(taskId: string): Promise<{ success: boolean; message: string }> {
-  return apiClient.post('/api/v1/task/resume', { task_id: taskId })
+export async function resumeTask(taskId: string | number): Promise<{ success: boolean; message: string }> {
+  return apiClient.post(`/api/v1/tasks/${taskId}/resume`)
 }
 
 /** 取消任务 */
-export async function cancelTask(taskId: string): Promise<{ success: boolean; message: string }> {
-  return apiClient.post('/api/v1/task/cancel', { task_id: taskId })
+export async function cancelTask(taskId: string | number): Promise<{ success: boolean; message: string }> {
+  return apiClient.post(`/api/v1/tasks/${taskId}/cancel`)
 }
 
-/** 获取任务执行状态 */
-export async function getTaskStatus(taskId: string): Promise<TaskExecutionState> {
-  return apiClient.get('/api/v1/task/status', { params: { task_id: taskId } })
+/** 获取任务执行状态 (保留兼容) */
+export async function getTaskStatus(taskId: string | number): Promise<TaskExecutionState> {
+  const task = await getTask(taskId)
+  return {
+    task_id: String(task.id),
+    status: (task as any).status || 'idle',
+    progress: (task as any).progress || 0,
+    current_node_id: (task as any).current_step ? String((task as any).current_step) : undefined,
+    message: (task as any).error_message,
+    started_at: (task as any).started_at,
+    finished_at: (task as any).completed_at
+  }
 }
 
-// ==================== 预设 API ====================
+/** 直接执行任务树 (兼容旧接口) */
+export async function executeTaskTree(taskTree: TaskDefinition): Promise<{ success: boolean; message: string }> {
+  // 先创建任务，然后启动
+  const created = await createTask({
+    name: taskTree.name,
+    description: taskTree.description,
+    program: taskTree.root ? [taskTree.root] : []
+  })
+  return startTask(created.id!)
+}
 
-/** 获取预设列表 */
+/** 执行任务 (兼容旧接口) */
+export async function executeTask(taskId: string): Promise<{ success: boolean; message: string }> {
+  return startTask(taskId)
+}
+
+// ==================== 预设 API (使用新的统一预设接口) ====================
+
+/** 
+ * 获取预设列表 
+ * @deprecated 请使用 presets.ts 中的 listPresets
+ */
 export async function listPresets(
   presetType: 'location' | 'arm_pose' | 'head_position' | 'lift_height' | 'gripper_position'
 ): Promise<{ items: any[] }> {
-  return apiClient.get(`/api/v1/presets/${presetType}`)
+  // 映射旧类型名到新类型名
+  const typeMap: Record<string, string> = {
+    'location': 'location',
+    'arm_pose': 'arm_pose',
+    'head_position': 'head_position',
+    'lift_height': 'lift_height',
+    'gripper_position': 'gripper_position'
+  }
+  const newType = typeMap[presetType] || presetType
+  const res = await apiClient.get('/api/v1/presets', { params: { preset_type: newType } })
+  return { items: res.items || [] }
 }
 
 // ==================== 头部点位 API ====================
 
 /** 获取头部点位列表 */
 export async function listHeadPoints(): Promise<HeadPoint[]> {
-  return await apiClient.get('/api/v1/head/points')
+  const res = await apiClient.get('/api/v1/presets', { params: { preset_type: 'head_position' } })
+  return (res.items || []).map((p: any) => ({
+    id: p.id,
+    name: p.name,
+    description: p.description || '',
+    pan: p.data?.pan || 0,
+    tilt: p.data?.tilt || 0,
+    is_builtin: p.is_builtin || false
+  }))
 }
 
 /** 获取指定头部点位 */
 export async function getHeadPoint(pointId: string): Promise<HeadPoint> {
-  return await apiClient.get(`/api/v1/head/points/${pointId}`)
+  const res = await apiClient.get(`/api/v1/presets/head_position/${pointId}`)
+  return {
+    id: res.id,
+    name: res.name,
+    description: res.description || '',
+    pan: res.data?.pan || 0,
+    tilt: res.data?.tilt || 0,
+    is_builtin: res.is_builtin || false
+  }
 }
 
 // ==================== 升降点位 API ====================
 
 /** 获取升降点位列表 */
 export async function listLiftPoints(): Promise<LiftPoint[]> {
-  return await apiClient.get('/api/v1/lift/points')
+  const res = await apiClient.get('/api/v1/presets', { params: { preset_type: 'lift_height' } })
+  return (res.items || []).map((p: any) => ({
+    id: p.id,
+    name: p.name,
+    description: p.description || '',
+    height: p.data?.height || 0,
+    is_builtin: p.is_builtin || false
+  }))
 }
 
 /** 获取指定升降点位 */
 export async function getLiftPoint(pointId: string): Promise<LiftPoint> {
-  return await apiClient.get(`/api/v1/lift/points/${pointId}`)
+  const res = await apiClient.get(`/api/v1/presets/lift_height/${pointId}`)
+  return {
+    id: res.id,
+    name: res.name,
+    description: res.description || '',
+    height: res.data?.height || 0,
+    is_builtin: res.is_builtin || false
+  }
 }
 
 // ==================== 腰部点位 API ====================
 
 /** 获取腰部点位列表 */
 export async function listWaistPoints(): Promise<WaistPoint[]> {
-  return await apiClient.get('/api/v1/waist/points')
+  const res = await apiClient.get('/api/v1/presets', { params: { preset_type: 'waist_angle' } })
+  return (res.items || []).map((p: any) => ({
+    id: p.id,
+    name: p.name,
+    description: p.description || '',
+    angle: p.data?.angle || 0,
+    is_builtin: p.is_builtin || false
+  }))
 }
 
 /** 获取指定腰部点位 */
 export async function getWaistPoint(pointId: string): Promise<WaistPoint> {
-  return await apiClient.get(`/api/v1/waist/points/${pointId}`)
+  const res = await apiClient.get(`/api/v1/presets/waist_angle/${pointId}`)
+  return {
+    id: res.id,
+    name: res.name,
+    description: res.description || '',
+    angle: res.data?.angle || 0,
+    is_builtin: res.is_builtin || false
+  }
 }

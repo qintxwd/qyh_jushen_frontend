@@ -381,8 +381,19 @@ const editPointForm = reactive({
 // 获取点位列表
 async function fetchWaistPoints() {
   try {
-    const data: any = await apiClient.get(`/api/v1/waist/points`)
-    waistPoints.value = data.points || data || []
+    const data = await apiClient.get('/api/v1/presets', {
+      params: { preset_type: 'waist_angle' }
+    })
+    // 新API返回格式: { data: { items: [...] } }
+    const items = data?.data?.items || data?.items || []
+    // 转换为旧格式兼容
+    waistPoints.value = items.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      description: item.description || '',
+      angle: item.data?.angle ?? 0,
+      is_builtin: item.is_builtin ?? false
+    }))
   } catch (error) {
     console.error('获取腰部点位列表失败:', error)
   }
@@ -404,13 +415,20 @@ async function confirmAddPoint() {
   }
   
   try {
-    await apiClient.post(`/api/v1/waist/points`, newPointForm)
+    await apiClient.post('/api/v1/presets', {
+      preset_type: 'waist_angle',
+      name: newPointForm.name,
+      description: newPointForm.description,
+      data: {
+        angle: newPointForm.angle
+      }
+    })
     ElMessage.success('点位添加成功')
     addPointDialogVisible.value = false
     await fetchWaistPoints()
   } catch (error: any) {
     console.error('添加点位失败:', error)
-    ElMessage.error(error.response?.data?.detail || '添加点位失败')
+    ElMessage.error(error.response?.data?.detail || error.response?.data?.message || '添加点位失败')
   }
 }
 
@@ -436,17 +454,19 @@ async function confirmEditPoint() {
   }
   
   try {
-    await apiClient.put(`/api/v1/waist/points/${editPointForm.id}`, {
+    await apiClient.put(`/api/v1/presets/waist_angle/${editPointForm.id}`, {
       name: editPointForm.name,
       description: editPointForm.description,
-      angle: editPointForm.angle
+      data: {
+        angle: editPointForm.angle
+      }
     })
     ElMessage.success('点位更新成功')
     editPointDialogVisible.value = false
     await fetchWaistPoints()
   } catch (error: any) {
     console.error('更新点位失败:', error)
-    ElMessage.error(error.response?.data?.detail || '更新点位失败')
+    ElMessage.error(error.response?.data?.detail || error.response?.data?.message || '更新点位失败')
   }
 }
 
@@ -468,7 +488,7 @@ async function deletePoint(point: WaistPoint) {
       }
     )
     
-    await apiClient.delete(`/api/v1/waist/points/${point.id}`)
+    await apiClient.delete(`/api/v1/presets/waist_angle/${point.id}`)
     ElMessage.success('点位删除成功')
     if (selectedPointId.value === point.id) {
       selectedPointId.value = ''
@@ -506,10 +526,12 @@ async function updatePointAngle(point: WaistPoint) {
       }
     )
     
-    await apiClient.put(`/api/v1/waist/points/${point.id}`, {
+    await apiClient.put(`/api/v1/presets/waist_angle/${point.id}`, {
       name: point.name,
       description: point.description,
-      angle: state.currentAngle
+      data: {
+        angle: state.currentAngle
+      }
     })
     ElMessage.success('点位角度已更新')
     await fetchWaistPoints()
@@ -535,7 +557,9 @@ const CMD = {
   GO_UPRIGHT: 10
 }
 
-// 发送控制命�?
+// 发送控制命令
+// TODO: 新架构中腰部控制可通过预设 API 的 apply 功能或 Data Plane WebSocket 实现
+// 目前保留旧API路径作为临时兼容
 async function sendCommand(command: number, value: number = 0, hold: boolean = false) {
   try {
     return apiClient.post('/api/v1/waist/control', { command, value, hold })
@@ -680,19 +704,23 @@ async function resetAlarm() {
   }
 }
 
-// 获取状�?
+// 获取状态
 async function fetchState() {
   try {
-    const data: any = await apiClient.get(`/api/v1/waist/state`)
+    // 使用新的统一状态 API
+    const data = await apiClient.get('/api/v1/robot/overview')
+    const waistData = data?.data?.waist || data?.waist
     
-    if (data) {
-      state.connected = data.connected ?? false
-      state.enabled = data.enabled ?? false
-      state.currentPosition = data.current_position ?? 230715
-      state.currentAngle = data.current_angle ?? 0
-      state.currentSpeed = data.current_speed ?? 1000
-      state.positionReached = data.position_reached ?? true
-      state.alarm = data.alarm ?? false
+    if (waistData) {
+      state.connected = true
+      state.enabled = waistData.enabled ?? false
+      state.currentPosition = waistData.current_position ?? waistData.position ?? 230715
+      state.currentAngle = waistData.current_angle ?? waistData.angle ?? 0
+      state.currentSpeed = waistData.current_speed ?? waistData.speed ?? 1000
+      state.positionReached = waistData.position_reached ?? true
+      state.alarm = waistData.alarm ?? false
+    } else {
+      state.connected = false
     }
   } catch (error) {
     console.error('获取状态失败', error)

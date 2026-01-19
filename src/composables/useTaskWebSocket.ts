@@ -1,5 +1,9 @@
 /**
  * 任务状态 WebSocket 连接 Hook
+ * 
+ * TODO: 新架构中任务状态推送需要通过 Data Plane WebSocket 实现
+ * 目前保留旧的 Control Plane WebSocket 路径作为临时兼容
+ * 后续需要迁移到 Data Plane 的 state 话题订阅机制
  */
 
 import { ref, onMounted, onUnmounted, watch } from 'vue'
@@ -48,7 +52,9 @@ export function useTaskWebSocket() {
   let heartbeatTimer: number | null = null
   
   // WebSocket URL
-  const wsUrl = `ws://${window.location.hostname}:8000/api/v1/task/ws`
+  // TODO: 新架构中需要使用 Data Plane WebSocket (8765 端口) 订阅任务状态话题
+  // 目前保留旧路径作为临时兼容
+  const wsUrl = `ws://${window.location.hostname}:8000/api/v1/tasks/ws`
   
   function connect() {
     if (ws.value?.readyState === WebSocket.OPEN) {

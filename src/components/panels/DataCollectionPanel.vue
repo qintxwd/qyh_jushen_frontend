@@ -429,15 +429,19 @@ async function fetchAvailableTopics() {
 
 async function fetchElectromagnetState() {
   try {
-    const response = await apiClient.get('/api/v1/lift/state')
-    if (response) {
-      electromagnetOn.value = response.electromagnet_on ?? false
+    // 使用新的统一状态 API
+    const response = await apiClient.get('/api/v1/robot/overview')
+    const liftData = response?.data?.lift || response?.lift
+    if (liftData) {
+      electromagnetOn.value = liftData.electromagnet_on ?? liftData.electromagnet ?? false
     }
   } catch (error) {
     // ignore
   }
 }
 
+// TODO: 新架构中电磁铁控制需要通过 Data Plane WebSocket 或专用API实现
+// 目前保留旧API路径作为临时兼容
 async function toggleElectromagnet() {
   if (electromagnetLoading.value) return
   electromagnetLoading.value = true

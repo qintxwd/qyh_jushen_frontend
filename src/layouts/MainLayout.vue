@@ -427,15 +427,22 @@ function stopResize() {
 }
 
 
-// 获取升降电机状态
+// 获取升降电机状态 - 使用统一 robot overview API
 async function fetchLiftStatus() {
   try {
-    const data = await apiClient.get('/api/v1/lift/state')
-    if (data) {
+    const data = await apiClient.get('/api/v1/robot/overview')
+    const liftData = data?.data?.lift || data?.lift
+    if (liftData) {
       layoutStore.updateLiftStatus({
-        connected: data.connected ?? false,
-        enabled: data.enabled ?? false,
-        alarm: data.alarm ?? false
+        connected: true,
+        enabled: liftData.enabled ?? false,
+        alarm: liftData.alarm ?? false
+      })
+    } else {
+      layoutStore.updateLiftStatus({
+        connected: false,
+        enabled: false,
+        alarm: false
       })
     }
   } catch (error) {
@@ -511,16 +518,19 @@ async function fetchGripperStatus() {
   }
 }
 
-// 获取头部状态
+// 获取头部状态 - 使用统一 robot overview API
 async function fetchHeadStatus() {
   try {
-    const data = await apiClient.get('/api/v1/head/state')
-    if (data) {
+    const data = await apiClient.get('/api/v1/robot/overview')
+    const headData = data?.data?.head || data?.head
+    if (headData) {
       layoutStore.updateHeadStatus({
-        connected: data.connected ?? false,
-        enabled: data.enabled ?? false,
-        error: data.error ?? false
+        connected: true,
+        enabled: headData.enabled ?? false,
+        error: headData.error ?? false
       })
+    } else {
+      layoutStore.updateHeadStatus({ connected: false })
     }
   } catch {
     layoutStore.updateHeadStatus({ connected: false })
@@ -555,16 +565,19 @@ async function fetchChassisStatus() {
   }
 }
 
-// 获取腰部状态
+// 获取腰部状态 - 使用统一 robot overview API
 async function fetchWaistStatus() {
   try {
-    const data = await apiClient.get('/api/v1/waist/state')
-    if (data) {
+    const data = await apiClient.get('/api/v1/robot/overview')
+    const waistData = data?.data?.waist || data?.waist
+    if (waistData) {
       layoutStore.updateWaistStatus({
-        connected: data.connected ?? false,
-        enabled: data.enabled ?? false,
-        error: data.error ?? false
+        connected: true,
+        enabled: waistData.enabled ?? false,
+        error: waistData.error ?? waistData.alarm ?? false
       })
+    } else {
+      layoutStore.updateWaistStatus({ connected: false })
     }
   } catch {
     layoutStore.updateWaistStatus({ connected: false })

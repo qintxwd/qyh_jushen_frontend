@@ -274,6 +274,8 @@ const headStyle = computed(() => ({
 }))
 
 // 发送控制命令
+// TODO: 新架构中头部控制需要通过 Data Plane WebSocket 实现
+// 目前保留旧API路径作为临时兼容，后续需要迁移到 WebSocket
 async function sendControl(pan: number | null, tilt: number | null, speed: number | null = null) {
   const payload: { pan: number | null; tilt: number | null; speed?: number | null } = { pan, tilt }
   if (speed !== null) {
@@ -300,6 +302,7 @@ async function executeMove() {
 }
 
 // 回正
+// TODO: 新架构中头部控制需要通过 Data Plane WebSocket 或预设 API 实现
 async function resetHead() {
   loadingReset.value = true
   try {
@@ -328,13 +331,16 @@ function goToPreset(preset: { name: string; pan: number; tilt: number }) {
 // 获取状态
 async function fetchState() {
   try {
-    const data = await apiClient.get('/api/v1/head/state')
-    if (data) {
-      state.connected = data.connected ?? false
-      state.panPosition = data.pan_position ?? 500
-      state.tiltPosition = data.tilt_position ?? 500
-      state.panNormalized = data.pan_normalized ?? 0
-      state.tiltNormalized = data.tilt_normalized ?? 0
+    // 使用新的统一状态 API
+    const data = await apiClient.get('/api/v1/robot/overview')
+    const headData = data?.data?.head || data?.head
+    if (headData) {
+      state.connected = true
+      // 新API返回格式可能不同，需要适配
+      state.panPosition = headData.pan_position ?? 500
+      state.tiltPosition = headData.tilt_position ?? 500
+      state.panNormalized = headData.pan_normalized ?? headData.pan ?? 0
+      state.tiltNormalized = headData.tilt_normalized ?? headData.tilt ?? 0
       
       // 首次加载时，将滑块初始化为当前位置
       if (!initialized.value) {
@@ -342,6 +348,8 @@ async function fetchState() {
         targetTilt.value = state.tiltNormalized
         initialized.value = true
       }
+    } else {
+      state.connected = false
     }
   } catch (error) {
     console.error('获取头部状态失败:', error)
@@ -385,8 +393,20 @@ const editPointForm = reactive({
 // 获取点位列表
 const fetchHeadPoints = async () => {
   try {
-    const data = await apiClient.get('/api/v1/head/points')
-    headPoints.value = data?.points || data || []
+    const data = await apiClient.get('/api/v1/presets', {
+      params: { preset_type: 'head_position' }
+    })
+    // 新API返回格式: { data: { items: [...] } }
+    const items = data?.data?.items || data?.items || []
+    // 转换为旧格式兼容
+    headPoints.value = items.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      description: item.description || '',
+      pan: item.data?.pan ?? 0,
+      tilt: item.data?.tilt ?? 0,
+      is_builtin: item.is_builtin ?? false
+    }))
   } catch (error) {
     console.error('获取头部点位列表失败:', error)
     // 不弹出错误提示，只在控制台记录
@@ -411,13 +431,21 @@ const confirmAddPoint = async () => {
   }
   
   try {
-    await apiClient.post('/api/v1/head/points', newPointForm)
+    await apiClient.post('/api/v1/presets', {
+      preset_type: 'head_position',
+      name: newPointForm.name,
+      description: newPointForm.description,
+      data: {
+        pan: newPointForm.pan,
+        tilt: newPointForm.tilt
+      }
+    })
     ElMessage.success('点位添加成功')
     addPointDialogVisible.value = false
     await fetchHeadPoints()
   } catch (error: any) {
     console.error('添加点位失败:', error)
-    ElMessage.error(error.response?.data?.detail || '添加点位失败')
+    ElMessage.error(error.response?.data?.detail || error.response?.data?.message || '添加点位失败')
   }
 }
 
@@ -444,11 +472,13 @@ const confirmEditPoint = async () => {
   }
   
   try {
-    await apiClient.put(`/api/v1/head/points/${editPointForm.id}`, {
+    await apiClient.put(`/api/v1/presets/head_position/${editPointForm.id}`, {
       name: editPointForm.name,
       description: editPointForm.description,
-      pan: editPointForm.pan,
-      tilt: editPointForm.tilt
+      data: {
+        pan: editPointForm.pan,
+        tilt: editPointForm.tilt
+      }
     })
     ElMessage.success('点位更新成功')
     editPointDialogVisible.value = false
@@ -477,7 +507,7 @@ const deletePoint = async (point: HeadPoint) => {
       }
     )
     
-    await apiClient.delete(`/api/v1/head/points/${point.id}`)
+    await apiClient.delete(`/api/v1/presets/head_position/${point.id}`)
     ElMessage.success('点位删除成功')
     if (selectedPointId.value === point.id) {
       selectedPointId.value = ''
@@ -533,11 +563,13 @@ const updatePointPosition = async (point: HeadPoint) => {
       }
     )
     
-    await apiClient.put(`/api/v1/head/points/${point.id}`, {
+    await apiClient.put(`/api/v1/presets/head_position/${point.id}`, {
       name: point.name,
       description: point.description,
-      pan: state.panNormalized,
-      tilt: state.tiltNormalized
+      data: {
+        pan: state.panNormalized,
+        tilt: state.tiltNormalized
+      }
     })
     ElMessage.success('点位位置已更新')
     await fetchHeadPoints()
