@@ -377,16 +377,54 @@ export function useDataPlane() {
   
   /**
    * 发送底盘速度命令
+   * 支持两种调用方式:
+   * 1. sendChassisVelocity(linearX, linearY, angularZ) - 直接参数
+   * 2. sendChassisVelocity({ linear: {x,y,z}, angular: {x,y,z} }) - 对象格式
    */
-  function sendChassisVelocity(linearX: number, linearY: number, angularZ: number) {
+  function sendChassisVelocity(
+    linearXOrCmd: number | { linear?: { x?: number; y?: number; z?: number }; angular?: { x?: number; y?: number; z?: number } },
+    linearY?: number,
+    angularZ?: number
+  ) {
     if (!isAuthenticated.value) return false
+    
+    let lx: number, ly: number, az: number
+    
+    if (typeof linearXOrCmd === 'object') {
+      // 对象格式调用
+      lx = linearXOrCmd.linear?.x ?? 0
+      ly = linearXOrCmd.linear?.y ?? 0
+      az = linearXOrCmd.angular?.z ?? 0
+    } else {
+      // 直接参数调用
+      lx = linearXOrCmd
+      ly = linearY ?? 0
+      az = angularZ ?? 0
+    }
     
     return send({
       type: MessageType.MSG_CHASSIS_VELOCITY,
       chassisVelocity: {
-        linearX,
-        linearY,
-        angularZ
+        linearX: lx,
+        linearY: ly,
+        angularZ: az
+      }
+    })
+  }
+  
+  /**
+   * 发送紧急停止命令
+   * 通过 WebSocket 发送以获得最低延迟
+   */
+  function sendEmergencyStop(active: boolean = true, reason: string = 'user_triggered') {
+    if (!isAuthenticated.value) return false
+    
+    return send({
+      type: MessageType.MSG_EMERGENCY_STOP,
+      emergencyStop: {
+        active,
+        source: 'web_client',
+        reason
       }
     })
   }
@@ -720,6 +758,7 @@ export function useDataPlane() {
     sendChassisVelocity,
     sendJointCommand,
     sendGripperCommand,
+    sendEmergencyStop,
     on,
   }
 }

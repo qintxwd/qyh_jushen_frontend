@@ -455,7 +455,7 @@ interface Station {
 }
 
 // ==================== 响应式数据 ====================
-const { chassisState, sendChassisVelocity, isConnected } = useDataPlane()
+const { chassisState, sendChassisVelocity, sendEmergencyStop, isConnected } = useDataPlane()
 const status = ref<ChassisStatus>({})
 const stations = ref<Station[]>([])
 const selectedStationId = ref<number | null>(null)
@@ -538,6 +538,13 @@ function getBatteryClass(percentage?: number): string {
 // ==================== 紧急控制 ====================
 async function emergencyStop() {
   try {
+    // WebSocket 优先（最低延迟）
+    if (isConnected.value) {
+      sendEmergencyStop(true, 'user_triggered')
+      ElMessage.success('急停已触发 (WebSocket)')
+      return
+    }
+    // 回退到 HTTP API
     await chassisApi.emergencyStop()
     ElMessage.success('急停已触发')
   } catch (e: any) {
@@ -547,6 +554,13 @@ async function emergencyStop() {
 
 async function releaseEmergencyStop() {
   try {
+    // WebSocket 优先（最低延迟）
+    if (isConnected.value) {
+      sendEmergencyStop(false, 'user_released')
+      ElMessage.success('急停已解除 (WebSocket)')
+      return
+    }
+    // 回退到 HTTP API
     await chassisApi.releaseEmergencyStop()
     ElMessage.success('急停已解除')
   } catch (e: any) {

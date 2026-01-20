@@ -314,6 +314,10 @@ import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import SvgIcon from '@/components/SvgIcon.vue'
 import { chassisApi } from '@/api/chassis'
+import { useDataPlane } from '@/composables/useDataPlane'
+
+// Data Plane WebSocket
+const { sendChassisVelocity, sendEmergencyStop, isConnected } = useDataPlane()
 
 // ==================== 类型定义 ====================
 interface ChassisStatus {
@@ -432,6 +436,13 @@ function getBatteryClass(percentage?: number): string {
 // ==================== 紧急控制 ====================
 async function emergencyStop() {
   try {
+    // WebSocket 优先（最低延迟）
+    if (isConnected.value) {
+      sendEmergencyStop(true, 'user_triggered')
+      ElMessage.success('急停已触发 (WebSocket)')
+      return
+    }
+    // 回退到 HTTP API
     await chassisApi.emergencyStop()
     ElMessage.success('急停已触发')
   } catch (e: any) {
@@ -441,6 +452,13 @@ async function emergencyStop() {
 
 async function releaseEmergencyStop() {
   try {
+    // WebSocket 优先（最低延迟）
+    if (isConnected.value) {
+      sendEmergencyStop(false, 'user_released')
+      ElMessage.success('急停已解除 (WebSocket)')
+      return
+    }
+    // 回退到 HTTP API
     await chassisApi.releaseEmergencyStop()
     ElMessage.success('急停已解除')
   } catch (e: any) {
@@ -616,6 +634,12 @@ async function updateManualControl() {
   if (keyStates.left) angular += manualSpeeds.angular
   if (keyStates.right) angular -= manualSpeeds.angular
 
+  // WebSocket 优先
+  if (isConnected.value) {
+    sendChassisVelocity({ linear: { x: linear, y: 0, z: 0 }, angular: { x: 0, y: 0, z: angular } })
+    return
+  }
+  
   try {
     await chassisApi.moveBySpeed(linear, angular)
   } catch (e: any) {
@@ -624,6 +648,18 @@ async function updateManualControl() {
 }
 
 async function stopChassis() {
+  keyStates.forward = false
+  keyStates.backward = false
+  keyStates.left = false
+  keyStates.right = false
+  
+  // WebSocket 优先
+  if (isConnected.value) {
+    sendChassisVelocity({ linear: { x: 0, y: 0, z: 0 }, angular: { x: 0, y: 0, z: 0 } })
+    ElMessage.success('已停止')
+    return
+  }
+  
   try {
     await chassisApi.moveBySpeed(0, 0)
     ElMessage.success('已停止')
