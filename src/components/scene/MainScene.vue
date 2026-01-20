@@ -200,10 +200,6 @@ watch(liftState, (newState) => {
 
 function stopPolling() {
   // Do nothing or disconnect if needed
-}  if (chassisStateInterval) {
-    clearInterval(chassisStateInterval)
-    chassisStateInterval = null
-  }
 }
 
 // ==================== 地图渲染 ====================
