@@ -653,6 +653,9 @@ import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import apiClient from '@/api/client'
+import { useDataPlane } from '@/composables/useDataPlane'
+
+const { isConnected, sendArmJog } = useDataPlane()
 
 // 机械臂状态
 const armState = reactive({
@@ -1374,6 +1377,18 @@ async function startJog(axisNum: number, direction: number) {
 
 // 发送连续模式心跳
 async function sendJogHeartbeat(axisNum: number, direction: number) {
+  // WS Priority
+  if (isConnected.value) {
+    const side = jogParams.robotId === 0 ? 'left' : 'right'
+    const mode = jogParams.coordType === 1 ? 'joint' : 'cartesian'
+    // direction is +1 or -1
+    const speed = jogParams.velocity * Math.sign(direction)
+    
+    sendArmJog(side, axisNum, speed, mode)
+    return
+  }
+
+  // HTTP Fallback
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), JOG_CONFIG.REQUEST_TIMEOUT)
@@ -1482,6 +1497,12 @@ async function stopJog() {
   
   // 发送停止命令（在连续模式下确保机械臂停止运动）
   if (axisToStop !== null) {
+    if (isConnected.value) {
+      const side = robotToStop === 0 ? 'left' : 'right'
+      const mode = jogParams.coordType === 1 ? 'joint' : 'cartesian'
+      sendArmJog(side, axisToStop, 0.0, mode)
+    }
+
     try {
       // 停止命令也设置超时
       const controller = new AbortController()

@@ -129,10 +129,13 @@
 import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useLayoutStore } from '@/stores/layout'
+import { useDataPlane } from '@/composables/useDataPlane'
 import { ElMessage } from 'element-plus'
 import apiClient from '@/api/client'
+import emergencyApi from '@/api/emergency' // Fallback API
 
 const layoutStore = useLayoutStore()
+const { sendEmergencyStop, isConnected } = useDataPlane()
 
 const loading = ref(false)
 
@@ -177,8 +180,21 @@ async function goToHome() {
   }
 }
 
-function emergencyStop() {
-  ElMessage.warning('急停命令已发送')
+async function emergencyStop() {
+  try {
+    // WebSocket Priority
+    if (isConnected.value) {
+      sendEmergencyStop(true, 'OverviewPanel user triggered')
+      ElMessage.success('急停已触发 (WebSocket)')
+      return
+    }
+    
+    // HTTP Fallback
+    await emergencyApi.triggerEmergencyStop('OverviewPanel user triggered (HTTP)')
+    ElMessage.success('急停已触发 (HTTP)')
+  } catch (e: any) {
+    ElMessage.error(e.message || '急停触发失败')
+  }
 }
 
 function refreshStatus() {

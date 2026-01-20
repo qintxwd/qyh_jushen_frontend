@@ -9,6 +9,7 @@
 
 import { ref, reactive, onMounted, onUnmounted, computed } from 'vue'
 import { qyh } from '@/proto/dataplane'
+import { getSystemConfig } from '@/api/system'
 
 // Protobuf 类型别名
 const { WebSocketMessage, MessageType } = qyh.dataplane
@@ -213,7 +214,17 @@ export function useDataPlane() {
   /**
    * 获取 WebSocket URL
    */
-  function getWsUrl(): string {
+  async function getWsUrl(): Promise<string> {
+    try {
+      const config = await getSystemConfig()
+      if (config.endpoints && config.endpoints.websocket) {
+        return config.endpoints.websocket
+      }
+    } catch (e) {
+      console.warn('[DataPlane] 获取系统配置失败, 使用默认 WebSocket 地址', e)
+    }
+    
+    // 后备方案
     const hostname = window.location.hostname
     return `ws://${hostname}:${DATA_PLANE_PORT}/`
   }
@@ -221,7 +232,7 @@ export function useDataPlane() {
   /**
    * 连接到 Data Plane
    */
-  function connect() {
+  async function connect() {
     if (ws?.readyState === WebSocket.OPEN || ws?.readyState === WebSocket.CONNECTING) {
       return
     }
@@ -229,7 +240,7 @@ export function useDataPlane() {
     connectionState.value = 'connecting'
     lastError.value = ''
     
-    const url = getWsUrl()
+    const url = await getWsUrl()
     console.log(`[DataPlane] 连接到 ${url}`)
     
     try {
@@ -374,6 +385,30 @@ export function useDataPlane() {
       }
     })
   }
+
+  /**
+   * 发送紧急停止 (WebSocket 通道 - 优先使用)
+   */
+  function sendEmergencyStop(active: boolean, reason: string = 'User triggered emergency stop'): boolean {
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      return false
+    }
+
+    /* 
+     * 注意: 急停不需要认证即可发送 (根据安全要求)
+     * 但如果连接未建立，必须回退到 HTTP
+     */
+
+    // 直接构造消息发送，绕过 send() 的序列号检查可能带来的问题（虽然 send() 也能用）
+    // 这里复用 standard send()
+    return send({
+      type: MessageType.MSG_EMERGENCY_STOP,
+      emergencyStop: {
+        active: active,
+        reason: reason
+      }
+    })
+  }
   
   /**
    * 发送底盘速度命令
@@ -413,23 +448,6 @@ export function useDataPlane() {
   }
   
   /**
-   * 发送紧急停止命令
-   * 通过 WebSocket 发送以获得最低延迟
-   */
-  function sendEmergencyStop(active: boolean = true, reason: string = 'user_triggered') {
-    if (!isAuthenticated.value) return false
-    
-    return send({
-      type: MessageType.MSG_EMERGENCY_STOP,
-      emergencyStop: {
-        active,
-        source: 'web_client',
-        reason
-      }
-    })
-  }
-  
-  /**
    * 发送关节命令
    */
   function sendJointCommand(names: string[], positions: number[], velocities?: number[]) {
@@ -457,6 +475,85 @@ export function useDataPlane() {
         gripperId,
         position,
         force
+      }
+    })
+  }
+
+  /**
+   * 发送升降柱命令
+   */
+  function sendLiftCommand(command: string, targetHeight: number = 0, speed: number = 0.5) {
+     if (!isAuthenticated.value) return false
+     return send({
+       type: MessageType.MSG_LIFT_COMMAND,
+       liftCommand: {
+         command,
+         targetHeight,
+         speed
+       }
+     })
+  }
+
+  /**
+   * 发送头部云台命令
+   */
+  function sendHeadCommand(command: string, yaw: number = 0, pitch: number = 0, presetName: string = '', speed: number = 0.5) {
+     if (!isAuthenticated.value) return false
+     return send({
+       type: MessageType.MSG_HEAD_COMMAND,
+       headCommand: {
+         command,
+         yaw,
+         pitch,
+         presetName,
+         speed
+       }
+     })
+  }
+
+  /**
+   * 发送腰部命令
+   */
+  function sendWaistCommand(command: string, targetAngle: number = 0, speed: number = 0.5) {
+     if (!isAuthenticated.value) return false
+     return send({
+       type: MessageType.MSG_WAIST_COMMAND,
+       waistCommand: {
+         command,
+         targetAngle,
+         speed
+       }
+     })
+  }
+
+  /**
+   * 发送机械臂移动命令
+   */
+  function sendArmMove(armSide: string, motionType: string, target: number[], speed: number = 0.5) {
+    if (!isAuthenticated.value) return false
+    return send({
+      type: MessageType.MSG_ARM_MOVE,
+      armMove: {
+        armSide,
+        motionType,
+        target,
+        speed
+      }
+    })
+  }
+
+  /**
+   * 发送机械臂点动命令
+   */
+  function sendArmJog(armSide: string, axisIndex: number, direction: number, jogMode: string = 'joint') {
+    if (!isAuthenticated.value) return false
+    return send({
+      type: MessageType.MSG_ARM_JOG,
+      armJog: {
+        armSide,
+        jogMode,
+        axisIndex, // 0-5
+        direction // -1.0 to 1.0 (speed * sign)
       }
     })
   }
@@ -759,6 +856,11 @@ export function useDataPlane() {
     sendJointCommand,
     sendGripperCommand,
     sendEmergencyStop,
+    sendLiftCommand,
+    sendHeadCommand,
+    sendWaistCommand,
+    sendArmMove,
+    sendArmJog,
     on,
   }
 }

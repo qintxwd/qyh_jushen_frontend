@@ -5,21 +5,39 @@
       <span>{{ title }}</span>
       <div class="camera-status" :class="{ online: topicOnline }">
         {{ topicOnline ? '在线' : '离线' }}
+        <span v-if="shouldUseWebRTC && rtcConnected" style="margin-left:4px; font-size:9px; opacity:0.8">(RTC)</span>
+        <span v-else-if="shouldUseWebRTC && !rtcConnected && !rtcFailure" style="margin-left:4px; font-size:9px; opacity:0.8">(Conn...)</span>
       </div>
     </div>
     <div class="camera-content">
+      <video
+        v-if="shouldUseWebRTC"
+        ref="videoRef"
+        autoplay
+        playsinline
+        muted
+        :class="{ 'stream-error': streamError }"
+        :style="rotateStyle"
+        style="width: 100%; height: 100%; object-fit: contain;"
+      ></video>
       <img 
-        v-if="streamUrl" 
+        v-else-if="streamUrl" 
         :src="streamUrl" 
         :alt="title"
         @error="handleImageError"
         @load="handleImageLoad"
         :class="{ 'stream-error': streamError }"
-        :style="rotate ? { transform: `rotate(${rotate}deg)` } : {}"
+        :style="rotateStyle"
       />
-      <div v-if="!streamUrl || streamError" class="no-signal-overlay">
-        <el-icon size="48"><VideoCamera /></el-icon>
-        <span>{{ topicOnline ? '视频流异常 (ROS Topic 正常)' : (errorMessage || '未连接') }}</span>
+      <div v-if="(!streamUrl && !shouldUseWebRTC) || streamError || (shouldUseWebRTC && !rtcStream && !rtcFailure)" class="no-signal-overlay">
+        <template v-if="shouldUseWebRTC && !rtcStream && !rtcFailure">
+             <el-icon class="is-loading" size="24"><Loading /></el-icon>
+             <span>连接视频流中...</span>
+        </template>
+        <template v-else>
+            <el-icon size="48"><VideoCamera /></el-icon>
+            <span>{{ topicOnline ? '视频流异常 (ROS Topic 正常)' : (errorMessage || '未连接') }}</span>
+        </template>
       </div>
     </div>
   </div>
@@ -27,13 +45,28 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { Loading, VideoCamera } from '@element-plus/icons-vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { useWebRTCStream } from '@/composables/useWebRTCStream'
+
 const props = defineProps<{
   title: string
   cameraId: string  // 'head', 'left_hand', 'right_hand'
   enabled?: boolean
   rotate?: number   // 旋转角度，如 180 表示旋转180度（用于左手摄像头上下颠倒的情况）
+  mode?: 'auto' | 'webrtc' | 'mjpeg' // default auto
 }>()
+
+// 模式控制
+const currentMode = ref(props.mode || 'auto')
+const shouldUseWebRTC = computed(() => currentMode.value === 'webrtc' || (currentMode.value === 'auto' && !rtcFailure.value))
+const rtcFailure = ref(false)
+
+// WebRTC logic
+// 猜测源名称: head -> head_camera
+const rtcSource = computed(() => props.cameraId.endsWith('_camera') ? props.cameraId : `${props.cameraId}_camera`)
+const { start: startWebRTC, stop: stopWebRTC, stream: rtcStream, isConnected: rtcConnected, error: rtcError } = useWebRTCStream(rtcSource.value)
+const videoRef = ref<HTMLVideoElement | null>(null)
 
 // 基于 ROS2 Topic 的在线状态（更可靠）
 const topicOnline = ref(false)
@@ -49,22 +82,59 @@ function getApiBaseUrl() {
   return `http://${host}:8000`
 }
 
-// 构建视频流 URL
-// 通过后端 API 代理访问 web_video_server
+// 构建 MJPEG 视频流 URL
 const streamUrl = computed(() => {
   if (!props.enabled) return ''
   return `${getApiBaseUrl()}/api/v1/camera/stream/${props.cameraId}?quality=50`
 })
 
+// 旋转样式
+const rotateStyle = computed(() => props.rotate ? { transform: `rotate(${props.rotate}deg)` } : {})
+
+// 监视 WebRTC 流并绑定到 Video 元素
+watch(rtcStream, (newStream) => {
+  if (newStream) {
+    nextTick(() => {
+      if (videoRef.value) {
+        videoRef.value.srcObject = newStream
+        videoRef.value.play().catch(console.error)
+      }
+    })
+  }
+})
+
+// 监视 WebRTC 错误，自动降级
+watch(rtcError, (err) => {
+  if (err && currentMode.value === 'auto') {
+    console.warn(`WebRTC error for ${props.title}, falling back to MJPEG:`, err)
+    rtcFailure.value = true
+    stopWebRTC()
+  }
+})
+
+function initStream() {
+  if (!props.enabled) return
+  
+  // Reset failure state on re-enable?
+  // rtcFailure.value = false 
+  
+  if (shouldUseWebRTC.value) {
+    startWebRTC()
+  }
+}
+
+function stopStream() {
+  stopWebRTC()
+}
+
+// ... existing topic check logic ...
 function handleImageError() {
   streamError.value = true
-  // 不再用视频流状态来判断在线，只记录流错误
 }
 
 function handleImageLoad() {
   streamError.value = false
   imageLoaded.value = true
-  // 图片加载成功说明相机在线
   topicOnline.value = true
   errorMessage.value = ''
 }
@@ -83,7 +153,8 @@ async function checkTopicStatus() {
     if (response.ok) {
       const data = await response.json()
       const cameraStatus = data.cameras?.[props.cameraId]
-      topicOnline.value = cameraStatus?.available ?? false
+      // WebRTC 连接成功也可以认为在线
+      topicOnline.value = cameraStatus?.available || rtcConnected.value
       
       if (!topicOnline.value) {
         errorMessage.value = cameraStatus?.error || '相机话题无数据'
@@ -91,11 +162,9 @@ async function checkTopicStatus() {
         errorMessage.value = ''
       }
     } else {
-      // API 调用失败时保持之前的状态，避免闪烁
       errorMessage.value = '无法连接后端'
     }
   } catch (e) {
-    // 网络错误时保持之前的状态
     errorMessage.value = '网络错误'
   }
 }
@@ -103,20 +172,23 @@ async function checkTopicStatus() {
 watch(() => props.enabled, (enabled) => {
   if (enabled) {
     checkTopicStatus()
+    initStream()
   } else {
     topicOnline.value = false
+    stopStream()
   }
 })
 
 onMounted(() => {
   if (props.enabled) {
     checkTopicStatus()
+    initStream()
   }
-  // 每 2 秒检查一次 ROS2 Topic 状态（比之前的 5 秒更频繁）
   topicCheckTimer = window.setInterval(checkTopicStatus, 2000)
 })
 
 onUnmounted(() => {
+  stopStream()
   if (topicCheckTimer) {
     clearInterval(topicCheckTimer)
   }

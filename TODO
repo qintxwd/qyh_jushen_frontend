@@ -1,0 +1,48 @@
+# 前端重构待办事项清单（与后端同步）
+
+基于对更新后的后端文档（Control Plane, Data Plane, Media Plane）和当前前端代码库的审查，发现了以下差异和需要更新的内容。
+
+## 1. Protobuf 与数据平面核心
+- [ ] **重新生成 Protobuf 文件**: 前端的 protobuf 定义 (`src/proto/dataplane.js`, `src/proto/dataplane.d.ts`) 已过时。它们不包含新的消息类型，如 `LiftCommand` (265), `HeadCommand` (267), `ArmMoveCommand` (268) 等。
+    - *动作*: 使用 `protobufjs` 将更新后的 `.proto` 文件（来自 `qyh_jushen_backend/shared/proto`）编译到前端的 `src/proto` 目录中。
+- [ ] **动态 WebSocket URL**: `src/composables/useDataPlane.ts` 硬编码了 WebSocket URL 端口 8765。
+    - *动作*: 更新 `connect()` 方法，使用 `getSystemConfig()`（来自 `src/api/system.ts`）返回的 URL 或 `endpoints.websocket` 字段，确保遵循文档中描述的“服务发现”模式。
+
+## 2. 紧急停止（双通道）
+- [ ] **实现 WebSocket 紧急停止**: 目前 `src/api/emergency.ts` 仅支持 HTTP。
+    - *动作*: 在 `useDataPlane.ts` 中添加 `sendEmergencyStop()`，发送 `MSG_EMERGENCY_STOP` (1026)。
+- [ ] **实现双通道逻辑**:
+    - *动作*: 更新 UI（例如全局停止按钮），尝试优先发送 WS 消息（主通道，<10ms），如果 WS 连接断开或失败，则回退到 HTTP API (`/api/v1/emergency/stop`)。
+
+## 3. 执行器控制（从 HTTP 切换到 WebSocket）
+后端明确禁止通过 HTTP 进行实时控制。必须重构以下组件/API，使用 `useDataPlane().send()` 发送相应的 Protobuf 消息。
+
+- [ ] **升降控制**:
+    - *当前*: `src/api/lift.ts` 使用 HTTP `/api/v1/lift/control`。
+    - *目标*: 发送 `MSG_LIFT_COMMAND` (265)。
+- [ ] **头部控制**:
+    - *当前*: `HeadPanel.vue` 使用 HTTP `/api/v1/head/control`。
+    - *目标*: 发送 `MSG_HEAD_COMMAND` (267)。
+- [ ] **腰部控制** (如果适用):
+    - *目标*: 发送 `MSG_WAIST_COMMAND` (266)。
+- [ ] **机械臂控制**:
+    - *当前*: `ArmControlPanel.vue` 使用 HTTP `/api/v1/arm/jog`, `/api/v1/arm/power_on` 等。
+    - *目标*: 运动控制发送 `MSG_ARM_MOVE` (268) 或 `MSG_ARM_JOG` (269)。状态反馈使用 `MSG_ACTUATOR_STATE` (519)。注意：某些管理命令（如“更新负载配置”）可能仍是 HTTP，但运动必须是 WS。
+
+## 4. 视频流（从 HTTP 切换到 WebRTC）
+- [ ] **实现 WebRTC 客户端**:
+    - *当前*: `CameraView.vue` 使用 HTTP MJPEG (`/api/v1/camera/stream/...`)。
+    - *目标*: 实现一个 WebRTC 客户端（可能在新的 `useMediaPlane` composable 中），连接到 Media Plane WebSocket（默认端口 8888，但应通过发现获取）进行信令交换，处理 SDP 交换，并渲染 `MediaStream`。
+- [ ] **更新相机状态检查**:
+    - *当前*: `CameraView.vue` 轮询 `/api/v1/camera/topic_status`（新 API 中可能不存在）。
+    - *目标*: 使用 `/api/v1/camera/list` (HTTP) 获取元数据或监听通道状态事件。
+
+## 5. 导航与底盘
+- [ ] **导航目标**: 验证 `ChassisPanel.vue` 导航逻辑。
+    - *要求*: 应使用 `MSG_NAVIGATION_GOAL` (261) 将目标发送到数据平面。虽然存在 HTTP `/api/v1/chassis/navigate/pose`，但那是用于控制平面（高级任务管理）。需确认 UI 应使用哪一个（直接控制 = WS）。
+- [ ] **状态更新**:
+    - *当前*: `src/api/chassis.ts` 中的 `ChassisStatus` 接口似乎很详细。
+    - *目标*: 确保前端使用 `MSG_CHASSIS_STATE` (515) 和 `MSG_ROBOT_STATE` (512) 进行实时仪表盘更新（电池、速度、位姿），而不是轮询 HTTP。
+
+## 6. 常规清理
+- [ ] **审查 API 端点**: 删除 `src/api/` 中已不再使用的、已被 WebSocket 消息取代的 HTTP API 定义，以避免混淆。

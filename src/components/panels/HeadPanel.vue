@@ -222,7 +222,7 @@ import { useDataPlane } from '@/composables/useDataPlane'
 import { presetsApi } from '@/api/presets'
 import type { Preset } from '@/api/presets'
 
-const { headPanState, headTiltState, sendJointCommand, isConnected, connect, subscribe } = useDataPlane()
+const { headPanState, headTiltState, sendJointCommand, isConnected, connect, subscribe, sendHeadCommand } = useDataPlane()
 
 const loading = ref(false)
 const loadingReset = ref(false)
@@ -279,31 +279,22 @@ const headStyle = computed(() => ({
 }))
 
 // 发送控制命令
-// 使用 Data Plane WebSocket
+// 使用 Data Plane WebSocket (优先)
 async function sendControl(pan: number | null, tilt: number | null, speed: number | null = null) {
   if (isConnected.value) {
     const LIMIT_PAN = 1.57
     const LIMIT_TILT = 0.52 
     
-    const names: string[] = []
-    const positions: number[] = []
+    // 计算目标弧度
+    // 如果参数为 null，使用当前状态
+    const targetPanRad = (pan !== null) ? pan * LIMIT_PAN : (state.panNormalized * LIMIT_PAN)
+    const targetTiltRad = (tilt !== null) ? tilt * LIMIT_TILT : (state.tiltNormalized * LIMIT_TILT)
     
-    if (pan !== null) {
-      names.push('head_pan_joint')
-      positions.push(pan * LIMIT_PAN)
-    }
+    // 速度 0-100 转 0.0-1.0
+    const speedFactor = (speed !== null) ? speed / 100.0 : 0.5
     
-    if (tilt !== null) {
-      names.push('head_tilt_joint')
-      positions.push(tilt * LIMIT_TILT)
-    }
-    
-    if (names.length > 0) {
-      // 速度目前作为全局参数并不直接支持，或者需要对应关节的 velocity 数组
-      // 目前只发位置
-      sendJointCommand(names, positions, [])
-      return { success: true, message: '指令已发送 (WS)' }
-    }
+    sendHeadCommand('goto', targetPanRad, targetTiltRad, '', speedFactor)
+    return { success: true, message: '指令已发送 (WS)' }
   }
 
   // Fallback to HTTP

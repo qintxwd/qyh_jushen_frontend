@@ -987,6 +987,2759 @@ export namespace qyh {
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
+        /** ControlType enum. */
+        enum ControlType {
+            CONTROL_NONE = 0,
+            CONTROL_VR_TELEOP = 1,
+            CONTROL_GAMEPAD = 2,
+            CONTROL_KEYBOARD = 3,
+            CONTROL_AUTO = 4
+        }
+
+        /** Properties of a VRController. */
+        interface IVRController {
+
+            /** VRController active */
+            active?: (boolean|null);
+
+            /** VRController pose */
+            pose?: (qyh.dataplane.IPose|null);
+
+            /** VRController trigger */
+            trigger?: (number|null);
+
+            /** VRController grip */
+            grip?: (number|null);
+
+            /** VRController joystick */
+            joystick?: (number[]|null);
+
+            /** VRController buttons */
+            buttons?: (boolean[]|null);
+
+            /** VRController clutchEngaged */
+            clutchEngaged?: (boolean|null);
+        }
+
+        /** Represents a VRController. */
+        class VRController implements IVRController {
+
+            /**
+             * Constructs a new VRController.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IVRController);
+
+            /** VRController active. */
+            public active: boolean;
+
+            /** VRController pose. */
+            public pose?: (qyh.dataplane.IPose|null);
+
+            /** VRController trigger. */
+            public trigger: number;
+
+            /** VRController grip. */
+            public grip: number;
+
+            /** VRController joystick. */
+            public joystick: number[];
+
+            /** VRController buttons. */
+            public buttons: boolean[];
+
+            /** VRController clutchEngaged. */
+            public clutchEngaged: boolean;
+
+            /**
+             * Creates a new VRController instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns VRController instance
+             */
+            public static create(properties?: qyh.dataplane.IVRController): qyh.dataplane.VRController;
+
+            /**
+             * Encodes the specified VRController message. Does not implicitly {@link qyh.dataplane.VRController.verify|verify} messages.
+             * @param message VRController message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IVRController, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified VRController message, length delimited. Does not implicitly {@link qyh.dataplane.VRController.verify|verify} messages.
+             * @param message VRController message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IVRController, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a VRController message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns VRController
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.VRController;
+
+            /**
+             * Decodes a VRController message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns VRController
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.VRController;
+
+            /**
+             * Verifies a VRController message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a VRController message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns VRController
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.VRController;
+
+            /**
+             * Creates a plain object from a VRController message. Also converts values to other types if specified.
+             * @param message VRController
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.VRController, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this VRController to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for VRController
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a VRControlIntent. */
+        interface IVRControlIntent {
+
+            /** VRControlIntent header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** VRControlIntent headPose */
+            headPose?: (qyh.dataplane.IPose|null);
+
+            /** VRControlIntent leftHand */
+            leftHand?: (qyh.dataplane.IVRController|null);
+
+            /** VRControlIntent rightHand */
+            rightHand?: (qyh.dataplane.IVRController|null);
+        }
+
+        /** Represents a VRControlIntent. */
+        class VRControlIntent implements IVRControlIntent {
+
+            /**
+             * Constructs a new VRControlIntent.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IVRControlIntent);
+
+            /** VRControlIntent header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** VRControlIntent headPose. */
+            public headPose?: (qyh.dataplane.IPose|null);
+
+            /** VRControlIntent leftHand. */
+            public leftHand?: (qyh.dataplane.IVRController|null);
+
+            /** VRControlIntent rightHand. */
+            public rightHand?: (qyh.dataplane.IVRController|null);
+
+            /**
+             * Creates a new VRControlIntent instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns VRControlIntent instance
+             */
+            public static create(properties?: qyh.dataplane.IVRControlIntent): qyh.dataplane.VRControlIntent;
+
+            /**
+             * Encodes the specified VRControlIntent message. Does not implicitly {@link qyh.dataplane.VRControlIntent.verify|verify} messages.
+             * @param message VRControlIntent message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IVRControlIntent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified VRControlIntent message, length delimited. Does not implicitly {@link qyh.dataplane.VRControlIntent.verify|verify} messages.
+             * @param message VRControlIntent message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IVRControlIntent, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a VRControlIntent message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns VRControlIntent
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.VRControlIntent;
+
+            /**
+             * Decodes a VRControlIntent message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns VRControlIntent
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.VRControlIntent;
+
+            /**
+             * Verifies a VRControlIntent message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a VRControlIntent message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns VRControlIntent
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.VRControlIntent;
+
+            /**
+             * Creates a plain object from a VRControlIntent message. Also converts values to other types if specified.
+             * @param message VRControlIntent
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.VRControlIntent, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this VRControlIntent to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for VRControlIntent
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a ChassisVelocity. */
+        interface IChassisVelocity {
+
+            /** ChassisVelocity header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** ChassisVelocity linearX */
+            linearX?: (number|null);
+
+            /** ChassisVelocity linearY */
+            linearY?: (number|null);
+
+            /** ChassisVelocity angularZ */
+            angularZ?: (number|null);
+        }
+
+        /** Represents a ChassisVelocity. */
+        class ChassisVelocity implements IChassisVelocity {
+
+            /**
+             * Constructs a new ChassisVelocity.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IChassisVelocity);
+
+            /** ChassisVelocity header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** ChassisVelocity linearX. */
+            public linearX: number;
+
+            /** ChassisVelocity linearY. */
+            public linearY: number;
+
+            /** ChassisVelocity angularZ. */
+            public angularZ: number;
+
+            /**
+             * Creates a new ChassisVelocity instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ChassisVelocity instance
+             */
+            public static create(properties?: qyh.dataplane.IChassisVelocity): qyh.dataplane.ChassisVelocity;
+
+            /**
+             * Encodes the specified ChassisVelocity message. Does not implicitly {@link qyh.dataplane.ChassisVelocity.verify|verify} messages.
+             * @param message ChassisVelocity message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IChassisVelocity, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified ChassisVelocity message, length delimited. Does not implicitly {@link qyh.dataplane.ChassisVelocity.verify|verify} messages.
+             * @param message ChassisVelocity message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IChassisVelocity, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a ChassisVelocity message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ChassisVelocity
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.ChassisVelocity;
+
+            /**
+             * Decodes a ChassisVelocity message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns ChassisVelocity
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.ChassisVelocity;
+
+            /**
+             * Verifies a ChassisVelocity message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a ChassisVelocity message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ChassisVelocity
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.ChassisVelocity;
+
+            /**
+             * Creates a plain object from a ChassisVelocity message. Also converts values to other types if specified.
+             * @param message ChassisVelocity
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.ChassisVelocity, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ChassisVelocity to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ChassisVelocity
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a NavigationGoal. */
+        interface INavigationGoal {
+
+            /** NavigationGoal header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** NavigationGoal targetPose */
+            targetPose?: (qyh.dataplane.IPose|null);
+
+            /** NavigationGoal isLocalizationOnly */
+            isLocalizationOnly?: (boolean|null);
+        }
+
+        /** Represents a NavigationGoal. */
+        class NavigationGoal implements INavigationGoal {
+
+            /**
+             * Constructs a new NavigationGoal.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.INavigationGoal);
+
+            /** NavigationGoal header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** NavigationGoal targetPose. */
+            public targetPose?: (qyh.dataplane.IPose|null);
+
+            /** NavigationGoal isLocalizationOnly. */
+            public isLocalizationOnly: boolean;
+
+            /**
+             * Creates a new NavigationGoal instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns NavigationGoal instance
+             */
+            public static create(properties?: qyh.dataplane.INavigationGoal): qyh.dataplane.NavigationGoal;
+
+            /**
+             * Encodes the specified NavigationGoal message. Does not implicitly {@link qyh.dataplane.NavigationGoal.verify|verify} messages.
+             * @param message NavigationGoal message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.INavigationGoal, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified NavigationGoal message, length delimited. Does not implicitly {@link qyh.dataplane.NavigationGoal.verify|verify} messages.
+             * @param message NavigationGoal message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.INavigationGoal, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a NavigationGoal message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns NavigationGoal
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.NavigationGoal;
+
+            /**
+             * Decodes a NavigationGoal message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns NavigationGoal
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.NavigationGoal;
+
+            /**
+             * Verifies a NavigationGoal message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a NavigationGoal message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns NavigationGoal
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.NavigationGoal;
+
+            /**
+             * Creates a plain object from a NavigationGoal message. Also converts values to other types if specified.
+             * @param message NavigationGoal
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.NavigationGoal, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this NavigationGoal to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for NavigationGoal
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a NavigationControl. */
+        interface INavigationControl {
+
+            /** NavigationControl header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** NavigationControl action */
+            action?: (string|null);
+        }
+
+        /** Represents a NavigationControl. */
+        class NavigationControl implements INavigationControl {
+
+            /**
+             * Constructs a new NavigationControl.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.INavigationControl);
+
+            /** NavigationControl header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** NavigationControl action. */
+            public action: string;
+
+            /**
+             * Creates a new NavigationControl instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns NavigationControl instance
+             */
+            public static create(properties?: qyh.dataplane.INavigationControl): qyh.dataplane.NavigationControl;
+
+            /**
+             * Encodes the specified NavigationControl message. Does not implicitly {@link qyh.dataplane.NavigationControl.verify|verify} messages.
+             * @param message NavigationControl message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.INavigationControl, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified NavigationControl message, length delimited. Does not implicitly {@link qyh.dataplane.NavigationControl.verify|verify} messages.
+             * @param message NavigationControl message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.INavigationControl, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a NavigationControl message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns NavigationControl
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.NavigationControl;
+
+            /**
+             * Decodes a NavigationControl message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns NavigationControl
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.NavigationControl;
+
+            /**
+             * Verifies a NavigationControl message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a NavigationControl message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns NavigationControl
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.NavigationControl;
+
+            /**
+             * Creates a plain object from a NavigationControl message. Also converts values to other types if specified.
+             * @param message NavigationControl
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.NavigationControl, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this NavigationControl to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for NavigationControl
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a LiftCommand. */
+        interface ILiftCommand {
+
+            /** LiftCommand header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** LiftCommand command */
+            command?: (string|null);
+
+            /** LiftCommand targetHeight */
+            targetHeight?: (number|null);
+
+            /** LiftCommand speed */
+            speed?: (number|null);
+        }
+
+        /** Represents a LiftCommand. */
+        class LiftCommand implements ILiftCommand {
+
+            /**
+             * Constructs a new LiftCommand.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.ILiftCommand);
+
+            /** LiftCommand header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** LiftCommand command. */
+            public command: string;
+
+            /** LiftCommand targetHeight. */
+            public targetHeight: number;
+
+            /** LiftCommand speed. */
+            public speed: number;
+
+            /**
+             * Creates a new LiftCommand instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns LiftCommand instance
+             */
+            public static create(properties?: qyh.dataplane.ILiftCommand): qyh.dataplane.LiftCommand;
+
+            /**
+             * Encodes the specified LiftCommand message. Does not implicitly {@link qyh.dataplane.LiftCommand.verify|verify} messages.
+             * @param message LiftCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.ILiftCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified LiftCommand message, length delimited. Does not implicitly {@link qyh.dataplane.LiftCommand.verify|verify} messages.
+             * @param message LiftCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.ILiftCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a LiftCommand message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns LiftCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.LiftCommand;
+
+            /**
+             * Decodes a LiftCommand message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns LiftCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.LiftCommand;
+
+            /**
+             * Verifies a LiftCommand message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a LiftCommand message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns LiftCommand
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.LiftCommand;
+
+            /**
+             * Creates a plain object from a LiftCommand message. Also converts values to other types if specified.
+             * @param message LiftCommand
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.LiftCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this LiftCommand to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for LiftCommand
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a WaistCommand. */
+        interface IWaistCommand {
+
+            /** WaistCommand header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** WaistCommand command */
+            command?: (string|null);
+
+            /** WaistCommand targetAngle */
+            targetAngle?: (number|null);
+
+            /** WaistCommand speed */
+            speed?: (number|null);
+        }
+
+        /** Represents a WaistCommand. */
+        class WaistCommand implements IWaistCommand {
+
+            /**
+             * Constructs a new WaistCommand.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IWaistCommand);
+
+            /** WaistCommand header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** WaistCommand command. */
+            public command: string;
+
+            /** WaistCommand targetAngle. */
+            public targetAngle: number;
+
+            /** WaistCommand speed. */
+            public speed: number;
+
+            /**
+             * Creates a new WaistCommand instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns WaistCommand instance
+             */
+            public static create(properties?: qyh.dataplane.IWaistCommand): qyh.dataplane.WaistCommand;
+
+            /**
+             * Encodes the specified WaistCommand message. Does not implicitly {@link qyh.dataplane.WaistCommand.verify|verify} messages.
+             * @param message WaistCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IWaistCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified WaistCommand message, length delimited. Does not implicitly {@link qyh.dataplane.WaistCommand.verify|verify} messages.
+             * @param message WaistCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IWaistCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a WaistCommand message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns WaistCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.WaistCommand;
+
+            /**
+             * Decodes a WaistCommand message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns WaistCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.WaistCommand;
+
+            /**
+             * Verifies a WaistCommand message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a WaistCommand message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns WaistCommand
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.WaistCommand;
+
+            /**
+             * Creates a plain object from a WaistCommand message. Also converts values to other types if specified.
+             * @param message WaistCommand
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.WaistCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this WaistCommand to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for WaistCommand
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a HeadCommand. */
+        interface IHeadCommand {
+
+            /** HeadCommand header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** HeadCommand command */
+            command?: (string|null);
+
+            /** HeadCommand yaw */
+            yaw?: (number|null);
+
+            /** HeadCommand pitch */
+            pitch?: (number|null);
+
+            /** HeadCommand presetName */
+            presetName?: (string|null);
+
+            /** HeadCommand speed */
+            speed?: (number|null);
+        }
+
+        /** Represents a HeadCommand. */
+        class HeadCommand implements IHeadCommand {
+
+            /**
+             * Constructs a new HeadCommand.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IHeadCommand);
+
+            /** HeadCommand header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** HeadCommand command. */
+            public command: string;
+
+            /** HeadCommand yaw. */
+            public yaw: number;
+
+            /** HeadCommand pitch. */
+            public pitch: number;
+
+            /** HeadCommand presetName. */
+            public presetName: string;
+
+            /** HeadCommand speed. */
+            public speed: number;
+
+            /**
+             * Creates a new HeadCommand instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns HeadCommand instance
+             */
+            public static create(properties?: qyh.dataplane.IHeadCommand): qyh.dataplane.HeadCommand;
+
+            /**
+             * Encodes the specified HeadCommand message. Does not implicitly {@link qyh.dataplane.HeadCommand.verify|verify} messages.
+             * @param message HeadCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IHeadCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified HeadCommand message, length delimited. Does not implicitly {@link qyh.dataplane.HeadCommand.verify|verify} messages.
+             * @param message HeadCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IHeadCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a HeadCommand message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns HeadCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.HeadCommand;
+
+            /**
+             * Decodes a HeadCommand message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns HeadCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.HeadCommand;
+
+            /**
+             * Verifies a HeadCommand message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a HeadCommand message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns HeadCommand
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.HeadCommand;
+
+            /**
+             * Creates a plain object from a HeadCommand message. Also converts values to other types if specified.
+             * @param message HeadCommand
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.HeadCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this HeadCommand to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for HeadCommand
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of an ArmMoveCommand. */
+        interface IArmMoveCommand {
+
+            /** ArmMoveCommand header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** ArmMoveCommand armSide */
+            armSide?: (string|null);
+
+            /** ArmMoveCommand motionType */
+            motionType?: (string|null);
+
+            /** ArmMoveCommand target */
+            target?: (number[]|null);
+
+            /** ArmMoveCommand speed */
+            speed?: (number|null);
+
+            /** ArmMoveCommand acceleration */
+            acceleration?: (number|null);
+
+            /** ArmMoveCommand blendRadius */
+            blendRadius?: (number|null);
+        }
+
+        /** Represents an ArmMoveCommand. */
+        class ArmMoveCommand implements IArmMoveCommand {
+
+            /**
+             * Constructs a new ArmMoveCommand.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IArmMoveCommand);
+
+            /** ArmMoveCommand header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** ArmMoveCommand armSide. */
+            public armSide: string;
+
+            /** ArmMoveCommand motionType. */
+            public motionType: string;
+
+            /** ArmMoveCommand target. */
+            public target: number[];
+
+            /** ArmMoveCommand speed. */
+            public speed: number;
+
+            /** ArmMoveCommand acceleration. */
+            public acceleration: number;
+
+            /** ArmMoveCommand blendRadius. */
+            public blendRadius: number;
+
+            /**
+             * Creates a new ArmMoveCommand instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ArmMoveCommand instance
+             */
+            public static create(properties?: qyh.dataplane.IArmMoveCommand): qyh.dataplane.ArmMoveCommand;
+
+            /**
+             * Encodes the specified ArmMoveCommand message. Does not implicitly {@link qyh.dataplane.ArmMoveCommand.verify|verify} messages.
+             * @param message ArmMoveCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IArmMoveCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified ArmMoveCommand message, length delimited. Does not implicitly {@link qyh.dataplane.ArmMoveCommand.verify|verify} messages.
+             * @param message ArmMoveCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IArmMoveCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an ArmMoveCommand message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ArmMoveCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.ArmMoveCommand;
+
+            /**
+             * Decodes an ArmMoveCommand message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns ArmMoveCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.ArmMoveCommand;
+
+            /**
+             * Verifies an ArmMoveCommand message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an ArmMoveCommand message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ArmMoveCommand
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.ArmMoveCommand;
+
+            /**
+             * Creates a plain object from an ArmMoveCommand message. Also converts values to other types if specified.
+             * @param message ArmMoveCommand
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.ArmMoveCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ArmMoveCommand to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ArmMoveCommand
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of an ArmJogCommand. */
+        interface IArmJogCommand {
+
+            /** ArmJogCommand header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** ArmJogCommand armSide */
+            armSide?: (string|null);
+
+            /** ArmJogCommand jogMode */
+            jogMode?: (string|null);
+
+            /** ArmJogCommand axisIndex */
+            axisIndex?: (number|null);
+
+            /** ArmJogCommand direction */
+            direction?: (number|null);
+        }
+
+        /** Represents an ArmJogCommand. */
+        class ArmJogCommand implements IArmJogCommand {
+
+            /**
+             * Constructs a new ArmJogCommand.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IArmJogCommand);
+
+            /** ArmJogCommand header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** ArmJogCommand armSide. */
+            public armSide: string;
+
+            /** ArmJogCommand jogMode. */
+            public jogMode: string;
+
+            /** ArmJogCommand axisIndex. */
+            public axisIndex: number;
+
+            /** ArmJogCommand direction. */
+            public direction: number;
+
+            /**
+             * Creates a new ArmJogCommand instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ArmJogCommand instance
+             */
+            public static create(properties?: qyh.dataplane.IArmJogCommand): qyh.dataplane.ArmJogCommand;
+
+            /**
+             * Encodes the specified ArmJogCommand message. Does not implicitly {@link qyh.dataplane.ArmJogCommand.verify|verify} messages.
+             * @param message ArmJogCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IArmJogCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified ArmJogCommand message, length delimited. Does not implicitly {@link qyh.dataplane.ArmJogCommand.verify|verify} messages.
+             * @param message ArmJogCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IArmJogCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an ArmJogCommand message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ArmJogCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.ArmJogCommand;
+
+            /**
+             * Decodes an ArmJogCommand message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns ArmJogCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.ArmJogCommand;
+
+            /**
+             * Verifies an ArmJogCommand message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an ArmJogCommand message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ArmJogCommand
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.ArmJogCommand;
+
+            /**
+             * Creates a plain object from an ArmJogCommand message. Also converts values to other types if specified.
+             * @param message ArmJogCommand
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.ArmJogCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ArmJogCommand to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ArmJogCommand
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a JointCommand. */
+        interface IJointCommand {
+
+            /** JointCommand header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** JointCommand names */
+            names?: (string[]|null);
+
+            /** JointCommand positions */
+            positions?: (number[]|null);
+
+            /** JointCommand velocities */
+            velocities?: (number[]|null);
+        }
+
+        /** Represents a JointCommand. */
+        class JointCommand implements IJointCommand {
+
+            /**
+             * Constructs a new JointCommand.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IJointCommand);
+
+            /** JointCommand header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** JointCommand names. */
+            public names: string[];
+
+            /** JointCommand positions. */
+            public positions: number[];
+
+            /** JointCommand velocities. */
+            public velocities: number[];
+
+            /**
+             * Creates a new JointCommand instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns JointCommand instance
+             */
+            public static create(properties?: qyh.dataplane.IJointCommand): qyh.dataplane.JointCommand;
+
+            /**
+             * Encodes the specified JointCommand message. Does not implicitly {@link qyh.dataplane.JointCommand.verify|verify} messages.
+             * @param message JointCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IJointCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified JointCommand message, length delimited. Does not implicitly {@link qyh.dataplane.JointCommand.verify|verify} messages.
+             * @param message JointCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IJointCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a JointCommand message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns JointCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.JointCommand;
+
+            /**
+             * Decodes a JointCommand message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns JointCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.JointCommand;
+
+            /**
+             * Verifies a JointCommand message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a JointCommand message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns JointCommand
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.JointCommand;
+
+            /**
+             * Creates a plain object from a JointCommand message. Also converts values to other types if specified.
+             * @param message JointCommand
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.JointCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this JointCommand to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for JointCommand
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of an EndEffectorCommand. */
+        interface IEndEffectorCommand {
+
+            /** EndEffectorCommand header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** EndEffectorCommand armSide */
+            armSide?: (string|null);
+
+            /** EndEffectorCommand targetPose */
+            targetPose?: (qyh.dataplane.IPose|null);
+
+            /** EndEffectorCommand speedFactor */
+            speedFactor?: (number|null);
+        }
+
+        /** Represents an EndEffectorCommand. */
+        class EndEffectorCommand implements IEndEffectorCommand {
+
+            /**
+             * Constructs a new EndEffectorCommand.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IEndEffectorCommand);
+
+            /** EndEffectorCommand header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** EndEffectorCommand armSide. */
+            public armSide: string;
+
+            /** EndEffectorCommand targetPose. */
+            public targetPose?: (qyh.dataplane.IPose|null);
+
+            /** EndEffectorCommand speedFactor. */
+            public speedFactor: number;
+
+            /**
+             * Creates a new EndEffectorCommand instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns EndEffectorCommand instance
+             */
+            public static create(properties?: qyh.dataplane.IEndEffectorCommand): qyh.dataplane.EndEffectorCommand;
+
+            /**
+             * Encodes the specified EndEffectorCommand message. Does not implicitly {@link qyh.dataplane.EndEffectorCommand.verify|verify} messages.
+             * @param message EndEffectorCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IEndEffectorCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified EndEffectorCommand message, length delimited. Does not implicitly {@link qyh.dataplane.EndEffectorCommand.verify|verify} messages.
+             * @param message EndEffectorCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IEndEffectorCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an EndEffectorCommand message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns EndEffectorCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.EndEffectorCommand;
+
+            /**
+             * Decodes an EndEffectorCommand message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns EndEffectorCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.EndEffectorCommand;
+
+            /**
+             * Verifies an EndEffectorCommand message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an EndEffectorCommand message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns EndEffectorCommand
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.EndEffectorCommand;
+
+            /**
+             * Creates a plain object from an EndEffectorCommand message. Also converts values to other types if specified.
+             * @param message EndEffectorCommand
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.EndEffectorCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this EndEffectorCommand to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for EndEffectorCommand
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a GripperCommand. */
+        interface IGripperCommand {
+
+            /** GripperCommand header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** GripperCommand gripperId */
+            gripperId?: (string|null);
+
+            /** GripperCommand position */
+            position?: (number|null);
+
+            /** GripperCommand force */
+            force?: (number|null);
+        }
+
+        /** Represents a GripperCommand. */
+        class GripperCommand implements IGripperCommand {
+
+            /**
+             * Constructs a new GripperCommand.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IGripperCommand);
+
+            /** GripperCommand header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** GripperCommand gripperId. */
+            public gripperId: string;
+
+            /** GripperCommand position. */
+            public position: number;
+
+            /** GripperCommand force. */
+            public force: number;
+
+            /**
+             * Creates a new GripperCommand instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GripperCommand instance
+             */
+            public static create(properties?: qyh.dataplane.IGripperCommand): qyh.dataplane.GripperCommand;
+
+            /**
+             * Encodes the specified GripperCommand message. Does not implicitly {@link qyh.dataplane.GripperCommand.verify|verify} messages.
+             * @param message GripperCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IGripperCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified GripperCommand message, length delimited. Does not implicitly {@link qyh.dataplane.GripperCommand.verify|verify} messages.
+             * @param message GripperCommand message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IGripperCommand, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GripperCommand message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GripperCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.GripperCommand;
+
+            /**
+             * Decodes a GripperCommand message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns GripperCommand
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.GripperCommand;
+
+            /**
+             * Verifies a GripperCommand message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a GripperCommand message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GripperCommand
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.GripperCommand;
+
+            /**
+             * Creates a plain object from a GripperCommand message. Also converts values to other types if specified.
+             * @param message GripperCommand
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.GripperCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GripperCommand to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for GripperCommand
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a Heartbeat. */
+        interface IHeartbeat {
+
+            /** Heartbeat header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** Heartbeat sessionId */
+            sessionId?: (string|null);
+
+            /** Heartbeat controlType */
+            controlType?: (qyh.dataplane.ControlType|null);
+        }
+
+        /** Represents a Heartbeat. */
+        class Heartbeat implements IHeartbeat {
+
+            /**
+             * Constructs a new Heartbeat.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IHeartbeat);
+
+            /** Heartbeat header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** Heartbeat sessionId. */
+            public sessionId: string;
+
+            /** Heartbeat controlType. */
+            public controlType: qyh.dataplane.ControlType;
+
+            /**
+             * Creates a new Heartbeat instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns Heartbeat instance
+             */
+            public static create(properties?: qyh.dataplane.IHeartbeat): qyh.dataplane.Heartbeat;
+
+            /**
+             * Encodes the specified Heartbeat message. Does not implicitly {@link qyh.dataplane.Heartbeat.verify|verify} messages.
+             * @param message Heartbeat message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IHeartbeat, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified Heartbeat message, length delimited. Does not implicitly {@link qyh.dataplane.Heartbeat.verify|verify} messages.
+             * @param message Heartbeat message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IHeartbeat, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a Heartbeat message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns Heartbeat
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.Heartbeat;
+
+            /**
+             * Decodes a Heartbeat message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns Heartbeat
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.Heartbeat;
+
+            /**
+             * Verifies a Heartbeat message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a Heartbeat message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns Heartbeat
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.Heartbeat;
+
+            /**
+             * Creates a plain object from a Heartbeat message. Also converts values to other types if specified.
+             * @param message Heartbeat
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.Heartbeat, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this Heartbeat to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for Heartbeat
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a SubscribeRequest. */
+        interface ISubscribeRequest {
+
+            /** SubscribeRequest header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** SubscribeRequest topics */
+            topics?: (string[]|null);
+
+            /** SubscribeRequest maxRateHz */
+            maxRateHz?: (number|null);
+        }
+
+        /** Represents a SubscribeRequest. */
+        class SubscribeRequest implements ISubscribeRequest {
+
+            /**
+             * Constructs a new SubscribeRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.ISubscribeRequest);
+
+            /** SubscribeRequest header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** SubscribeRequest topics. */
+            public topics: string[];
+
+            /** SubscribeRequest maxRateHz. */
+            public maxRateHz: number;
+
+            /**
+             * Creates a new SubscribeRequest instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns SubscribeRequest instance
+             */
+            public static create(properties?: qyh.dataplane.ISubscribeRequest): qyh.dataplane.SubscribeRequest;
+
+            /**
+             * Encodes the specified SubscribeRequest message. Does not implicitly {@link qyh.dataplane.SubscribeRequest.verify|verify} messages.
+             * @param message SubscribeRequest message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.ISubscribeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified SubscribeRequest message, length delimited. Does not implicitly {@link qyh.dataplane.SubscribeRequest.verify|verify} messages.
+             * @param message SubscribeRequest message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.ISubscribeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a SubscribeRequest message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns SubscribeRequest
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.SubscribeRequest;
+
+            /**
+             * Decodes a SubscribeRequest message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns SubscribeRequest
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.SubscribeRequest;
+
+            /**
+             * Verifies a SubscribeRequest message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a SubscribeRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns SubscribeRequest
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.SubscribeRequest;
+
+            /**
+             * Creates a plain object from a SubscribeRequest message. Also converts values to other types if specified.
+             * @param message SubscribeRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.SubscribeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this SubscribeRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for SubscribeRequest
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of an UnsubscribeRequest. */
+        interface IUnsubscribeRequest {
+
+            /** UnsubscribeRequest header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** UnsubscribeRequest topics */
+            topics?: (string[]|null);
+        }
+
+        /** Represents an UnsubscribeRequest. */
+        class UnsubscribeRequest implements IUnsubscribeRequest {
+
+            /**
+             * Constructs a new UnsubscribeRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IUnsubscribeRequest);
+
+            /** UnsubscribeRequest header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** UnsubscribeRequest topics. */
+            public topics: string[];
+
+            /**
+             * Creates a new UnsubscribeRequest instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns UnsubscribeRequest instance
+             */
+            public static create(properties?: qyh.dataplane.IUnsubscribeRequest): qyh.dataplane.UnsubscribeRequest;
+
+            /**
+             * Encodes the specified UnsubscribeRequest message. Does not implicitly {@link qyh.dataplane.UnsubscribeRequest.verify|verify} messages.
+             * @param message UnsubscribeRequest message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IUnsubscribeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified UnsubscribeRequest message, length delimited. Does not implicitly {@link qyh.dataplane.UnsubscribeRequest.verify|verify} messages.
+             * @param message UnsubscribeRequest message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IUnsubscribeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an UnsubscribeRequest message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns UnsubscribeRequest
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.UnsubscribeRequest;
+
+            /**
+             * Decodes an UnsubscribeRequest message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns UnsubscribeRequest
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.UnsubscribeRequest;
+
+            /**
+             * Verifies an UnsubscribeRequest message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an UnsubscribeRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns UnsubscribeRequest
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.UnsubscribeRequest;
+
+            /**
+             * Creates a plain object from an UnsubscribeRequest message. Also converts values to other types if specified.
+             * @param message UnsubscribeRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.UnsubscribeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this UnsubscribeRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for UnsubscribeRequest
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of an AuthRequest. */
+        interface IAuthRequest {
+
+            /** AuthRequest token */
+            token?: (string|null);
+
+            /** AuthRequest clientType */
+            clientType?: (string|null);
+
+            /** AuthRequest clientVersion */
+            clientVersion?: (string|null);
+        }
+
+        /** Represents an AuthRequest. */
+        class AuthRequest implements IAuthRequest {
+
+            /**
+             * Constructs a new AuthRequest.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IAuthRequest);
+
+            /** AuthRequest token. */
+            public token: string;
+
+            /** AuthRequest clientType. */
+            public clientType: string;
+
+            /** AuthRequest clientVersion. */
+            public clientVersion: string;
+
+            /**
+             * Creates a new AuthRequest instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns AuthRequest instance
+             */
+            public static create(properties?: qyh.dataplane.IAuthRequest): qyh.dataplane.AuthRequest;
+
+            /**
+             * Encodes the specified AuthRequest message. Does not implicitly {@link qyh.dataplane.AuthRequest.verify|verify} messages.
+             * @param message AuthRequest message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IAuthRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified AuthRequest message, length delimited. Does not implicitly {@link qyh.dataplane.AuthRequest.verify|verify} messages.
+             * @param message AuthRequest message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IAuthRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an AuthRequest message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns AuthRequest
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.AuthRequest;
+
+            /**
+             * Decodes an AuthRequest message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns AuthRequest
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.AuthRequest;
+
+            /**
+             * Verifies an AuthRequest message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an AuthRequest message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns AuthRequest
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.AuthRequest;
+
+            /**
+             * Creates a plain object from an AuthRequest message. Also converts values to other types if specified.
+             * @param message AuthRequest
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.AuthRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this AuthRequest to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for AuthRequest
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of an AuthResponse. */
+        interface IAuthResponse {
+
+            /** AuthResponse success */
+            success?: (boolean|null);
+
+            /** AuthResponse session */
+            session?: (qyh.dataplane.ISessionInfo|null);
+
+            /** AuthResponse error */
+            error?: (qyh.dataplane.IError|null);
+        }
+
+        /** Represents an AuthResponse. */
+        class AuthResponse implements IAuthResponse {
+
+            /**
+             * Constructs a new AuthResponse.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IAuthResponse);
+
+            /** AuthResponse success. */
+            public success: boolean;
+
+            /** AuthResponse session. */
+            public session?: (qyh.dataplane.ISessionInfo|null);
+
+            /** AuthResponse error. */
+            public error?: (qyh.dataplane.IError|null);
+
+            /**
+             * Creates a new AuthResponse instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns AuthResponse instance
+             */
+            public static create(properties?: qyh.dataplane.IAuthResponse): qyh.dataplane.AuthResponse;
+
+            /**
+             * Encodes the specified AuthResponse message. Does not implicitly {@link qyh.dataplane.AuthResponse.verify|verify} messages.
+             * @param message AuthResponse message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IAuthResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified AuthResponse message, length delimited. Does not implicitly {@link qyh.dataplane.AuthResponse.verify|verify} messages.
+             * @param message AuthResponse message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IAuthResponse, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an AuthResponse message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns AuthResponse
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.AuthResponse;
+
+            /**
+             * Decodes an AuthResponse message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns AuthResponse
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.AuthResponse;
+
+            /**
+             * Verifies an AuthResponse message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an AuthResponse message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns AuthResponse
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.AuthResponse;
+
+            /**
+             * Creates a plain object from an AuthResponse message. Also converts values to other types if specified.
+             * @param message AuthResponse
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.AuthResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this AuthResponse to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for AuthResponse
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** MessageType enum. */
+        enum MessageType {
+            MSG_UNKNOWN = 0,
+            MSG_AUTH_REQUEST = 1,
+            MSG_AUTH_RESPONSE = 2,
+            MSG_SUBSCRIBE = 16,
+            MSG_UNSUBSCRIBE = 17,
+            MSG_HEARTBEAT = 32,
+            MSG_HEARTBEAT_ACK = 33,
+            MSG_VR_CONTROL = 256,
+            MSG_CHASSIS_VELOCITY = 257,
+            MSG_JOINT_COMMAND = 258,
+            MSG_END_EFFECTOR_CMD = 259,
+            MSG_GRIPPER_COMMAND = 260,
+            MSG_NAVIGATION_GOAL = 261,
+            MSG_NAVIGATION_CANCEL = 262,
+            MSG_NAVIGATION_PAUSE = 263,
+            MSG_NAVIGATION_RESUME = 264,
+            MSG_LIFT_COMMAND = 265,
+            MSG_WAIST_COMMAND = 266,
+            MSG_HEAD_COMMAND = 267,
+            MSG_ARM_MOVE = 268,
+            MSG_ARM_JOG = 269,
+            MSG_ROBOT_STATE = 512,
+            MSG_JOINT_STATE = 513,
+            MSG_ARM_STATE = 514,
+            MSG_CHASSIS_STATE = 515,
+            MSG_GRIPPER_STATE = 516,
+            MSG_VR_SYSTEM_STATE = 517,
+            MSG_TASK_STATE = 518,
+            MSG_ACTUATOR_STATE = 519,
+            MSG_ERROR = 768,
+            MSG_MODE_CHANGED = 1024,
+            MSG_CONTROL_CHANGED = 1025,
+            MSG_EMERGENCY_STOP = 1026
+        }
+
+        /** Properties of a WebSocketMessage. */
+        interface IWebSocketMessage {
+
+            /** WebSocketMessage type */
+            type?: (qyh.dataplane.MessageType|null);
+
+            /** WebSocketMessage sequence */
+            sequence?: (number|Long|null);
+
+            /** WebSocketMessage timestamp */
+            timestamp?: (qyh.dataplane.ITimestamp|null);
+
+            /** WebSocketMessage authRequest */
+            authRequest?: (qyh.dataplane.IAuthRequest|null);
+
+            /** WebSocketMessage authResponse */
+            authResponse?: (qyh.dataplane.IAuthResponse|null);
+
+            /** WebSocketMessage subscribe */
+            subscribe?: (qyh.dataplane.ISubscribeRequest|null);
+
+            /** WebSocketMessage unsubscribe */
+            unsubscribe?: (qyh.dataplane.IUnsubscribeRequest|null);
+
+            /** WebSocketMessage heartbeat */
+            heartbeat?: (qyh.dataplane.IHeartbeat|null);
+
+            /** WebSocketMessage vrControl */
+            vrControl?: (qyh.dataplane.IVRControlIntent|null);
+
+            /** WebSocketMessage chassisVelocity */
+            chassisVelocity?: (qyh.dataplane.IChassisVelocity|null);
+
+            /** WebSocketMessage jointCommand */
+            jointCommand?: (qyh.dataplane.IJointCommand|null);
+
+            /** WebSocketMessage endEffectorCmd */
+            endEffectorCmd?: (qyh.dataplane.IEndEffectorCommand|null);
+
+            /** WebSocketMessage gripperCommand */
+            gripperCommand?: (qyh.dataplane.IGripperCommand|null);
+
+            /** WebSocketMessage navigationGoal */
+            navigationGoal?: (qyh.dataplane.INavigationGoal|null);
+
+            /** WebSocketMessage navigationControl */
+            navigationControl?: (qyh.dataplane.INavigationControl|null);
+
+            /** WebSocketMessage liftCommand */
+            liftCommand?: (qyh.dataplane.ILiftCommand|null);
+
+            /** WebSocketMessage waistCommand */
+            waistCommand?: (qyh.dataplane.IWaistCommand|null);
+
+            /** WebSocketMessage headCommand */
+            headCommand?: (qyh.dataplane.IHeadCommand|null);
+
+            /** WebSocketMessage armMove */
+            armMove?: (qyh.dataplane.IArmMoveCommand|null);
+
+            /** WebSocketMessage armJog */
+            armJog?: (qyh.dataplane.IArmJogCommand|null);
+
+            /** WebSocketMessage robotState */
+            robotState?: (qyh.dataplane.IRobotState|null);
+
+            /** WebSocketMessage jointState */
+            jointState?: (qyh.dataplane.IJointState|null);
+
+            /** WebSocketMessage armState */
+            armState?: (qyh.dataplane.IArmState|null);
+
+            /** WebSocketMessage chassisState */
+            chassisState?: (qyh.dataplane.IChassisState|null);
+
+            /** WebSocketMessage gripperState */
+            gripperState?: (qyh.dataplane.IGripperState|null);
+
+            /** WebSocketMessage vrSystemState */
+            vrSystemState?: (qyh.dataplane.IVRSystemState|null);
+
+            /** WebSocketMessage taskState */
+            taskState?: (qyh.dataplane.ITaskState|null);
+
+            /** WebSocketMessage actuatorState */
+            actuatorState?: (qyh.dataplane.IActuatorState|null);
+
+            /** WebSocketMessage error */
+            error?: (qyh.dataplane.IError|null);
+
+            /** WebSocketMessage modeChanged */
+            modeChanged?: (qyh.dataplane.IModeChangedNotification|null);
+
+            /** WebSocketMessage controlChanged */
+            controlChanged?: (qyh.dataplane.IControlChangedNotification|null);
+
+            /** WebSocketMessage emergencyStop */
+            emergencyStop?: (qyh.dataplane.IEmergencyStopNotification|null);
+        }
+
+        /** Represents a WebSocketMessage. */
+        class WebSocketMessage implements IWebSocketMessage {
+
+            /**
+             * Constructs a new WebSocketMessage.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IWebSocketMessage);
+
+            /** WebSocketMessage type. */
+            public type: qyh.dataplane.MessageType;
+
+            /** WebSocketMessage sequence. */
+            public sequence: (number|Long);
+
+            /** WebSocketMessage timestamp. */
+            public timestamp?: (qyh.dataplane.ITimestamp|null);
+
+            /** WebSocketMessage authRequest. */
+            public authRequest?: (qyh.dataplane.IAuthRequest|null);
+
+            /** WebSocketMessage authResponse. */
+            public authResponse?: (qyh.dataplane.IAuthResponse|null);
+
+            /** WebSocketMessage subscribe. */
+            public subscribe?: (qyh.dataplane.ISubscribeRequest|null);
+
+            /** WebSocketMessage unsubscribe. */
+            public unsubscribe?: (qyh.dataplane.IUnsubscribeRequest|null);
+
+            /** WebSocketMessage heartbeat. */
+            public heartbeat?: (qyh.dataplane.IHeartbeat|null);
+
+            /** WebSocketMessage vrControl. */
+            public vrControl?: (qyh.dataplane.IVRControlIntent|null);
+
+            /** WebSocketMessage chassisVelocity. */
+            public chassisVelocity?: (qyh.dataplane.IChassisVelocity|null);
+
+            /** WebSocketMessage jointCommand. */
+            public jointCommand?: (qyh.dataplane.IJointCommand|null);
+
+            /** WebSocketMessage endEffectorCmd. */
+            public endEffectorCmd?: (qyh.dataplane.IEndEffectorCommand|null);
+
+            /** WebSocketMessage gripperCommand. */
+            public gripperCommand?: (qyh.dataplane.IGripperCommand|null);
+
+            /** WebSocketMessage navigationGoal. */
+            public navigationGoal?: (qyh.dataplane.INavigationGoal|null);
+
+            /** WebSocketMessage navigationControl. */
+            public navigationControl?: (qyh.dataplane.INavigationControl|null);
+
+            /** WebSocketMessage liftCommand. */
+            public liftCommand?: (qyh.dataplane.ILiftCommand|null);
+
+            /** WebSocketMessage waistCommand. */
+            public waistCommand?: (qyh.dataplane.IWaistCommand|null);
+
+            /** WebSocketMessage headCommand. */
+            public headCommand?: (qyh.dataplane.IHeadCommand|null);
+
+            /** WebSocketMessage armMove. */
+            public armMove?: (qyh.dataplane.IArmMoveCommand|null);
+
+            /** WebSocketMessage armJog. */
+            public armJog?: (qyh.dataplane.IArmJogCommand|null);
+
+            /** WebSocketMessage robotState. */
+            public robotState?: (qyh.dataplane.IRobotState|null);
+
+            /** WebSocketMessage jointState. */
+            public jointState?: (qyh.dataplane.IJointState|null);
+
+            /** WebSocketMessage armState. */
+            public armState?: (qyh.dataplane.IArmState|null);
+
+            /** WebSocketMessage chassisState. */
+            public chassisState?: (qyh.dataplane.IChassisState|null);
+
+            /** WebSocketMessage gripperState. */
+            public gripperState?: (qyh.dataplane.IGripperState|null);
+
+            /** WebSocketMessage vrSystemState. */
+            public vrSystemState?: (qyh.dataplane.IVRSystemState|null);
+
+            /** WebSocketMessage taskState. */
+            public taskState?: (qyh.dataplane.ITaskState|null);
+
+            /** WebSocketMessage actuatorState. */
+            public actuatorState?: (qyh.dataplane.IActuatorState|null);
+
+            /** WebSocketMessage error. */
+            public error?: (qyh.dataplane.IError|null);
+
+            /** WebSocketMessage modeChanged. */
+            public modeChanged?: (qyh.dataplane.IModeChangedNotification|null);
+
+            /** WebSocketMessage controlChanged. */
+            public controlChanged?: (qyh.dataplane.IControlChangedNotification|null);
+
+            /** WebSocketMessage emergencyStop. */
+            public emergencyStop?: (qyh.dataplane.IEmergencyStopNotification|null);
+
+            /** WebSocketMessage payload. */
+            public payload?: ("authRequest"|"authResponse"|"subscribe"|"unsubscribe"|"heartbeat"|"vrControl"|"chassisVelocity"|"jointCommand"|"endEffectorCmd"|"gripperCommand"|"navigationGoal"|"navigationControl"|"liftCommand"|"waistCommand"|"headCommand"|"armMove"|"armJog"|"robotState"|"jointState"|"armState"|"chassisState"|"gripperState"|"vrSystemState"|"taskState"|"actuatorState"|"error"|"modeChanged"|"controlChanged"|"emergencyStop");
+
+            /**
+             * Creates a new WebSocketMessage instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns WebSocketMessage instance
+             */
+            public static create(properties?: qyh.dataplane.IWebSocketMessage): qyh.dataplane.WebSocketMessage;
+
+            /**
+             * Encodes the specified WebSocketMessage message. Does not implicitly {@link qyh.dataplane.WebSocketMessage.verify|verify} messages.
+             * @param message WebSocketMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IWebSocketMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified WebSocketMessage message, length delimited. Does not implicitly {@link qyh.dataplane.WebSocketMessage.verify|verify} messages.
+             * @param message WebSocketMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IWebSocketMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a WebSocketMessage message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns WebSocketMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.WebSocketMessage;
+
+            /**
+             * Decodes a WebSocketMessage message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns WebSocketMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.WebSocketMessage;
+
+            /**
+             * Verifies a WebSocketMessage message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a WebSocketMessage message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns WebSocketMessage
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.WebSocketMessage;
+
+            /**
+             * Creates a plain object from a WebSocketMessage message. Also converts values to other types if specified.
+             * @param message WebSocketMessage
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.WebSocketMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this WebSocketMessage to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for WebSocketMessage
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a ModeChangedNotification. */
+        interface IModeChangedNotification {
+
+            /** ModeChangedNotification header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** ModeChangedNotification oldMode */
+            oldMode?: (qyh.dataplane.RobotMode|null);
+
+            /** ModeChangedNotification newMode */
+            newMode?: (qyh.dataplane.RobotMode|null);
+
+            /** ModeChangedNotification reason */
+            reason?: (string|null);
+        }
+
+        /** Represents a ModeChangedNotification. */
+        class ModeChangedNotification implements IModeChangedNotification {
+
+            /**
+             * Constructs a new ModeChangedNotification.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IModeChangedNotification);
+
+            /** ModeChangedNotification header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** ModeChangedNotification oldMode. */
+            public oldMode: qyh.dataplane.RobotMode;
+
+            /** ModeChangedNotification newMode. */
+            public newMode: qyh.dataplane.RobotMode;
+
+            /** ModeChangedNotification reason. */
+            public reason: string;
+
+            /**
+             * Creates a new ModeChangedNotification instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ModeChangedNotification instance
+             */
+            public static create(properties?: qyh.dataplane.IModeChangedNotification): qyh.dataplane.ModeChangedNotification;
+
+            /**
+             * Encodes the specified ModeChangedNotification message. Does not implicitly {@link qyh.dataplane.ModeChangedNotification.verify|verify} messages.
+             * @param message ModeChangedNotification message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IModeChangedNotification, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified ModeChangedNotification message, length delimited. Does not implicitly {@link qyh.dataplane.ModeChangedNotification.verify|verify} messages.
+             * @param message ModeChangedNotification message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IModeChangedNotification, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a ModeChangedNotification message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ModeChangedNotification
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.ModeChangedNotification;
+
+            /**
+             * Decodes a ModeChangedNotification message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns ModeChangedNotification
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.ModeChangedNotification;
+
+            /**
+             * Verifies a ModeChangedNotification message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a ModeChangedNotification message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ModeChangedNotification
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.ModeChangedNotification;
+
+            /**
+             * Creates a plain object from a ModeChangedNotification message. Also converts values to other types if specified.
+             * @param message ModeChangedNotification
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.ModeChangedNotification, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ModeChangedNotification to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ModeChangedNotification
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a ControlChangedNotification. */
+        interface IControlChangedNotification {
+
+            /** ControlChangedNotification header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** ControlChangedNotification controlHeld */
+            controlHeld?: (boolean|null);
+
+            /** ControlChangedNotification holderUsername */
+            holderUsername?: (string|null);
+
+            /** ControlChangedNotification holderUserId */
+            holderUserId?: (number|Long|null);
+
+            /** ControlChangedNotification changeReason */
+            changeReason?: (string|null);
+        }
+
+        /** Represents a ControlChangedNotification. */
+        class ControlChangedNotification implements IControlChangedNotification {
+
+            /**
+             * Constructs a new ControlChangedNotification.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IControlChangedNotification);
+
+            /** ControlChangedNotification header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** ControlChangedNotification controlHeld. */
+            public controlHeld: boolean;
+
+            /** ControlChangedNotification holderUsername. */
+            public holderUsername: string;
+
+            /** ControlChangedNotification holderUserId. */
+            public holderUserId: (number|Long);
+
+            /** ControlChangedNotification changeReason. */
+            public changeReason: string;
+
+            /**
+             * Creates a new ControlChangedNotification instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ControlChangedNotification instance
+             */
+            public static create(properties?: qyh.dataplane.IControlChangedNotification): qyh.dataplane.ControlChangedNotification;
+
+            /**
+             * Encodes the specified ControlChangedNotification message. Does not implicitly {@link qyh.dataplane.ControlChangedNotification.verify|verify} messages.
+             * @param message ControlChangedNotification message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IControlChangedNotification, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified ControlChangedNotification message, length delimited. Does not implicitly {@link qyh.dataplane.ControlChangedNotification.verify|verify} messages.
+             * @param message ControlChangedNotification message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IControlChangedNotification, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a ControlChangedNotification message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ControlChangedNotification
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.ControlChangedNotification;
+
+            /**
+             * Decodes a ControlChangedNotification message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns ControlChangedNotification
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.ControlChangedNotification;
+
+            /**
+             * Verifies a ControlChangedNotification message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a ControlChangedNotification message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ControlChangedNotification
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.ControlChangedNotification;
+
+            /**
+             * Creates a plain object from a ControlChangedNotification message. Also converts values to other types if specified.
+             * @param message ControlChangedNotification
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.ControlChangedNotification, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ControlChangedNotification to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ControlChangedNotification
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of an EmergencyStopNotification. */
+        interface IEmergencyStopNotification {
+
+            /** EmergencyStopNotification header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** EmergencyStopNotification active */
+            active?: (boolean|null);
+
+            /** EmergencyStopNotification source */
+            source?: (string|null);
+
+            /** EmergencyStopNotification reason */
+            reason?: (string|null);
+        }
+
+        /** Represents an EmergencyStopNotification. */
+        class EmergencyStopNotification implements IEmergencyStopNotification {
+
+            /**
+             * Constructs a new EmergencyStopNotification.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IEmergencyStopNotification);
+
+            /** EmergencyStopNotification header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** EmergencyStopNotification active. */
+            public active: boolean;
+
+            /** EmergencyStopNotification source. */
+            public source: string;
+
+            /** EmergencyStopNotification reason. */
+            public reason: string;
+
+            /**
+             * Creates a new EmergencyStopNotification instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns EmergencyStopNotification instance
+             */
+            public static create(properties?: qyh.dataplane.IEmergencyStopNotification): qyh.dataplane.EmergencyStopNotification;
+
+            /**
+             * Encodes the specified EmergencyStopNotification message. Does not implicitly {@link qyh.dataplane.EmergencyStopNotification.verify|verify} messages.
+             * @param message EmergencyStopNotification message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IEmergencyStopNotification, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified EmergencyStopNotification message, length delimited. Does not implicitly {@link qyh.dataplane.EmergencyStopNotification.verify|verify} messages.
+             * @param message EmergencyStopNotification message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IEmergencyStopNotification, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an EmergencyStopNotification message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns EmergencyStopNotification
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.EmergencyStopNotification;
+
+            /**
+             * Decodes an EmergencyStopNotification message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns EmergencyStopNotification
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.EmergencyStopNotification;
+
+            /**
+             * Verifies an EmergencyStopNotification message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an EmergencyStopNotification message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns EmergencyStopNotification
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.EmergencyStopNotification;
+
+            /**
+             * Creates a plain object from an EmergencyStopNotification message. Also converts values to other types if specified.
+             * @param message EmergencyStopNotification
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.EmergencyStopNotification, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this EmergencyStopNotification to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for EmergencyStopNotification
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
         /** Properties of a JointState. */
         interface IJointState {
 
@@ -2416,2001 +5169,6 @@ export namespace qyh {
                 FAILED = 4,
                 CANCELLED = 5
             }
-        }
-
-        /** ControlType enum. */
-        enum ControlType {
-            CONTROL_NONE = 0,
-            CONTROL_VR_TELEOP = 1,
-            CONTROL_GAMEPAD = 2,
-            CONTROL_KEYBOARD = 3,
-            CONTROL_AUTO = 4
-        }
-
-        /** Properties of a VRController. */
-        interface IVRController {
-
-            /** VRController active */
-            active?: (boolean|null);
-
-            /** VRController pose */
-            pose?: (qyh.dataplane.IPose|null);
-
-            /** VRController trigger */
-            trigger?: (number|null);
-
-            /** VRController grip */
-            grip?: (number|null);
-
-            /** VRController joystick */
-            joystick?: (number[]|null);
-
-            /** VRController buttons */
-            buttons?: (boolean[]|null);
-
-            /** VRController clutchEngaged */
-            clutchEngaged?: (boolean|null);
-        }
-
-        /** Represents a VRController. */
-        class VRController implements IVRController {
-
-            /**
-             * Constructs a new VRController.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IVRController);
-
-            /** VRController active. */
-            public active: boolean;
-
-            /** VRController pose. */
-            public pose?: (qyh.dataplane.IPose|null);
-
-            /** VRController trigger. */
-            public trigger: number;
-
-            /** VRController grip. */
-            public grip: number;
-
-            /** VRController joystick. */
-            public joystick: number[];
-
-            /** VRController buttons. */
-            public buttons: boolean[];
-
-            /** VRController clutchEngaged. */
-            public clutchEngaged: boolean;
-
-            /**
-             * Creates a new VRController instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns VRController instance
-             */
-            public static create(properties?: qyh.dataplane.IVRController): qyh.dataplane.VRController;
-
-            /**
-             * Encodes the specified VRController message. Does not implicitly {@link qyh.dataplane.VRController.verify|verify} messages.
-             * @param message VRController message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IVRController, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified VRController message, length delimited. Does not implicitly {@link qyh.dataplane.VRController.verify|verify} messages.
-             * @param message VRController message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IVRController, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a VRController message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns VRController
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.VRController;
-
-            /**
-             * Decodes a VRController message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns VRController
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.VRController;
-
-            /**
-             * Verifies a VRController message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a VRController message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns VRController
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.VRController;
-
-            /**
-             * Creates a plain object from a VRController message. Also converts values to other types if specified.
-             * @param message VRController
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.VRController, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this VRController to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for VRController
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a VRControlIntent. */
-        interface IVRControlIntent {
-
-            /** VRControlIntent header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** VRControlIntent headPose */
-            headPose?: (qyh.dataplane.IPose|null);
-
-            /** VRControlIntent leftHand */
-            leftHand?: (qyh.dataplane.IVRController|null);
-
-            /** VRControlIntent rightHand */
-            rightHand?: (qyh.dataplane.IVRController|null);
-        }
-
-        /** Represents a VRControlIntent. */
-        class VRControlIntent implements IVRControlIntent {
-
-            /**
-             * Constructs a new VRControlIntent.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IVRControlIntent);
-
-            /** VRControlIntent header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** VRControlIntent headPose. */
-            public headPose?: (qyh.dataplane.IPose|null);
-
-            /** VRControlIntent leftHand. */
-            public leftHand?: (qyh.dataplane.IVRController|null);
-
-            /** VRControlIntent rightHand. */
-            public rightHand?: (qyh.dataplane.IVRController|null);
-
-            /**
-             * Creates a new VRControlIntent instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns VRControlIntent instance
-             */
-            public static create(properties?: qyh.dataplane.IVRControlIntent): qyh.dataplane.VRControlIntent;
-
-            /**
-             * Encodes the specified VRControlIntent message. Does not implicitly {@link qyh.dataplane.VRControlIntent.verify|verify} messages.
-             * @param message VRControlIntent message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IVRControlIntent, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified VRControlIntent message, length delimited. Does not implicitly {@link qyh.dataplane.VRControlIntent.verify|verify} messages.
-             * @param message VRControlIntent message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IVRControlIntent, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a VRControlIntent message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns VRControlIntent
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.VRControlIntent;
-
-            /**
-             * Decodes a VRControlIntent message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns VRControlIntent
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.VRControlIntent;
-
-            /**
-             * Verifies a VRControlIntent message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a VRControlIntent message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns VRControlIntent
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.VRControlIntent;
-
-            /**
-             * Creates a plain object from a VRControlIntent message. Also converts values to other types if specified.
-             * @param message VRControlIntent
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.VRControlIntent, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this VRControlIntent to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for VRControlIntent
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a ChassisVelocity. */
-        interface IChassisVelocity {
-
-            /** ChassisVelocity header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** ChassisVelocity linearX */
-            linearX?: (number|null);
-
-            /** ChassisVelocity linearY */
-            linearY?: (number|null);
-
-            /** ChassisVelocity angularZ */
-            angularZ?: (number|null);
-        }
-
-        /** Represents a ChassisVelocity. */
-        class ChassisVelocity implements IChassisVelocity {
-
-            /**
-             * Constructs a new ChassisVelocity.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IChassisVelocity);
-
-            /** ChassisVelocity header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** ChassisVelocity linearX. */
-            public linearX: number;
-
-            /** ChassisVelocity linearY. */
-            public linearY: number;
-
-            /** ChassisVelocity angularZ. */
-            public angularZ: number;
-
-            /**
-             * Creates a new ChassisVelocity instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns ChassisVelocity instance
-             */
-            public static create(properties?: qyh.dataplane.IChassisVelocity): qyh.dataplane.ChassisVelocity;
-
-            /**
-             * Encodes the specified ChassisVelocity message. Does not implicitly {@link qyh.dataplane.ChassisVelocity.verify|verify} messages.
-             * @param message ChassisVelocity message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IChassisVelocity, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified ChassisVelocity message, length delimited. Does not implicitly {@link qyh.dataplane.ChassisVelocity.verify|verify} messages.
-             * @param message ChassisVelocity message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IChassisVelocity, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a ChassisVelocity message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns ChassisVelocity
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.ChassisVelocity;
-
-            /**
-             * Decodes a ChassisVelocity message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns ChassisVelocity
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.ChassisVelocity;
-
-            /**
-             * Verifies a ChassisVelocity message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a ChassisVelocity message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns ChassisVelocity
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.ChassisVelocity;
-
-            /**
-             * Creates a plain object from a ChassisVelocity message. Also converts values to other types if specified.
-             * @param message ChassisVelocity
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.ChassisVelocity, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this ChassisVelocity to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for ChassisVelocity
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a NavigationGoal. */
-        interface INavigationGoal {
-
-            /** NavigationGoal header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** NavigationGoal targetPose */
-            targetPose?: (qyh.dataplane.IPose|null);
-
-            /** NavigationGoal isLocalizationOnly */
-            isLocalizationOnly?: (boolean|null);
-        }
-
-        /** Represents a NavigationGoal. */
-        class NavigationGoal implements INavigationGoal {
-
-            /**
-             * Constructs a new NavigationGoal.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.INavigationGoal);
-
-            /** NavigationGoal header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** NavigationGoal targetPose. */
-            public targetPose?: (qyh.dataplane.IPose|null);
-
-            /** NavigationGoal isLocalizationOnly. */
-            public isLocalizationOnly: boolean;
-
-            /**
-             * Creates a new NavigationGoal instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns NavigationGoal instance
-             */
-            public static create(properties?: qyh.dataplane.INavigationGoal): qyh.dataplane.NavigationGoal;
-
-            /**
-             * Encodes the specified NavigationGoal message. Does not implicitly {@link qyh.dataplane.NavigationGoal.verify|verify} messages.
-             * @param message NavigationGoal message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.INavigationGoal, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified NavigationGoal message, length delimited. Does not implicitly {@link qyh.dataplane.NavigationGoal.verify|verify} messages.
-             * @param message NavigationGoal message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.INavigationGoal, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a NavigationGoal message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns NavigationGoal
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.NavigationGoal;
-
-            /**
-             * Decodes a NavigationGoal message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns NavigationGoal
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.NavigationGoal;
-
-            /**
-             * Verifies a NavigationGoal message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a NavigationGoal message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns NavigationGoal
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.NavigationGoal;
-
-            /**
-             * Creates a plain object from a NavigationGoal message. Also converts values to other types if specified.
-             * @param message NavigationGoal
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.NavigationGoal, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this NavigationGoal to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for NavigationGoal
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a JointCommand. */
-        interface IJointCommand {
-
-            /** JointCommand header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** JointCommand names */
-            names?: (string[]|null);
-
-            /** JointCommand positions */
-            positions?: (number[]|null);
-
-            /** JointCommand velocities */
-            velocities?: (number[]|null);
-        }
-
-        /** Represents a JointCommand. */
-        class JointCommand implements IJointCommand {
-
-            /**
-             * Constructs a new JointCommand.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IJointCommand);
-
-            /** JointCommand header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** JointCommand names. */
-            public names: string[];
-
-            /** JointCommand positions. */
-            public positions: number[];
-
-            /** JointCommand velocities. */
-            public velocities: number[];
-
-            /**
-             * Creates a new JointCommand instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns JointCommand instance
-             */
-            public static create(properties?: qyh.dataplane.IJointCommand): qyh.dataplane.JointCommand;
-
-            /**
-             * Encodes the specified JointCommand message. Does not implicitly {@link qyh.dataplane.JointCommand.verify|verify} messages.
-             * @param message JointCommand message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IJointCommand, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified JointCommand message, length delimited. Does not implicitly {@link qyh.dataplane.JointCommand.verify|verify} messages.
-             * @param message JointCommand message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IJointCommand, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a JointCommand message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns JointCommand
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.JointCommand;
-
-            /**
-             * Decodes a JointCommand message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns JointCommand
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.JointCommand;
-
-            /**
-             * Verifies a JointCommand message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a JointCommand message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns JointCommand
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.JointCommand;
-
-            /**
-             * Creates a plain object from a JointCommand message. Also converts values to other types if specified.
-             * @param message JointCommand
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.JointCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this JointCommand to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for JointCommand
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of an EndEffectorCommand. */
-        interface IEndEffectorCommand {
-
-            /** EndEffectorCommand header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** EndEffectorCommand armSide */
-            armSide?: (string|null);
-
-            /** EndEffectorCommand targetPose */
-            targetPose?: (qyh.dataplane.IPose|null);
-
-            /** EndEffectorCommand speedFactor */
-            speedFactor?: (number|null);
-        }
-
-        /** Represents an EndEffectorCommand. */
-        class EndEffectorCommand implements IEndEffectorCommand {
-
-            /**
-             * Constructs a new EndEffectorCommand.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IEndEffectorCommand);
-
-            /** EndEffectorCommand header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** EndEffectorCommand armSide. */
-            public armSide: string;
-
-            /** EndEffectorCommand targetPose. */
-            public targetPose?: (qyh.dataplane.IPose|null);
-
-            /** EndEffectorCommand speedFactor. */
-            public speedFactor: number;
-
-            /**
-             * Creates a new EndEffectorCommand instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns EndEffectorCommand instance
-             */
-            public static create(properties?: qyh.dataplane.IEndEffectorCommand): qyh.dataplane.EndEffectorCommand;
-
-            /**
-             * Encodes the specified EndEffectorCommand message. Does not implicitly {@link qyh.dataplane.EndEffectorCommand.verify|verify} messages.
-             * @param message EndEffectorCommand message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IEndEffectorCommand, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified EndEffectorCommand message, length delimited. Does not implicitly {@link qyh.dataplane.EndEffectorCommand.verify|verify} messages.
-             * @param message EndEffectorCommand message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IEndEffectorCommand, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes an EndEffectorCommand message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns EndEffectorCommand
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.EndEffectorCommand;
-
-            /**
-             * Decodes an EndEffectorCommand message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns EndEffectorCommand
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.EndEffectorCommand;
-
-            /**
-             * Verifies an EndEffectorCommand message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates an EndEffectorCommand message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns EndEffectorCommand
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.EndEffectorCommand;
-
-            /**
-             * Creates a plain object from an EndEffectorCommand message. Also converts values to other types if specified.
-             * @param message EndEffectorCommand
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.EndEffectorCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this EndEffectorCommand to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for EndEffectorCommand
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a GripperCommand. */
-        interface IGripperCommand {
-
-            /** GripperCommand header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** GripperCommand gripperId */
-            gripperId?: (string|null);
-
-            /** GripperCommand position */
-            position?: (number|null);
-
-            /** GripperCommand force */
-            force?: (number|null);
-        }
-
-        /** Represents a GripperCommand. */
-        class GripperCommand implements IGripperCommand {
-
-            /**
-             * Constructs a new GripperCommand.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IGripperCommand);
-
-            /** GripperCommand header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** GripperCommand gripperId. */
-            public gripperId: string;
-
-            /** GripperCommand position. */
-            public position: number;
-
-            /** GripperCommand force. */
-            public force: number;
-
-            /**
-             * Creates a new GripperCommand instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns GripperCommand instance
-             */
-            public static create(properties?: qyh.dataplane.IGripperCommand): qyh.dataplane.GripperCommand;
-
-            /**
-             * Encodes the specified GripperCommand message. Does not implicitly {@link qyh.dataplane.GripperCommand.verify|verify} messages.
-             * @param message GripperCommand message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IGripperCommand, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified GripperCommand message, length delimited. Does not implicitly {@link qyh.dataplane.GripperCommand.verify|verify} messages.
-             * @param message GripperCommand message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IGripperCommand, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a GripperCommand message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns GripperCommand
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.GripperCommand;
-
-            /**
-             * Decodes a GripperCommand message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns GripperCommand
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.GripperCommand;
-
-            /**
-             * Verifies a GripperCommand message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a GripperCommand message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns GripperCommand
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.GripperCommand;
-
-            /**
-             * Creates a plain object from a GripperCommand message. Also converts values to other types if specified.
-             * @param message GripperCommand
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.GripperCommand, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this GripperCommand to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for GripperCommand
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a Heartbeat. */
-        interface IHeartbeat {
-
-            /** Heartbeat header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** Heartbeat sessionId */
-            sessionId?: (string|null);
-
-            /** Heartbeat controlType */
-            controlType?: (qyh.dataplane.ControlType|null);
-        }
-
-        /** Represents a Heartbeat. */
-        class Heartbeat implements IHeartbeat {
-
-            /**
-             * Constructs a new Heartbeat.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IHeartbeat);
-
-            /** Heartbeat header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** Heartbeat sessionId. */
-            public sessionId: string;
-
-            /** Heartbeat controlType. */
-            public controlType: qyh.dataplane.ControlType;
-
-            /**
-             * Creates a new Heartbeat instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns Heartbeat instance
-             */
-            public static create(properties?: qyh.dataplane.IHeartbeat): qyh.dataplane.Heartbeat;
-
-            /**
-             * Encodes the specified Heartbeat message. Does not implicitly {@link qyh.dataplane.Heartbeat.verify|verify} messages.
-             * @param message Heartbeat message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IHeartbeat, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified Heartbeat message, length delimited. Does not implicitly {@link qyh.dataplane.Heartbeat.verify|verify} messages.
-             * @param message Heartbeat message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IHeartbeat, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a Heartbeat message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns Heartbeat
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.Heartbeat;
-
-            /**
-             * Decodes a Heartbeat message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns Heartbeat
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.Heartbeat;
-
-            /**
-             * Verifies a Heartbeat message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a Heartbeat message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns Heartbeat
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.Heartbeat;
-
-            /**
-             * Creates a plain object from a Heartbeat message. Also converts values to other types if specified.
-             * @param message Heartbeat
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.Heartbeat, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this Heartbeat to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for Heartbeat
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a SubscribeRequest. */
-        interface ISubscribeRequest {
-
-            /** SubscribeRequest header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** SubscribeRequest topics */
-            topics?: (string[]|null);
-
-            /** SubscribeRequest maxRateHz */
-            maxRateHz?: (number|null);
-        }
-
-        /** Represents a SubscribeRequest. */
-        class SubscribeRequest implements ISubscribeRequest {
-
-            /**
-             * Constructs a new SubscribeRequest.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.ISubscribeRequest);
-
-            /** SubscribeRequest header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** SubscribeRequest topics. */
-            public topics: string[];
-
-            /** SubscribeRequest maxRateHz. */
-            public maxRateHz: number;
-
-            /**
-             * Creates a new SubscribeRequest instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns SubscribeRequest instance
-             */
-            public static create(properties?: qyh.dataplane.ISubscribeRequest): qyh.dataplane.SubscribeRequest;
-
-            /**
-             * Encodes the specified SubscribeRequest message. Does not implicitly {@link qyh.dataplane.SubscribeRequest.verify|verify} messages.
-             * @param message SubscribeRequest message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.ISubscribeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified SubscribeRequest message, length delimited. Does not implicitly {@link qyh.dataplane.SubscribeRequest.verify|verify} messages.
-             * @param message SubscribeRequest message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.ISubscribeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a SubscribeRequest message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns SubscribeRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.SubscribeRequest;
-
-            /**
-             * Decodes a SubscribeRequest message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns SubscribeRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.SubscribeRequest;
-
-            /**
-             * Verifies a SubscribeRequest message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a SubscribeRequest message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns SubscribeRequest
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.SubscribeRequest;
-
-            /**
-             * Creates a plain object from a SubscribeRequest message. Also converts values to other types if specified.
-             * @param message SubscribeRequest
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.SubscribeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this SubscribeRequest to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for SubscribeRequest
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of an UnsubscribeRequest. */
-        interface IUnsubscribeRequest {
-
-            /** UnsubscribeRequest header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** UnsubscribeRequest topics */
-            topics?: (string[]|null);
-        }
-
-        /** Represents an UnsubscribeRequest. */
-        class UnsubscribeRequest implements IUnsubscribeRequest {
-
-            /**
-             * Constructs a new UnsubscribeRequest.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IUnsubscribeRequest);
-
-            /** UnsubscribeRequest header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** UnsubscribeRequest topics. */
-            public topics: string[];
-
-            /**
-             * Creates a new UnsubscribeRequest instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns UnsubscribeRequest instance
-             */
-            public static create(properties?: qyh.dataplane.IUnsubscribeRequest): qyh.dataplane.UnsubscribeRequest;
-
-            /**
-             * Encodes the specified UnsubscribeRequest message. Does not implicitly {@link qyh.dataplane.UnsubscribeRequest.verify|verify} messages.
-             * @param message UnsubscribeRequest message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IUnsubscribeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified UnsubscribeRequest message, length delimited. Does not implicitly {@link qyh.dataplane.UnsubscribeRequest.verify|verify} messages.
-             * @param message UnsubscribeRequest message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IUnsubscribeRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes an UnsubscribeRequest message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns UnsubscribeRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.UnsubscribeRequest;
-
-            /**
-             * Decodes an UnsubscribeRequest message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns UnsubscribeRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.UnsubscribeRequest;
-
-            /**
-             * Verifies an UnsubscribeRequest message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates an UnsubscribeRequest message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns UnsubscribeRequest
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.UnsubscribeRequest;
-
-            /**
-             * Creates a plain object from an UnsubscribeRequest message. Also converts values to other types if specified.
-             * @param message UnsubscribeRequest
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.UnsubscribeRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this UnsubscribeRequest to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for UnsubscribeRequest
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of an AuthRequest. */
-        interface IAuthRequest {
-
-            /** AuthRequest token */
-            token?: (string|null);
-
-            /** AuthRequest clientType */
-            clientType?: (string|null);
-
-            /** AuthRequest clientVersion */
-            clientVersion?: (string|null);
-        }
-
-        /** Represents an AuthRequest. */
-        class AuthRequest implements IAuthRequest {
-
-            /**
-             * Constructs a new AuthRequest.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IAuthRequest);
-
-            /** AuthRequest token. */
-            public token: string;
-
-            /** AuthRequest clientType. */
-            public clientType: string;
-
-            /** AuthRequest clientVersion. */
-            public clientVersion: string;
-
-            /**
-             * Creates a new AuthRequest instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns AuthRequest instance
-             */
-            public static create(properties?: qyh.dataplane.IAuthRequest): qyh.dataplane.AuthRequest;
-
-            /**
-             * Encodes the specified AuthRequest message. Does not implicitly {@link qyh.dataplane.AuthRequest.verify|verify} messages.
-             * @param message AuthRequest message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IAuthRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified AuthRequest message, length delimited. Does not implicitly {@link qyh.dataplane.AuthRequest.verify|verify} messages.
-             * @param message AuthRequest message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IAuthRequest, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes an AuthRequest message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns AuthRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.AuthRequest;
-
-            /**
-             * Decodes an AuthRequest message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns AuthRequest
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.AuthRequest;
-
-            /**
-             * Verifies an AuthRequest message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates an AuthRequest message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns AuthRequest
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.AuthRequest;
-
-            /**
-             * Creates a plain object from an AuthRequest message. Also converts values to other types if specified.
-             * @param message AuthRequest
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.AuthRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this AuthRequest to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for AuthRequest
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of an AuthResponse. */
-        interface IAuthResponse {
-
-            /** AuthResponse success */
-            success?: (boolean|null);
-
-            /** AuthResponse session */
-            session?: (qyh.dataplane.ISessionInfo|null);
-
-            /** AuthResponse error */
-            error?: (qyh.dataplane.IError|null);
-        }
-
-        /** Represents an AuthResponse. */
-        class AuthResponse implements IAuthResponse {
-
-            /**
-             * Constructs a new AuthResponse.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IAuthResponse);
-
-            /** AuthResponse success. */
-            public success: boolean;
-
-            /** AuthResponse session. */
-            public session?: (qyh.dataplane.ISessionInfo|null);
-
-            /** AuthResponse error. */
-            public error?: (qyh.dataplane.IError|null);
-
-            /**
-             * Creates a new AuthResponse instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns AuthResponse instance
-             */
-            public static create(properties?: qyh.dataplane.IAuthResponse): qyh.dataplane.AuthResponse;
-
-            /**
-             * Encodes the specified AuthResponse message. Does not implicitly {@link qyh.dataplane.AuthResponse.verify|verify} messages.
-             * @param message AuthResponse message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IAuthResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified AuthResponse message, length delimited. Does not implicitly {@link qyh.dataplane.AuthResponse.verify|verify} messages.
-             * @param message AuthResponse message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IAuthResponse, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes an AuthResponse message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns AuthResponse
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.AuthResponse;
-
-            /**
-             * Decodes an AuthResponse message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns AuthResponse
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.AuthResponse;
-
-            /**
-             * Verifies an AuthResponse message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates an AuthResponse message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns AuthResponse
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.AuthResponse;
-
-            /**
-             * Creates a plain object from an AuthResponse message. Also converts values to other types if specified.
-             * @param message AuthResponse
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.AuthResponse, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this AuthResponse to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for AuthResponse
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** MessageType enum. */
-        enum MessageType {
-            MSG_UNKNOWN = 0,
-            MSG_AUTH_REQUEST = 1,
-            MSG_AUTH_RESPONSE = 2,
-            MSG_SUBSCRIBE = 16,
-            MSG_UNSUBSCRIBE = 17,
-            MSG_HEARTBEAT = 32,
-            MSG_HEARTBEAT_ACK = 33,
-            MSG_VR_CONTROL = 256,
-            MSG_CHASSIS_VELOCITY = 257,
-            MSG_JOINT_COMMAND = 258,
-            MSG_END_EFFECTOR_CMD = 259,
-            MSG_GRIPPER_COMMAND = 260,
-            MSG_NAVIGATION_GOAL = 261,
-            MSG_ROBOT_STATE = 512,
-            MSG_JOINT_STATE = 513,
-            MSG_ARM_STATE = 514,
-            MSG_CHASSIS_STATE = 515,
-            MSG_GRIPPER_STATE = 516,
-            MSG_VR_SYSTEM_STATE = 517,
-            MSG_TASK_STATE = 518,
-            MSG_ACTUATOR_STATE = 519,
-            MSG_ERROR = 768,
-            MSG_MODE_CHANGED = 1024,
-            MSG_CONTROL_CHANGED = 1025,
-            MSG_EMERGENCY_STOP = 1026
-        }
-
-        /** Properties of a WebSocketMessage. */
-        interface IWebSocketMessage {
-
-            /** WebSocketMessage type */
-            type?: (qyh.dataplane.MessageType|null);
-
-            /** WebSocketMessage sequence */
-            sequence?: (number|Long|null);
-
-            /** WebSocketMessage timestamp */
-            timestamp?: (qyh.dataplane.ITimestamp|null);
-
-            /** WebSocketMessage authRequest */
-            authRequest?: (qyh.dataplane.IAuthRequest|null);
-
-            /** WebSocketMessage authResponse */
-            authResponse?: (qyh.dataplane.IAuthResponse|null);
-
-            /** WebSocketMessage subscribe */
-            subscribe?: (qyh.dataplane.ISubscribeRequest|null);
-
-            /** WebSocketMessage unsubscribe */
-            unsubscribe?: (qyh.dataplane.IUnsubscribeRequest|null);
-
-            /** WebSocketMessage heartbeat */
-            heartbeat?: (qyh.dataplane.IHeartbeat|null);
-
-            /** WebSocketMessage vrControl */
-            vrControl?: (qyh.dataplane.IVRControlIntent|null);
-
-            /** WebSocketMessage chassisVelocity */
-            chassisVelocity?: (qyh.dataplane.IChassisVelocity|null);
-
-            /** WebSocketMessage jointCommand */
-            jointCommand?: (qyh.dataplane.IJointCommand|null);
-
-            /** WebSocketMessage endEffectorCmd */
-            endEffectorCmd?: (qyh.dataplane.IEndEffectorCommand|null);
-
-            /** WebSocketMessage gripperCommand */
-            gripperCommand?: (qyh.dataplane.IGripperCommand|null);
-
-            /** WebSocketMessage navigationGoal */
-            navigationGoal?: (qyh.dataplane.INavigationGoal|null);
-
-            /** WebSocketMessage robotState */
-            robotState?: (qyh.dataplane.IRobotState|null);
-
-            /** WebSocketMessage jointState */
-            jointState?: (qyh.dataplane.IJointState|null);
-
-            /** WebSocketMessage armState */
-            armState?: (qyh.dataplane.IArmState|null);
-
-            /** WebSocketMessage chassisState */
-            chassisState?: (qyh.dataplane.IChassisState|null);
-
-            /** WebSocketMessage gripperState */
-            gripperState?: (qyh.dataplane.IGripperState|null);
-
-            /** WebSocketMessage vrSystemState */
-            vrSystemState?: (qyh.dataplane.IVRSystemState|null);
-
-            /** WebSocketMessage taskState */
-            taskState?: (qyh.dataplane.ITaskState|null);
-
-            /** WebSocketMessage actuatorState */
-            actuatorState?: (qyh.dataplane.IActuatorState|null);
-
-            /** WebSocketMessage error */
-            error?: (qyh.dataplane.IError|null);
-
-            /** WebSocketMessage modeChanged */
-            modeChanged?: (qyh.dataplane.IModeChangedNotification|null);
-
-            /** WebSocketMessage controlChanged */
-            controlChanged?: (qyh.dataplane.IControlChangedNotification|null);
-
-            /** WebSocketMessage emergencyStop */
-            emergencyStop?: (qyh.dataplane.IEmergencyStopNotification|null);
-        }
-
-        /** Represents a WebSocketMessage. */
-        class WebSocketMessage implements IWebSocketMessage {
-
-            /**
-             * Constructs a new WebSocketMessage.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IWebSocketMessage);
-
-            /** WebSocketMessage type. */
-            public type: qyh.dataplane.MessageType;
-
-            /** WebSocketMessage sequence. */
-            public sequence: (number|Long);
-
-            /** WebSocketMessage timestamp. */
-            public timestamp?: (qyh.dataplane.ITimestamp|null);
-
-            /** WebSocketMessage authRequest. */
-            public authRequest?: (qyh.dataplane.IAuthRequest|null);
-
-            /** WebSocketMessage authResponse. */
-            public authResponse?: (qyh.dataplane.IAuthResponse|null);
-
-            /** WebSocketMessage subscribe. */
-            public subscribe?: (qyh.dataplane.ISubscribeRequest|null);
-
-            /** WebSocketMessage unsubscribe. */
-            public unsubscribe?: (qyh.dataplane.IUnsubscribeRequest|null);
-
-            /** WebSocketMessage heartbeat. */
-            public heartbeat?: (qyh.dataplane.IHeartbeat|null);
-
-            /** WebSocketMessage vrControl. */
-            public vrControl?: (qyh.dataplane.IVRControlIntent|null);
-
-            /** WebSocketMessage chassisVelocity. */
-            public chassisVelocity?: (qyh.dataplane.IChassisVelocity|null);
-
-            /** WebSocketMessage jointCommand. */
-            public jointCommand?: (qyh.dataplane.IJointCommand|null);
-
-            /** WebSocketMessage endEffectorCmd. */
-            public endEffectorCmd?: (qyh.dataplane.IEndEffectorCommand|null);
-
-            /** WebSocketMessage gripperCommand. */
-            public gripperCommand?: (qyh.dataplane.IGripperCommand|null);
-
-            /** WebSocketMessage navigationGoal. */
-            public navigationGoal?: (qyh.dataplane.INavigationGoal|null);
-
-            /** WebSocketMessage robotState. */
-            public robotState?: (qyh.dataplane.IRobotState|null);
-
-            /** WebSocketMessage jointState. */
-            public jointState?: (qyh.dataplane.IJointState|null);
-
-            /** WebSocketMessage armState. */
-            public armState?: (qyh.dataplane.IArmState|null);
-
-            /** WebSocketMessage chassisState. */
-            public chassisState?: (qyh.dataplane.IChassisState|null);
-
-            /** WebSocketMessage gripperState. */
-            public gripperState?: (qyh.dataplane.IGripperState|null);
-
-            /** WebSocketMessage vrSystemState. */
-            public vrSystemState?: (qyh.dataplane.IVRSystemState|null);
-
-            /** WebSocketMessage taskState. */
-            public taskState?: (qyh.dataplane.ITaskState|null);
-
-            /** WebSocketMessage actuatorState. */
-            public actuatorState?: (qyh.dataplane.IActuatorState|null);
-
-            /** WebSocketMessage error. */
-            public error?: (qyh.dataplane.IError|null);
-
-            /** WebSocketMessage modeChanged. */
-            public modeChanged?: (qyh.dataplane.IModeChangedNotification|null);
-
-            /** WebSocketMessage controlChanged. */
-            public controlChanged?: (qyh.dataplane.IControlChangedNotification|null);
-
-            /** WebSocketMessage emergencyStop. */
-            public emergencyStop?: (qyh.dataplane.IEmergencyStopNotification|null);
-
-            /** WebSocketMessage payload. */
-            public payload?: ("authRequest"|"authResponse"|"subscribe"|"unsubscribe"|"heartbeat"|"vrControl"|"chassisVelocity"|"jointCommand"|"endEffectorCmd"|"gripperCommand"|"navigationGoal"|"robotState"|"jointState"|"armState"|"chassisState"|"gripperState"|"vrSystemState"|"taskState"|"actuatorState"|"error"|"modeChanged"|"controlChanged"|"emergencyStop");
-
-            /**
-             * Creates a new WebSocketMessage instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns WebSocketMessage instance
-             */
-            public static create(properties?: qyh.dataplane.IWebSocketMessage): qyh.dataplane.WebSocketMessage;
-
-            /**
-             * Encodes the specified WebSocketMessage message. Does not implicitly {@link qyh.dataplane.WebSocketMessage.verify|verify} messages.
-             * @param message WebSocketMessage message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IWebSocketMessage, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified WebSocketMessage message, length delimited. Does not implicitly {@link qyh.dataplane.WebSocketMessage.verify|verify} messages.
-             * @param message WebSocketMessage message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IWebSocketMessage, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a WebSocketMessage message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns WebSocketMessage
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.WebSocketMessage;
-
-            /**
-             * Decodes a WebSocketMessage message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns WebSocketMessage
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.WebSocketMessage;
-
-            /**
-             * Verifies a WebSocketMessage message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a WebSocketMessage message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns WebSocketMessage
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.WebSocketMessage;
-
-            /**
-             * Creates a plain object from a WebSocketMessage message. Also converts values to other types if specified.
-             * @param message WebSocketMessage
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.WebSocketMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this WebSocketMessage to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for WebSocketMessage
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a ModeChangedNotification. */
-        interface IModeChangedNotification {
-
-            /** ModeChangedNotification header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** ModeChangedNotification oldMode */
-            oldMode?: (qyh.dataplane.RobotMode|null);
-
-            /** ModeChangedNotification newMode */
-            newMode?: (qyh.dataplane.RobotMode|null);
-
-            /** ModeChangedNotification reason */
-            reason?: (string|null);
-        }
-
-        /** Represents a ModeChangedNotification. */
-        class ModeChangedNotification implements IModeChangedNotification {
-
-            /**
-             * Constructs a new ModeChangedNotification.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IModeChangedNotification);
-
-            /** ModeChangedNotification header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** ModeChangedNotification oldMode. */
-            public oldMode: qyh.dataplane.RobotMode;
-
-            /** ModeChangedNotification newMode. */
-            public newMode: qyh.dataplane.RobotMode;
-
-            /** ModeChangedNotification reason. */
-            public reason: string;
-
-            /**
-             * Creates a new ModeChangedNotification instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns ModeChangedNotification instance
-             */
-            public static create(properties?: qyh.dataplane.IModeChangedNotification): qyh.dataplane.ModeChangedNotification;
-
-            /**
-             * Encodes the specified ModeChangedNotification message. Does not implicitly {@link qyh.dataplane.ModeChangedNotification.verify|verify} messages.
-             * @param message ModeChangedNotification message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IModeChangedNotification, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified ModeChangedNotification message, length delimited. Does not implicitly {@link qyh.dataplane.ModeChangedNotification.verify|verify} messages.
-             * @param message ModeChangedNotification message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IModeChangedNotification, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a ModeChangedNotification message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns ModeChangedNotification
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.ModeChangedNotification;
-
-            /**
-             * Decodes a ModeChangedNotification message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns ModeChangedNotification
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.ModeChangedNotification;
-
-            /**
-             * Verifies a ModeChangedNotification message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a ModeChangedNotification message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns ModeChangedNotification
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.ModeChangedNotification;
-
-            /**
-             * Creates a plain object from a ModeChangedNotification message. Also converts values to other types if specified.
-             * @param message ModeChangedNotification
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.ModeChangedNotification, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this ModeChangedNotification to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for ModeChangedNotification
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of a ControlChangedNotification. */
-        interface IControlChangedNotification {
-
-            /** ControlChangedNotification header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** ControlChangedNotification controlHeld */
-            controlHeld?: (boolean|null);
-
-            /** ControlChangedNotification holderUsername */
-            holderUsername?: (string|null);
-
-            /** ControlChangedNotification holderUserId */
-            holderUserId?: (number|Long|null);
-
-            /** ControlChangedNotification changeReason */
-            changeReason?: (string|null);
-        }
-
-        /** Represents a ControlChangedNotification. */
-        class ControlChangedNotification implements IControlChangedNotification {
-
-            /**
-             * Constructs a new ControlChangedNotification.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IControlChangedNotification);
-
-            /** ControlChangedNotification header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** ControlChangedNotification controlHeld. */
-            public controlHeld: boolean;
-
-            /** ControlChangedNotification holderUsername. */
-            public holderUsername: string;
-
-            /** ControlChangedNotification holderUserId. */
-            public holderUserId: (number|Long);
-
-            /** ControlChangedNotification changeReason. */
-            public changeReason: string;
-
-            /**
-             * Creates a new ControlChangedNotification instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns ControlChangedNotification instance
-             */
-            public static create(properties?: qyh.dataplane.IControlChangedNotification): qyh.dataplane.ControlChangedNotification;
-
-            /**
-             * Encodes the specified ControlChangedNotification message. Does not implicitly {@link qyh.dataplane.ControlChangedNotification.verify|verify} messages.
-             * @param message ControlChangedNotification message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IControlChangedNotification, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified ControlChangedNotification message, length delimited. Does not implicitly {@link qyh.dataplane.ControlChangedNotification.verify|verify} messages.
-             * @param message ControlChangedNotification message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IControlChangedNotification, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes a ControlChangedNotification message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns ControlChangedNotification
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.ControlChangedNotification;
-
-            /**
-             * Decodes a ControlChangedNotification message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns ControlChangedNotification
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.ControlChangedNotification;
-
-            /**
-             * Verifies a ControlChangedNotification message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates a ControlChangedNotification message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns ControlChangedNotification
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.ControlChangedNotification;
-
-            /**
-             * Creates a plain object from a ControlChangedNotification message. Also converts values to other types if specified.
-             * @param message ControlChangedNotification
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.ControlChangedNotification, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this ControlChangedNotification to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for ControlChangedNotification
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
-        }
-
-        /** Properties of an EmergencyStopNotification. */
-        interface IEmergencyStopNotification {
-
-            /** EmergencyStopNotification header */
-            header?: (qyh.dataplane.IHeader|null);
-
-            /** EmergencyStopNotification active */
-            active?: (boolean|null);
-
-            /** EmergencyStopNotification source */
-            source?: (string|null);
-
-            /** EmergencyStopNotification reason */
-            reason?: (string|null);
-        }
-
-        /** Represents an EmergencyStopNotification. */
-        class EmergencyStopNotification implements IEmergencyStopNotification {
-
-            /**
-             * Constructs a new EmergencyStopNotification.
-             * @param [properties] Properties to set
-             */
-            constructor(properties?: qyh.dataplane.IEmergencyStopNotification);
-
-            /** EmergencyStopNotification header. */
-            public header?: (qyh.dataplane.IHeader|null);
-
-            /** EmergencyStopNotification active. */
-            public active: boolean;
-
-            /** EmergencyStopNotification source. */
-            public source: string;
-
-            /** EmergencyStopNotification reason. */
-            public reason: string;
-
-            /**
-             * Creates a new EmergencyStopNotification instance using the specified properties.
-             * @param [properties] Properties to set
-             * @returns EmergencyStopNotification instance
-             */
-            public static create(properties?: qyh.dataplane.IEmergencyStopNotification): qyh.dataplane.EmergencyStopNotification;
-
-            /**
-             * Encodes the specified EmergencyStopNotification message. Does not implicitly {@link qyh.dataplane.EmergencyStopNotification.verify|verify} messages.
-             * @param message EmergencyStopNotification message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encode(message: qyh.dataplane.IEmergencyStopNotification, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Encodes the specified EmergencyStopNotification message, length delimited. Does not implicitly {@link qyh.dataplane.EmergencyStopNotification.verify|verify} messages.
-             * @param message EmergencyStopNotification message or plain object to encode
-             * @param [writer] Writer to encode to
-             * @returns Writer
-             */
-            public static encodeDelimited(message: qyh.dataplane.IEmergencyStopNotification, writer?: $protobuf.Writer): $protobuf.Writer;
-
-            /**
-             * Decodes an EmergencyStopNotification message from the specified reader or buffer.
-             * @param reader Reader or buffer to decode from
-             * @param [length] Message length if known beforehand
-             * @returns EmergencyStopNotification
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.EmergencyStopNotification;
-
-            /**
-             * Decodes an EmergencyStopNotification message from the specified reader or buffer, length delimited.
-             * @param reader Reader or buffer to decode from
-             * @returns EmergencyStopNotification
-             * @throws {Error} If the payload is not a reader or valid buffer
-             * @throws {$protobuf.util.ProtocolError} If required fields are missing
-             */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.EmergencyStopNotification;
-
-            /**
-             * Verifies an EmergencyStopNotification message.
-             * @param message Plain object to verify
-             * @returns `null` if valid, otherwise the reason why it is not
-             */
-            public static verify(message: { [k: string]: any }): (string|null);
-
-            /**
-             * Creates an EmergencyStopNotification message from a plain object. Also converts values to their respective internal types.
-             * @param object Plain object
-             * @returns EmergencyStopNotification
-             */
-            public static fromObject(object: { [k: string]: any }): qyh.dataplane.EmergencyStopNotification;
-
-            /**
-             * Creates a plain object from an EmergencyStopNotification message. Also converts values to other types if specified.
-             * @param message EmergencyStopNotification
-             * @param [options] Conversion options
-             * @returns Plain object
-             */
-            public static toObject(message: qyh.dataplane.EmergencyStopNotification, options?: $protobuf.IConversionOptions): { [k: string]: any };
-
-            /**
-             * Converts this EmergencyStopNotification to JSON.
-             * @returns JSON object
-             */
-            public toJSON(): { [k: string]: any };
-
-            /**
-             * Gets the default type url for EmergencyStopNotification
-             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
-             * @returns The default type url
-             */
-            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
     }
 }

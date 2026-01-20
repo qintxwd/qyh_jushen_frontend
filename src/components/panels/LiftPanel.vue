@@ -316,7 +316,7 @@ const state = reactive({
   electromagnetOn: false
 })
 
-const { liftState, sendJointCommand, isConnected, connect, subscribe } = useDataPlane()
+const { liftState, sendJointCommand, isConnected, connect, subscribe, sendLiftCommand } = useDataPlane()
 
 // 监听 Data Plane 状态
 watch(liftState, (newState) => {
@@ -598,45 +598,36 @@ const CMD = {
 // TODO: 新架构中升降控制可通过预设 API 的 apply 功能或 Data Plane WebSocket 实现
 // 优先使用 Data Plane WebSocket，失败则降级到旧 API
 async function sendCommand(command: number, value: number = 0, hold: boolean = false) {
-  // Data Plane Control
+  // Data Plane Control (WebSocket Priority)
   if (isConnected.value) {
     const mm2m = (v: number) => v / 1000.0
-    const m2mm = (v: number) => v * 1000.0
     
-    // 假设升降关节名为 'lift_joint'
-    // 注意: 实际关节名需确认
-    const jointNames = ['lift_joint']
-    
-    try {
-      if (command === CMD.MOVE_UP) {
-        // 向上运动 (速度控制)
-        const velL = mm2m(value || 20)
-        sendJointCommand(jointNames, [], [velL])
-        return { success: true, message: '指令已发送 (WS)' }
-      } 
-      else if (command === CMD.MOVE_DOWN) {
-        // 向下运动 (速度控制)
-        const velL = mm2m(value || 20)
-        sendJointCommand(jointNames, [], [-velL])
-        return { success: true, message: '指令已发送 (WS)' }
-      }
-      else if (command === CMD.STOP) {
-        // 停止
-        sendJointCommand(jointNames, [], [0])
-        return { success: true, message: '已停止 (WS)' }
-      }
-      else if (command === CMD.GO_POSITION) {
-        // 位置控制
-        const posL = mm2m(value)
-        sendJointCommand(jointNames, [posL], [])
-        return { success: true, message: '位置指令已发送 (WS)' }
-      }
-      // ENABLE/DISABLE 等命令若不支持则回退到 API
-    } catch (e) {
-       console.warn('Data Plane control failed, falling back to HTTP', e)
-    }
-  }
+    let wsCmd = ''
+    let wsHeight = 0
+    let wsSpeed = 0.05 // default 5cm/s
 
+    if (command === CMD.GO_POSITION) {
+      wsCmd = 'goto'
+      wsHeight = mm2m(value)
+    } else if (command === CMD.MOVE_UP) {
+      wsCmd = 'up'
+    } else if (command === CMD.MOVE_DOWN) {
+      wsCmd = 'down'
+    } else if (command === CMD.STOP) {
+      wsCmd = 'stop'
+    }
+
+    if (wsCmd) {
+      // 通过 WS 发送
+      const success = sendLiftCommand(wsCmd, wsHeight, wsSpeed)
+      if (success) {
+        return { success: true, message: '指令已发送 (WS)' }
+      }
+    }
+    // Enable/Disable/Reset/SetSpeed might not be supported via LiftCommand WS yet, fallback using HTTP
+  }
+  
+  // HTTP Fallback
   try {
     return await apiClient.post('/api/v1/lift/control', { command, value, hold })
   } catch (error: any) {
