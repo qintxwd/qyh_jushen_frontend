@@ -150,9 +150,19 @@ class SceneManager {
       this.onLoadStatusChange?.('正在获取 URDF 文件...')
       
       const data = await apiClient.get('/api/v1/robot-model/urdf')
-      const { urdf, source } = data
       
-      console.log('[SceneManager] URDF source:', source)
+      let urdf = ''
+      if (typeof data === 'string') {
+        urdf = data
+      } else if (data && typeof data === 'object' && 'urdf' in data) {
+         // @ts-ignore
+         urdf = data.urdf
+      } else {
+        console.error('[SceneManager] 无效的 URDF 数据格式', data)
+        throw new Error('无效的 URDF 数据格式')
+      }
+      
+      console.log('[SceneManager] URDF loaded, length:', urdf.length)
       this.onLoadStatusChange?.('正在解析 URDF...')
       
       const loader = new URDFLoader()
