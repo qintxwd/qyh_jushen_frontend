@@ -47,7 +47,7 @@ import { getApiBaseUrl } from '@/utils/apiUrl'
 import { useDataPlane } from '@/composables/useDataPlane'
 
 const layoutStore = useLayoutStore()
-const { jointState, chassisState, liftState, isConnected, connect, subscribe } = useDataPlane()
+const { jointState, chassisState, liftState, armState, isConnected, connect, subscribe } = useDataPlane()
 
 // API 配置 - 动态获取，支持远程访问
 const getApiBase = () => getApiBaseUrl()
@@ -135,7 +135,7 @@ function startPolling() {
   // 订阅话题
   setTimeout(() => {
     if (isConnected.value) {
-      subscribe(['joint_state', 'chassis_state', 'actuator_state', 'robot_state'])
+      subscribe(['joint_state', 'chassis_state', 'actuator_state', 'robot_state', 'arm_state'])
     }
   }, 1000)
 }
@@ -182,14 +182,24 @@ watch(jointState, (newState) => {
 })
 
 watch(chassisState, (newState) => {
-  if (newState.odom) {
-     sceneManager.chassisPose.x = newState.odom.position.x
-     sceneManager.chassisPose.y = newState.odom.position.y
-     // quaternion to yaw
-     // ...
-     sceneManager.updateChassisPosition()
+  console.log('[MainScene] 收到底盘状态:', newState)
+  const odom = newState.odom
+  if (odom && odom.position) {
+    sceneManager.chassisPose.x = odom.position.x || 0
+    sceneManager.chassisPose.y = odom.position.y || 0
+    
+    // Quaternion to Yaw 转换
+    if (odom.orientation) {
+      const q = odom.orientation
+      const siny_cosp = 2 * ((q.w || 0) * (q.z || 0) + (q.x || 0) * (q.y || 0))
+      const cosy_cosp = 1 - 2 * ((q.y || 0) * (q.y || 0) + (q.z || 0) * (q.z || 0))
+      sceneManager.chassisPose.yaw = Math.atan2(siny_cosp, cosy_cosp)
+    }
+    
+    sceneManager.updateChassisPosition()
+    console.log('[MainScene] 更新底盘位置:', sceneManager.chassisPose)
   }
-})
+}, { deep: true })
 
 watch(liftState, (newState) => {
   if (newState.position !== undefined) {
@@ -197,6 +207,32 @@ watch(liftState, (newState) => {
     sceneManager.updateArmPosition()
   }
 })
+
+// 监听手臂状态更新3D模型关节角度
+watch(armState, (newState) => {
+  console.log('[MainScene] 收到手臂状态:', newState)
+  
+  // 从 armState 获取关节角度
+  const leftPositions = newState.leftPositions || newState.left_positions
+  const rightPositions = newState.rightPositions || newState.right_positions
+  
+  if (leftPositions && leftPositions.length >= 7) {
+    for (let i = 0; i < 7; i++) {
+      sceneManager.leftJoints[i] = leftPositions[i]
+    }
+  }
+  
+  if (rightPositions && rightPositions.length >= 7) {
+    for (let i = 0; i < 7; i++) {
+      sceneManager.rightJoints[i] = rightPositions[i]
+    }
+  }
+  
+  if (leftPositions || rightPositions) {
+    sceneManager.updateJointAngles()
+    console.log('[MainScene] 更新关节角度:', { left: sceneManager.leftJoints, right: sceneManager.rightJoints })
+  }
+}, { deep: true })
 
 function stopPolling() {
   // Do nothing or disconnect if needed

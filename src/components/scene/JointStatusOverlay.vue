@@ -45,11 +45,14 @@ const isCollapsed = ref(false)
 const connected = ref(false)
 
 const dataPlane = useDataPlaneSingleton()
-const { isAuthenticated, connect, subscribe, jointState } = dataPlane
+const { isAuthenticated, connect, subscribe, jointState, armState } = dataPlane
 
 // 关节角度 (弧度值，从后端获取)
 const leftJoints = ref([0, 0, 0, 0, 0, 0, 0])
 const rightJoints = ref([0, 0, 0, 0, 0, 0, 0])
+
+// 标记是否已从 armState 获取到数据（优先级更高）
+const hasArmStateData = ref(false)
 
 function toggleCollapse() {
   isCollapsed.value = !isCollapsed.value
@@ -61,11 +64,13 @@ function radToDeg(rad: number): number {
 }
 
 function updateFromJointState(state: any) {
-  if (!state?.positions || state.positions.length === 0) {
-    connected.value = false
-    leftJoints.value = [0, 0, 0, 0, 0, 0, 0]
-    rightJoints.value = [0, 0, 0, 0, 0, 0, 0]
+  // 如果已经从 armState 获取到数据，忽略 jointState
+  if (hasArmStateData.value) {
     return
+  }
+  
+  if (!state?.positions || state.positions.length === 0) {
+    return  // 不重置为0，保持原有数据
   }
 
   const names = Array.isArray(state.names) ? state.names.map((name: any) => String(name ?? '')) : []
@@ -117,10 +122,34 @@ function updateFromJointState(state: any) {
 
 watch(isAuthenticated, (authed) => {
   if (!authed) return
-  subscribe(['joint_state'])
+  subscribe(['joint_state', 'arm_state'])
 }, { immediate: true })
 
 watch(jointState, updateFromJointState, { deep: true, immediate: true })
+
+// 优先使用 armState (包含更全面的手臂数据)
+watch(armState, (state) => {
+  if (!state) return
+  
+  const leftPositions = state.leftPositions || state.left_positions || []
+  const rightPositions = state.rightPositions || state.right_positions || []
+  
+  if (leftPositions.length === 0 && rightPositions.length === 0) return
+  
+  // 填充到7个关节
+  const left = [...leftPositions]
+  const right = [...rightPositions]
+  while (left.length < 7) left.push(0)
+  while (right.length < 7) right.push(0)
+  
+  leftJoints.value = left.slice(0, 7).map(radToDeg)
+  rightJoints.value = right.slice(0, 7).map(radToDeg)
+  connected.value = true
+  hasArmStateData.value = true  // 标记已获取到 armState 数据
+  
+  // console.log('[JointOverlay] 从 armState 更新关节:', { left: leftJoints.value, right: rightJoints.value })
+}, { deep: true, immediate: true })
+
 
 onMounted(() => {
   connect()
