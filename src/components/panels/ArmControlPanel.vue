@@ -904,6 +904,34 @@ const statusText = computed(() => {
   return '未连接'
 })
 
+// ========== 机械臂状态获取 ==========
+
+// 获取机械臂状态（初始化时调用）
+async function fetchArmState() {
+  try {
+    const data = await apiClient.get('/api/v1/arm/state')
+    if (data.success && data.data) {
+      Object.assign(armState, {
+        connected: data.data.connected ?? false,
+        robot_ip: data.data.robot_ip ?? '',
+        powered_on: data.data.powered_on ?? false,
+        enabled: data.data.enabled ?? false,
+        in_estop: data.data.in_estop ?? false,
+        in_error: data.data.in_error ?? false,
+        servo_mode_enabled: data.data.servo_mode_enabled ?? false,
+        error_message: data.data.error_message ?? ''
+      })
+      // 更新伺服状态
+      servoStatus.mode = armState.servo_mode_enabled ? 'running' : 'idle'
+      if (armState.servo_mode_enabled) {
+        servoStatus.publish_rate_hz = SERVO_PUBLISH_RATE_HZ
+      }
+    }
+  } catch (error) {
+    console.warn('获取机械臂状态失败:', error)
+  }
+}
+
 // ========== 点位管理函数 ==========
 
 // 获取点位列表
@@ -1562,6 +1590,8 @@ onMounted(() => {
   watch(wsArmState, updateArmFromWs, { deep: true, immediate: true })
   watch(wsJointState, updateJointsFromWs, { deep: true, immediate: true })
 
+  // 初始化时获取机械臂状态和点位
+  fetchArmState()
   fetchArmPoints()
   loadGripperConfig()
 
