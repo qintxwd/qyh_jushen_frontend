@@ -1616,8 +1616,19 @@ onMounted(() => {
   watch(wsArmState, updateArmFromWs, { deep: true, immediate: true })
   watch(wsJointState, updateJointsFromWs, { deep: true, immediate: true })
 
-  // 启动状态轮询（确保状态实时更新）
-  startStatePolling()
+  // WebSocket 连接状态变化时，切换轮询策略
+  // 当 WebSocket 已连接且已认证时停止轮询，否则启动轮询作为备用
+  watch([isConnected, isAuthenticated], ([connected, authed]) => {
+    if (connected && authed) {
+      // WebSocket 已连接，停止 HTTP 轮询
+      stopStatePolling()
+      console.log('[ArmControlPanel] WebSocket 已连接，停止 HTTP 轮询')
+    } else {
+      // WebSocket 未连接，启动 HTTP 轮询作为备用
+      startStatePolling()
+      console.log('[ArmControlPanel] WebSocket 未连接，启动 HTTP 轮询备用')
+    }
+  }, { immediate: true })
   
   // 获取点位列表和夹爪配置
   fetchArmPoints()
