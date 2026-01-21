@@ -503,91 +503,92 @@ onMounted(() => {
     startShutdownPolling()
   }, { immediate: true })
 
-  watch(isConnected, (connected) => {
-    layoutStore.updateConnectionStatus({ ros: connected })
-  }, { immediate: true })
+  // [已禁用] 使用 basicState 统一更新状态栏，避免多源状态跳变
+  // watch(isConnected, (connected) => {
+  //   layoutStore.updateConnectionStatus({ ros: connected })
+  // }, { immediate: true })
 
-  watch(armState, (state) => {
-    const connected = state.connected ?? false
-    layoutStore.updateArmStatus({
-      connected,
-      powered: state.powered_on ?? false,
-      enabled: state.enabled ?? false,
-      servoMode: state.servo_mode ?? false,
-      error: state.in_error ?? false,
-      errorCode: 0
-    })
-  }, { deep: true, immediate: true })
+  // watch(armState, (state) => {
+  //   const connected = state.connected ?? false
+  //   layoutStore.updateArmStatus({
+  //     connected,
+  //     powered: state.powered_on ?? false,
+  //     enabled: state.enabled ?? false,
+  //     servoMode: state.servo_mode ?? false,
+  //     error: state.in_error ?? false,
+  //     errorCode: 0
+  //   })
+  // }, { deep: true, immediate: true })
 
-  watch(chassisState, (state) => {
-    const connected = state.emergency_stop !== undefined ||
-      state.battery_level !== undefined ||
-      state.odom !== undefined ||
-      state.velocity !== undefined
-    layoutStore.updateChassisStatus({
-      connected,
-      system_status: connected ? (state.emergency_stop ? 0x03 : 0x02) : 0,
-      system_status_text: connected ? (state.emergency_stop ? '急停' : '在线') : '未知',
-      emergency: state.emergency_stop ?? false,
-      error: false,
-      batteryPercentage: Math.round(state.battery_level ?? 0),
-      batteryVoltage: 0,
-      isCharging: state.charging ?? false
-    })
-  }, { deep: true, immediate: true })
+  // watch(chassisState, (state) => {
+  //   const connected = state.emergency_stop !== undefined ||
+  //     state.battery_level !== undefined ||
+  //     state.odom !== undefined ||
+  //     state.velocity !== undefined
+  //   layoutStore.updateChassisStatus({
+  //     connected,
+  //     system_status: connected ? (state.emergency_stop ? 0x03 : 0x02) : 0,
+  //     system_status_text: connected ? (state.emergency_stop ? '急停' : '在线') : '未知',
+  //     emergency: state.emergency_stop ?? false,
+  //     error: false,
+  //     batteryPercentage: Math.round(state.battery_level ?? 0),
+  //     batteryVoltage: 0,
+  //     isCharging: state.charging ?? false
+  //   })
+  // }, { deep: true, immediate: true })
 
-  watch([leftGripperState, rightGripperState], () => {
-    const leftOk = leftGripperState.position !== undefined || leftGripperState.gripperId === 'left' || leftGripperState.gripper_id === 'left'
-    const rightOk = rightGripperState.position !== undefined || rightGripperState.gripperId === 'right' || rightGripperState.gripper_id === 'right'
-    layoutStore.updateGripperStatus('left', {
-      communication_ok: leftOk,
-      is_activated: leftOk,
-      fault_code: 0
-    })
-    layoutStore.updateGripperStatus('right', {
-      communication_ok: rightOk,
-      is_activated: rightOk,
-      fault_code: 0
-    })
-  }, { deep: true, immediate: true })
-
-  watch([liftState, waistState], () => {
-    const liftConnected = liftState.actuator_id === 'lift' || liftState.actuatorId === 'lift' || liftState.position !== undefined
-    const waistConnected = waistState.actuator_id === 'waist' || waistState.actuatorId === 'waist' || waistState.position !== undefined
-    layoutStore.updateLiftStatus({
-      connected: liftConnected,
-      enabled: liftConnected,
-      alarm: false
-    })
-    layoutStore.updateWaistStatus({
-      connected: waistConnected,
-      enabled: waistConnected,
-      error: false
-    })
-  }, { deep: true, immediate: true })
-
-  watch([headPanState, headTiltState], () => {
-    const headConnected = headPanState.actuator_id === 'head_pan' ||
-      headPanState.actuatorId === 'head_pan' ||
-      headTiltState.actuator_id === 'head_tilt' ||
-      headTiltState.actuatorId === 'head_tilt'
-    layoutStore.updateHeadStatus({
-      connected: headConnected,
-      enabled: headConnected,
-      error: false
-    })
-  }, { deep: true, immediate: true })
-
-  watch(vrSystemState, (state) => {
-    layoutStore.updateVRStatus({
-      connected: state.connected ?? false,
-      headsetActive: !!state.head_pose,
-      leftController: state.left_controller_active ?? false,
-      rightController: state.right_controller_active ?? false
-    })
-  }, { deep: true, immediate: true })
-
-  // 监听基础状态（来自 WebSocket 推送，更全面的状态）
+  //   watch([leftGripperState, rightGripperState], () => {
+  //     const leftOk = leftGripperState.position !== undefined || leftGripperState.gripperId === 'left' || leftGripperState.gripper_id === 'left'
+  //     const rightOk = rightGripperState.position !== undefined || rightGripperState.gripperId === 'right' || rightGripperState.gripper_id === 'right'
+  //     layoutStore.updateGripperStatus('left', {
+  //       communication_ok: leftOk,
+  //       is_activated: leftOk,
+  //       fault_code: 0
+  //     })
+  //     layoutStore.updateGripperStatus('right', {
+  //       communication_ok: rightOk,
+  //       is_activated: rightOk,
+  //       fault_code: 0
+  //     })
+  //   }, { deep: true, immediate: true })
+  // 
+  //   watch([liftState, waistState], () => {
+  //     const liftConnected = liftState.actuator_id === 'lift' || liftState.actuatorId === 'lift' || liftState.position !== undefined
+  //     const waistConnected = waistState.actuator_id === 'waist' || waistState.actuatorId === 'waist' || waistState.position !== undefined
+  //     layoutStore.updateLiftStatus({
+  //       connected: liftConnected,
+  //       enabled: liftConnected,
+  //       alarm: false
+  //     })
+  //     layoutStore.updateWaistStatus({
+  //       connected: waistConnected,
+  //       enabled: waistConnected,
+  //       error: false
+  //     })
+  //   }, { deep: true, immediate: true })
+  // 
+  //   watch([headPanState, headTiltState], () => {
+  //     const headConnected = headPanState.actuator_id === 'head_pan' ||
+  //       headPanState.actuatorId === 'head_pan' ||
+  //       headTiltState.actuator_id === 'head_tilt' ||
+  //       headTiltState.actuatorId === 'head_tilt'
+  //     layoutStore.updateHeadStatus({
+  //       connected: headConnected,
+  //       enabled: headConnected,
+  //       error: false
+  //     })
+  //   }, { deep: true, immediate: true })
+  // 
+  //   watch(vrSystemState, (state) => {
+  //     layoutStore.updateVRStatus({
+  //       connected: state.connected ?? false,
+  //       headsetActive: !!state.head_pose,
+  //       leftController: state.left_controller_active ?? false,
+  //       rightController: state.right_controller_active ?? false
+  //     })
+  //   }, { deep: true, immediate: true })
+  // 
+  //   // 监听基础状态（来自 WebSocket 推送，更全面的状态）
   watch(basicState, (state) => {
     console.log('[MainLayout] 📊 收到基础状态更新:', state)
     

@@ -191,6 +191,7 @@ export function useDataPlane() {
   const chassisState = reactive<Partial<ChassisState>>({})
   const vrSystemState = reactive<Partial<VRSystemState>>({})
   const taskState = reactive<Partial<TaskState>>({})
+  const basicState = reactive<Partial<qyh.dataplane.IBasicState>>({})
   const liftState = reactive<Partial<ActuatorState>>({})
   const waistState = reactive<Partial<ActuatorState>>({})
   const headPanState = reactive<Partial<ActuatorState>>({})
@@ -716,14 +717,6 @@ export function useDataPlane() {
         }
         break
         
-      case MessageType.MSG_BASIC_STATE:
-        console.log("[DataPlane] 📊 收到基础状态:", message.basicState)
-        if (message.basicState) {
-          Object.assign(basicState, message.basicState)
-          emit('basic_state', message.basicState)
-        }
-        break
-        
       case MessageType.MSG_ERROR:
         if (message.error) {
           console.error('[DataPlane] 收到错误:', message.error)
@@ -870,7 +863,6 @@ export function useDataPlane() {
     chassisState,
     vrSystemState,
     taskState,
-    basicState,
     basicState,
     liftState,
     waistState,
