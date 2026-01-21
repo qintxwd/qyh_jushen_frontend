@@ -714,6 +714,7 @@ const activeJogAxis = ref<number | null>(null)
 const jogDirection = ref<number>(0)
 const jogIntervalId = ref<number | null>(null)
 const jogTimeoutId = ref<number | null>(null)  // 连续模式超时定时器
+let statePollingTimer: number | null = null  // 状态轮询定时器（备用）
 const jogStartTime = ref<number>(0)  // Jog 开始时器
 const jogFailureCount = ref<number>(0)  // 连续失败次数
 const lastJogArmState = ref<boolean>(false)  // 上次Jog时的使能状态
@@ -906,29 +907,54 @@ const statusText = computed(() => {
 
 // ========== 机械臂状态获取 ==========
 
-// 获取机械臂状态（初始化时调用）
+// 获取机械臂状态（初始化和轮询时调用）
 async function fetchArmState() {
   try {
     const data = await apiClient.get('/api/v1/arm/state')
-    if (data.success && data.data) {
+    console.log('[ArmControlPanel] fetchArmState response:', data)
+    // apiClient 可能已经解析了 data，直接检查结构
+    const stateData = data?.data || data
+    console.log('[ArmControlPanel] stateData:', stateData)
+    if (stateData) {
       Object.assign(armState, {
-        connected: data.data.connected ?? false,
-        robot_ip: data.data.robot_ip ?? '',
-        powered_on: data.data.powered_on ?? false,
-        enabled: data.data.enabled ?? false,
-        in_estop: data.data.in_estop ?? false,
-        in_error: data.data.in_error ?? false,
-        servo_mode_enabled: data.data.servo_mode_enabled ?? false,
-        error_message: data.data.error_message ?? ''
+        connected: stateData.connected ?? false,
+        robot_ip: stateData.robot_ip ?? armState.robot_ip ?? '',
+        powered_on: stateData.powered_on ?? false,
+        enabled: stateData.enabled ?? false,
+        in_estop: stateData.in_estop ?? false,
+        in_error: stateData.in_error ?? false,
+        servo_mode_enabled: stateData.servo_mode_enabled ?? false,
+        error_message: stateData.error_message ?? ''
       })
       // 更新伺服状态
       servoStatus.mode = armState.servo_mode_enabled ? 'running' : 'idle'
       if (armState.servo_mode_enabled) {
         servoStatus.publish_rate_hz = SERVO_PUBLISH_RATE_HZ
+      } else {
+        servoStatus.publish_rate_hz = 0
       }
     }
   } catch (error) {
     console.warn('获取机械臂状态失败:', error)
+  }
+}
+
+// 开始状态轮询（备用机制，当 WebSocket 不推送时使用）
+function startStatePolling() {
+  if (statePollingTimer) return
+  // 立即获取一次
+  fetchArmState()
+  // 每 1 秒轮询一次（比旧版 500ms 稍慢，减少服务器压力）
+  statePollingTimer = window.setInterval(() => {
+    fetchArmState()
+  }, 1000)
+}
+
+// 停止状态轮询
+function stopStatePolling() {
+  if (statePollingTimer) {
+    clearInterval(statePollingTimer)
+    statePollingTimer = null
   }
 }
 
@@ -1590,8 +1616,10 @@ onMounted(() => {
   watch(wsArmState, updateArmFromWs, { deep: true, immediate: true })
   watch(wsJointState, updateJointsFromWs, { deep: true, immediate: true })
 
-  // 初始化时获取机械臂状态和点位
-  fetchArmState()
+  // 启动状态轮询（确保状态实时更新）
+  startStatePolling()
+  
+  // 获取点位列表和夹爪配置
   fetchArmPoints()
   loadGripperConfig()
 
@@ -1601,6 +1629,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('beforeunload', handleBeforeUnload)
+  
+  // 停止状态轮询
+  stopStatePolling()
 
   // 组件卸载时停止所有Jog操作
   if (activeJogAxis.value !== null) {
