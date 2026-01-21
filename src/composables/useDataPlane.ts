@@ -603,6 +603,8 @@ export function useDataPlane() {
   
   function handleMessage(event: MessageEvent) {
     let message: qyh.dataplane.WebSocketMessage
+    console.log("[DataPlane] 📩 handleMessage 收到消息, 类型:", typeof event.data, event.data instanceof ArrayBuffer ? "ArrayBuffer" : (event.data instanceof Blob ? "Blob" : "其他"), "大小:", event.data?.byteLength || event.data?.size || event.data?.length)
+    console.log("[DataPlane] 📩 handleMessage 收到消息, 类型:", typeof event.data, event.data instanceof ArrayBuffer ? "ArrayBuffer" : (event.data instanceof Blob ? "Blob" : "其他"), "大小:", event.data?.byteLength || event.data?.size || event.data?.length)
     
     try {
       // 使用 Protobuf 解码二进制数据
