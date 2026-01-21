@@ -650,12 +650,21 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import apiClient from '@/api/client'
-import { useDataPlane } from '@/composables/useDataPlane'
+import { useDataPlaneSingleton } from '@/composables/useDataPlane'
 
-const { isConnected, sendArmJog } = useDataPlane()
+const dataPlane = useDataPlaneSingleton()
+const {
+  isConnected,
+  isAuthenticated,
+  connect,
+  subscribe,
+  sendArmJog,
+  armState: wsArmState,
+  jointState: wsJointState
+} = dataPlane
 
 // 机械臂状态
 const armState = reactive({
@@ -679,6 +688,8 @@ const servoStatus = reactive({
   packet_loss_rate: 0.0,
   error_code: 0
 })
+
+const SERVO_PUBLISH_RATE_HZ = 125.0
 
 // 运动目标
 const moveTarget = ref<'dual' | 'left' | 'right'>('dual')
@@ -722,6 +733,80 @@ const currentJoints = reactive({
   left: [0, 0, 0, 0, 0, 0, 0],
   right: [0, 0, 0, 0, 0, 0, 0]
 })
+
+
+function updateArmFromWs(state: any) {
+  if (!state) return
+  Object.assign(armState, {
+    connected: state.connected ?? false,
+    robot_ip: armState.robot_ip,
+    powered_on: state.powered_on ?? false,
+    enabled: state.enabled ?? false,
+    in_estop: state.in_estop ?? false,
+    in_error: state.in_error ?? false,
+    servo_mode_enabled: state.servo_mode ?? state.servo_mode_enabled ?? false,
+    error_message: state.error_message ?? ''
+  })
+
+  servoStatus.mode = armState.servo_mode_enabled ? 'running' : 'idle'
+  if (armState.servo_mode_enabled) {
+    if (servoStatus.publish_rate_hz === 0) {
+      servoStatus.publish_rate_hz = SERVO_PUBLISH_RATE_HZ
+    }
+  } else {
+    servoStatus.publish_rate_hz = 0
+  }
+}
+
+function updateJointsFromWs(state: any) {
+  if (!state?.positions || state.positions.length === 0) return
+
+  const names = Array.isArray(state.names) ? state.names.map((name: any) => String(name ?? '')) : []
+  const positions = state.positions.map((pos: any) => Number(pos ?? 0))
+
+  const left: number[] = []
+  const right: number[] = []
+  const unknown: number[] = []
+
+  if (names.length) {
+    for (let i = 0; i < names.length; i++) {
+      const lower = names[i].toLowerCase()
+      const pos = positions[i] ?? 0
+
+      if (lower.includes('left') || lower.startsWith('l_') || lower.startsWith('l-')) {
+        if (left.length < 7) left.push(pos)
+        continue
+      }
+      if (lower.includes('right') || lower.startsWith('r_') || lower.startsWith('r-')) {
+        if (right.length < 7) right.push(pos)
+        continue
+      }
+      unknown.push(pos)
+    }
+  } else {
+    unknown.push(...positions)
+  }
+
+  if (left.length === 0 && right.length === 0 && positions.length >= 14) {
+    currentJoints.left = positions.slice(0, 7)
+    currentJoints.right = positions.slice(7, 14)
+    return
+  }
+
+  for (const pos of unknown) {
+    if (left.length < 7) {
+      left.push(pos)
+    } else if (right.length < 7) {
+      right.push(pos)
+    }
+  }
+
+  while (left.length < 7) left.push(0)
+  while (right.length < 7) right.push(0)
+
+  currentJoints.left = left
+  currentJoints.right = right
+}
 
 // 加载状态
 const loading = reactive({
@@ -782,7 +867,6 @@ const editPointForm = reactive({
 })
 
 // 轮询定时器
-let pollTimer: number | null = null
 
 // 计算伺服是否真正运行中(考虑机械臂状态
 const isServoRunning = computed(() => {
@@ -1002,57 +1086,10 @@ async function deletePoint(point: ArmPoint) {
 }
 
 // 获取机械臂状态
-async function fetchArmState() {
-  try {
-    const data = await apiClient.get('/api/v1/arm/state')
-    const safeData = data || {}
-    // Validate connected flag is boolean
-    if (typeof safeData.connected !== 'boolean') safeData.connected = false
-    // Ensure other expected boolean flags are present
-    if (typeof safeData.powered_on !== 'boolean') safeData.powered_on = !!safeData.powered_on
-    if (typeof safeData.enabled !== 'boolean') safeData.enabled = !!safeData.enabled
-    if (typeof safeData.in_estop !== 'boolean') safeData.in_estop = !!safeData.in_estop
-    if (typeof safeData.in_error !== 'boolean') safeData.in_error = !!safeData.in_error
-    if (typeof safeData.servo_mode_enabled !== 'boolean') safeData.servo_mode_enabled = !!safeData.servo_mode_enabled
-    Object.assign(armState, safeData)
-  } catch (error) {
-    console.warn('获取机械臂状态失败', error)
-    // Mark as disconnected / not powered when fetch fails to avoid stale "connected" UI
-    Object.assign(armState, {
-      connected: false,
-      powered_on: false,
-      enabled: false,
-      in_estop: false,
-      in_error: false,
-      servo_mode_enabled: false
-    })
-  }
-}
 
 // 获取伺服状态
-async function fetchServoStatus() {
-  try {
-    const data = await apiClient.get('/api/v1/arm/servo/status')
-    Object.assign(servoStatus, data)
-  } catch (error) {
-    console.warn('获取伺服状态失败', error)
-  }
-}
 
 // 获取关节状态(用于实时显示)
-async function fetchJointStates() {
-  try {
-    const data = await apiClient.get('/api/v1/robot-model/joint_states')
-    
-    if (data.source === 'ros2' && data.left && data.right) {
-      // 更新实时关节数据 (弧度)
-      currentJoints.left = data.left
-      currentJoints.right = data.right
-    }
-  } catch (error) {
-    console.warn('获取关节状态失败', error)
-  }
-}
 
 // 上电
 async function powerOn() {
@@ -1061,7 +1098,6 @@ async function powerOn() {
     const data = await apiClient.post('/api/v1/arm/power_on')
     if (data.success) {
       ElMessage.success('机械臂已上电')
-      await fetchArmState()
     } else {
       ElMessage.error(data.message || '上电失败')
     }
@@ -1079,7 +1115,6 @@ async function powerOff() {
     const data = await apiClient.post('/api/v1/arm/power_off')
     if (data.success) {
       ElMessage.success('机械臂已下电')
-      await fetchArmState()
     } else {
       ElMessage.error(data.message || '下电失败')
     }
@@ -1097,7 +1132,6 @@ async function enableArm() {
     const data = await apiClient.post('/api/v1/arm/enable')
     if (data.success) {
       ElMessage.success('机械臂已使能')
-      await fetchArmState()
     } else {
       ElMessage.error(data.message || '使能失败')
     }
@@ -1115,7 +1149,6 @@ async function disableArm() {
     const data = await apiClient.post('/api/v1/arm/disable')
     if (data.success) {
       ElMessage.success('机械臂已去使能')
-      await fetchArmState()
     } else {
       ElMessage.error(data.message || '去使能失败')
     }
@@ -1133,7 +1166,6 @@ async function startServo() {
     const data = await apiClient.post('/api/v1/arm/servo/start')
     if (data.success) {
       ElMessage.success('伺服模式已启动')
-      await fetchServoStatus()
     } else {
       ElMessage.error(data.message || '启动失败')
     }
@@ -1151,7 +1183,6 @@ async function stopServo() {
     const data = await apiClient.post('/api/v1/arm/servo/stop')
     if (data.success) {
       ElMessage.success('伺服模式已停止')
-      await fetchServoStatus()
     } else {
       ElMessage.error(data.message || '停止失败')
     }
@@ -1169,8 +1200,6 @@ async function motionAbort() {
     const data = await apiClient.post('/api/v1/arm/motion_abort')
     if (data.success) {
       ElMessage.warning('急停已执行')
-      await fetchArmState()
-      await fetchServoStatus()
     } else {
       ElMessage.error(data.message || '急停失败')
     }
@@ -1188,7 +1217,6 @@ async function clearError() {
     const data = await apiClient.post('/api/v1/arm/clear_error')
     if (data.success) {
       ElMessage.success('错误已清除')
-      await fetchArmState()
     } else {
       ElMessage.error(data.message || '清除失败')
     }
@@ -1523,40 +1551,27 @@ async function stopJog() {
   }
 }
 
-// 开始轮询
-function startPolling() {
-  fetchArmState()
-  fetchServoStatus()
-  fetchJointStates()
-  pollTimer = window.setInterval(() => {
-    fetchArmState()
-    fetchServoStatus()
-    fetchJointStates()
-  }, 500)
-}
-
-// 停止轮询
-function stopPolling() {
-  if (pollTimer) {
-    clearInterval(pollTimer)
-    pollTimer = null
-  }
-}
-
 onMounted(() => {
-  startPolling()
+  connect()
+
+  watch(isAuthenticated, (authed) => {
+    if (!authed) return
+    subscribe(['arm_state', 'joint_state'])
+  }, { immediate: true })
+
+  watch(wsArmState, updateArmFromWs, { deep: true, immediate: true })
+  watch(wsJointState, updateJointsFromWs, { deep: true, immediate: true })
+
   fetchArmPoints()
   loadGripperConfig()
-  
+
   // 添加页面关闭前的紧急停止处理
   window.addEventListener('beforeunload', handleBeforeUnload)
 })
 
 onUnmounted(() => {
-  // 移除事件监听
   window.removeEventListener('beforeunload', handleBeforeUnload)
-  
-  stopPolling()
+
   // 组件卸载时停止所有Jog操作
   if (activeJogAxis.value !== null) {
     // 使用同步方式发送停止命令
@@ -2608,5 +2623,3 @@ function sendJogStopSync() {
   color: var(--color-text-secondary);
 }
 </style>
-
-

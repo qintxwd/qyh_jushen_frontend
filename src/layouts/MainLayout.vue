@@ -290,7 +290,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import apiClient from '@/api/client'
 import { useLayoutStore, PANEL_DEFINITIONS } from '@/stores/layout'
@@ -298,13 +298,33 @@ import { useAuthStore } from '@/stores/auth'
 import TabWindow from '@/components/layout/TabWindow.vue'
 import SvgIcon from '@/components/SvgIcon.vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { chassisApi } from '@/api/chassis'
+import { useDataPlaneSingleton } from '@/composables/useDataPlane'
 
 const router = useRouter()
 const layoutStore = useLayoutStore()
 const authStore = useAuthStore()
 
 const scene3DFullscreen = ref(false)
+
+const dataPlane = useDataPlaneSingleton()
+const {
+  isConnected,
+  isAuthenticated,
+  connect,
+  subscribe,
+  armState,
+  chassisState,
+  liftState,
+  waistState,
+  headPanState,
+  headTiltState,
+  leftGripperState,
+  rightGripperState,
+  vrSystemState
+} = dataPlane
+
+let shutdownInterval: number | null = null
+let lastShutdownInProgress = false
 
 // 主导航项
 const mainNavItems = computed(() => PANEL_DEFINITIONS.filter(p => p.id !== 'settings'))
@@ -427,229 +447,6 @@ function stopResize() {
 }
 
 
-// 获取升降电机状态 - 使用统一 robot overview API
-async function fetchLiftStatus() {
-  try {
-    const data = await apiClient.get('/api/v1/robot/overview')
-    const liftData = data?.data?.lift || data?.lift
-    if (liftData) {
-      layoutStore.updateLiftStatus({
-        connected: true,
-        enabled: liftData.enabled ?? false,
-        alarm: liftData.alarm ?? false
-      })
-    } else {
-      layoutStore.updateLiftStatus({
-        connected: false,
-        enabled: false,
-        alarm: false
-      })
-    }
-  } catch (error) {
-    layoutStore.updateLiftStatus({
-      connected: false,
-      enabled: false,
-      alarm: false
-    })
-  }
-}
-
-// 获取机械臂状态
-async function fetchArmStatus() {
-  try {
-    const data = await apiClient.get('/api/v1/arm/state')
-    if (data) {
-      layoutStore.updateArmStatus({
-        connected: data.connected ?? false,
-        powered: data.powered_on ?? false,  // 修复：使用 powered_on
-        enabled: data.enabled ?? false,
-        servoMode: data.servo_mode_enabled ?? false,  // 修复：使用 servo_mode_enabled
-        error: data.in_error ?? false,  // 修复：使用 in_error
-        errorCode: 0  // 后端没有error_code字段，暂时设为0
-      })
-    }
-  } catch {
-    layoutStore.updateArmStatus({ connected: false })
-  }
-}
-
-// 获取相机状态
-async function fetchCameraStatus() {
-  try {
-    const data = await apiClient.get('/api/v1/camera/status')
-    if (data?.cameras) {
-      const cameras = data.cameras
-      layoutStore.updateCameraStatus('head', { 
-        connected: cameras.head?.available ?? false,
-        streaming: cameras.head?.available ?? false
-      })
-      layoutStore.updateCameraStatus('leftHand', { 
-        connected: cameras.left_hand?.available ?? false,
-        streaming: cameras.left_hand?.available ?? false
-      })
-      layoutStore.updateCameraStatus('rightHand', { 
-        connected: cameras.right_hand?.available ?? false,
-        streaming: cameras.right_hand?.available ?? false
-      })
-    }
-  } catch {
-    // 相机状态保持不变
-  }
-}
-
-// 获取夹爪状态
-async function fetchGripperStatus() {
-  try {
-    const data = await apiClient.get('/api/v1/gripper/state')
-    if (data) {
-      layoutStore.updateGripperStatus('left', {
-        communication_ok: data.left?.communication_ok ?? false,
-        is_activated: data.left?.is_activated ?? false,
-        fault_code: data.left?.fault_code ?? 0
-      })
-      layoutStore.updateGripperStatus('right', {
-        communication_ok: data.right?.communication_ok ?? false,
-        is_activated: data.right?.is_activated ?? false,
-        fault_code: data.right?.fault_code ?? 0
-      })
-    }
-  } catch {
-    // 夹爪状态保持不变
-  }
-}
-
-// 获取头部状态 - 使用统一 robot overview API
-async function fetchHeadStatus() {
-  try {
-    const data = await apiClient.get('/api/v1/robot/overview')
-    const headData = data?.data?.head || data?.head
-    if (headData) {
-      layoutStore.updateHeadStatus({
-        connected: true,
-        enabled: headData.enabled ?? false,
-        error: headData.error ?? false
-      })
-    } else {
-      layoutStore.updateHeadStatus({ connected: false })
-    }
-  } catch {
-    layoutStore.updateHeadStatus({ connected: false })
-  }
-}
-
-// 获取底盘状态
-async function fetchChassisStatus() {
-  try {
-    const data = await chassisApi.getStatus()
-    layoutStore.updateChassisStatus({
-      connected: true,
-      system_status: data.system_status || 0,
-      system_status_text: data.system_status_text || '未知',
-      emergency: data.flags?.is_emergency_stopped || false,
-      error: (data.system_status === 0x03 || data.system_status >= 0x15) || false,
-      batteryPercentage: data.battery?.percentage ?? 0,
-      batteryVoltage: data.battery?.voltage ?? 0,
-      isCharging: data.flags?.is_charging ?? false
-    })
-  } catch (error) {
-    layoutStore.updateChassisStatus({ 
-      connected: false,
-      system_status: 0,
-      system_status_text: '未知',
-      emergency: false,
-      error: false,
-      batteryPercentage: 0,
-      batteryVoltage: 0,
-      isCharging: false
-    })
-  }
-}
-
-// 获取腰部状态 - 使用统一 robot overview API
-async function fetchWaistStatus() {
-  try {
-    const data = await apiClient.get('/api/v1/robot/overview')
-    const waistData = data?.data?.waist || data?.waist
-    if (waistData) {
-      layoutStore.updateWaistStatus({
-        connected: true,
-        enabled: waistData.enabled ?? false,
-        error: waistData.error ?? waistData.alarm ?? false
-      })
-    } else {
-      layoutStore.updateWaistStatus({ connected: false })
-    }
-  } catch {
-    layoutStore.updateWaistStatus({ connected: false })
-  }
-}
-
-// 获取 VR 状态
-async function fetchVRStatus() {
-  try {
-    const data = await apiClient.get('/api/v1/vr/status')
-    if (data) {
-      layoutStore.updateVRStatus({
-        connected: data.connected ?? false,
-        headsetActive: data.left_hand_active || data.right_hand_active,
-        leftController: data.left_hand_active ?? false,
-        rightController: data.right_hand_active ?? false
-      })
-    }
-  } catch {
-    layoutStore.updateVRStatus({ connected: false })
-  }
-}
-
-// 获取 ROS 连接状态
-async function fetchRosStatus() {
-  try {
-    const data = await apiClient.get('/api/v1/health')
-    layoutStore.updateConnectionStatus({
-      ros: data?.ros2_connected ?? false
-    })
-  } catch {
-    layoutStore.updateConnectionStatus({ ros: false })
-  }
-}
-
-// 获取关机状态（独立于其他设备）
-let lastShutdownInProgress = false
-async function fetchShutdownStatus() {
-  try {
-    const data = await apiClient.get('/api/v1/shutdown/state')
-    if (data) {
-      const shutdownInProgress = data.shutdown_in_progress ?? false
-      // 检测新的关机请求（硬件按钮触发 trigger_source=1）
-      if (shutdownInProgress && !lastShutdownInProgress && data.trigger_source === 1) {
-        console.warn('⚠️ 检测到硬件关机按钮触发!')
-        window.dispatchEvent(new CustomEvent('hardware-shutdown-requested'))
-      }
-      lastShutdownInProgress = shutdownInProgress
-    }
-  } catch {
-    // 忽略错误
-  }
-}
-
-// 统一获取所有设备状态
-async function fetchAllStatus() {
-  await Promise.all([
-    fetchRosStatus(),
-    fetchLiftStatus(),
-    fetchArmStatus(),
-    fetchCameraStatus(),
-    fetchGripperStatus(),
-    fetchHeadStatus(),
-    fetchChassisStatus(),
-    fetchWaistStatus(),
-    fetchVRStatus(),
-    fetchShutdownStatus()
-  ])
-}
-
-let statusInterval: number | null = null
-
 // 硬件关机事件处理
 function handleHardwareShutdown() {
   ElMessageBox.alert(
@@ -664,22 +461,137 @@ function handleHardwareShutdown() {
   ElMessage.warning('硬件关机按钮已触发，系统即将关机...')
 }
 
+async function fetchShutdownStatus() {
+  try {
+    const data = await apiClient.get('/api/v1/robot/shutdown/state')
+    if (!data) return
+    const shutdownInProgress = data.shutdown_in_progress ?? false
+    if (shutdownInProgress && !lastShutdownInProgress && data.trigger_source === 1) {
+      console.warn('⚠️ 检测到硬件关机按钮触发!')
+      window.dispatchEvent(new CustomEvent('hardware-shutdown-requested'))
+    }
+    lastShutdownInProgress = shutdownInProgress
+  } catch {
+    // 忽略错误
+  }
+}
+
+function startShutdownPolling() {
+  if (shutdownInterval) return
+  fetchShutdownStatus()
+  shutdownInterval = window.setInterval(fetchShutdownStatus, 2000)
+}
+
+function stopShutdownPolling() {
+  if (!shutdownInterval) return
+  clearInterval(shutdownInterval)
+  shutdownInterval = null
+}
+
 onMounted(() => {
   layoutStore.initLayout()
-  
-  // 立即获取所有状态
-  fetchAllStatus()
-  // 每2秒更新所有状态
-  statusInterval = setInterval(fetchAllStatus, 2000)
-  
+
+  connect()
+
+  watch(isAuthenticated, (authed) => {
+    if (!authed) {
+      stopShutdownPolling()
+      return
+    }
+    subscribe(['arm_state', 'chassis_state', 'gripper_state', 'actuator_state', 'vr_system_state'])
+    startShutdownPolling()
+  }, { immediate: true })
+
+  watch(isConnected, (connected) => {
+    layoutStore.updateConnectionStatus({ ros: connected })
+  }, { immediate: true })
+
+  watch(armState, (state) => {
+    const connected = state.connected ?? false
+    layoutStore.updateArmStatus({
+      connected,
+      powered: state.powered_on ?? false,
+      enabled: state.enabled ?? false,
+      servoMode: state.servo_mode ?? false,
+      error: state.in_error ?? false,
+      errorCode: 0
+    })
+  }, { deep: true, immediate: true })
+
+  watch(chassisState, (state) => {
+    const connected = state.emergency_stop !== undefined ||
+      state.battery_level !== undefined ||
+      state.odom !== undefined ||
+      state.velocity !== undefined
+    layoutStore.updateChassisStatus({
+      connected,
+      system_status: connected ? (state.emergency_stop ? 0x03 : 0x02) : 0,
+      system_status_text: connected ? (state.emergency_stop ? '急停' : '在线') : '未知',
+      emergency: state.emergency_stop ?? false,
+      error: false,
+      batteryPercentage: Math.round(state.battery_level ?? 0),
+      batteryVoltage: 0,
+      isCharging: state.charging ?? false
+    })
+  }, { deep: true, immediate: true })
+
+  watch([leftGripperState, rightGripperState], () => {
+    const leftOk = leftGripperState.position !== undefined || leftGripperState.gripperId === 'left' || leftGripperState.gripper_id === 'left'
+    const rightOk = rightGripperState.position !== undefined || rightGripperState.gripperId === 'right' || rightGripperState.gripper_id === 'right'
+    layoutStore.updateGripperStatus('left', {
+      communication_ok: leftOk,
+      is_activated: leftOk,
+      fault_code: 0
+    })
+    layoutStore.updateGripperStatus('right', {
+      communication_ok: rightOk,
+      is_activated: rightOk,
+      fault_code: 0
+    })
+  }, { deep: true, immediate: true })
+
+  watch([liftState, waistState], () => {
+    const liftConnected = liftState.actuator_id === 'lift' || liftState.actuatorId === 'lift' || liftState.position !== undefined
+    const waistConnected = waistState.actuator_id === 'waist' || waistState.actuatorId === 'waist' || waistState.position !== undefined
+    layoutStore.updateLiftStatus({
+      connected: liftConnected,
+      enabled: liftConnected,
+      alarm: false
+    })
+    layoutStore.updateWaistStatus({
+      connected: waistConnected,
+      enabled: waistConnected,
+      error: false
+    })
+  }, { deep: true, immediate: true })
+
+  watch([headPanState, headTiltState], () => {
+    const headConnected = headPanState.actuator_id === 'head_pan' ||
+      headPanState.actuatorId === 'head_pan' ||
+      headTiltState.actuator_id === 'head_tilt' ||
+      headTiltState.actuatorId === 'head_tilt'
+    layoutStore.updateHeadStatus({
+      connected: headConnected,
+      enabled: headConnected,
+      error: false
+    })
+  }, { deep: true, immediate: true })
+
+  watch(vrSystemState, (state) => {
+    layoutStore.updateVRStatus({
+      connected: state.connected ?? false,
+      headsetActive: !!state.head_pose,
+      leftController: state.left_controller_active ?? false,
+      rightController: state.right_controller_active ?? false
+    })
+  }, { deep: true, immediate: true })
+
   // 监听硬件关机事件
   window.addEventListener('hardware-shutdown-requested', handleHardwareShutdown)
 })
 
 onUnmounted(() => {
-  if (statusInterval) {
-    clearInterval(statusInterval)
-  }
+  stopShutdownPolling()
   // 移除硬件关机事件监听
   window.removeEventListener('hardware-shutdown-requested', handleHardwareShutdown)
 })

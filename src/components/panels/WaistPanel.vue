@@ -10,7 +10,7 @@
     </div>
 
     <div class="panel-layout">
-      <!-- 状�?+ 控制�?-->
+      <!-- 状态 + 控制 -->
       <div class="top-section">
         <!-- 状态栏 -->
         <div class="status-compact">
@@ -57,7 +57,7 @@
           </div>
         </div>
 
-        <!-- 控制�?-->
+        <!-- 状态 + 控制 -->
         <div class="control-compact">
           <!-- 使能 + 速度 -->
           <div class="control-row">
@@ -244,7 +244,7 @@
       </div>
     </div>
     
-    <!-- 添加点位对话�?-->
+    <!-- 添加点位对话框 -->
     <el-dialog
       v-model="addPointDialogVisible"
       title="添加腰部点位"
@@ -274,7 +274,7 @@
       </template>
     </el-dialog>
 
-    <!-- 编辑点位对话�?-->
+    <!-- 编辑点位对话框 -->
     <el-dialog
       v-model="editPointDialogVisible"
       title="编辑腰部点位"
@@ -311,17 +311,18 @@ import SvgIcon from '@/components/SvgIcon.vue'
 import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import apiClient from '@/api/client'
-import { useDataPlane } from '@/composables/useDataPlane'
+import { useDataPlaneSingleton } from '@/composables/useDataPlane'
 import { presetsApi } from '@/api/presets'
 import type { Preset } from '@/api/presets'
 
 // Data Plane
-const { waistState, sendJointCommand, isConnected, connect, subscribe } = useDataPlane()
+const dataPlane = useDataPlaneSingleton()
+const { waistState, sendJointCommand, isConnected, isAuthenticated, connect, subscribe } = dataPlane
 
-// 最大角�?
+// 最大角度
 const maxAngle = 45
 
-// 状�?- 对应 WaistState
+// 状态 - 对应 WaistState
 const state = reactive({
   connected: false,
   enabled: false,
@@ -332,11 +333,11 @@ const state = reactive({
   alarm: false
 })
 
-// 输入�?
+// 输入参数
 const inputSpeed = ref(1000)
 const inputAngle = ref(0)
 
-// 加载状�?
+// 加载状态
 const loading = reactive({
   enable: false,
   speed: false,
@@ -354,7 +355,7 @@ const quickAngles = [
   { label: '45°', value: 45 }
 ]
 
-// 手动移动状�?
+// 手动移动状态
 let isManualMoving = false
 
 // ==================== 点位管理 ====================
@@ -405,7 +406,7 @@ async function fetchWaistPoints() {
   }
 }
 
-// 打开添加点位对话�?
+// 打开添加点位对话框
 function handleAddPoint() {
   newPointForm.name = ''
   newPointForm.description = ''
@@ -438,7 +439,7 @@ async function confirmAddPoint() {
   }
 }
 
-// 打开编辑点位对话�?
+// 打开编辑点位对话框
 function openEditDialog(point: WaistPoint) {
   if (point.is_builtin) {
     ElMessage.warning('内置点位无法编辑')
@@ -647,7 +648,7 @@ async function setSpeed() {
   }
 }
 
-// 去目标角�?
+// 去目标角度
 async function goToAngle() {
   loading.angle = true
   try {
@@ -704,14 +705,14 @@ function setQuickAngle(value: number) {
   goToAngle()
 }
 
-// 开始手动移�?
+// 开始手动移动
 async function startManualMove(direction: 'forward' | 'back') {
   if (!state.enabled || !state.connected || isManualMoving) return
   
   isManualMoving = true
   try {
     const command = direction === 'forward' ? CMD.LEAN_FORWARD : CMD.LEAN_BACK
-    await sendCommand(command, 0, true)  // hold=true 开始运�?
+    await sendCommand(command, 0, true)  // hold=true 开始运行
   } catch (error) {
     console.error('Manual move start error:', error)
     isManualMoving = false
@@ -754,39 +755,46 @@ async function fetchState() {
 
 // 监听 Data Plane 状态
 watch(waistState, (newState) => {
-  if (newState && isConnected.value) {
-    state.connected = true
-    if (newState.position !== undefined) {
-      // 假设 position 是弧度，转为角度
-      // 或者如果后端直接推角度，则直接使用。通常 JointState 是弧度。
-      // 但这里是 ActuatorState，可能 unit 不确定。假设是弧度。
-      // 旧代码：state.currentAngle
-      // 假设 0-45 度对应 0-0.785 rad
-      const RAD2DEG = 57.29578
-      state.currentAngle = Number((newState.position * RAD2DEG).toFixed(1))
-    }
-    if (newState.velocity !== undefined) state.currentSpeed = Math.round(Number(newState.velocity))
-    if (newState.inPosition !== undefined) state.positionReached = newState.inPosition
-    // enabled, alarm 等字段暂未映射
+  if (!newState || !isConnected.value) {
+    state.connected = false
+    return
+  }
+
+  state.connected = true
+  if (newState.position !== undefined) {
+    // 假设 position 是弧度，转为角度
+    // 或者如果后端直接推角度，则直接使用。通常 JointState 是弧度。
+    // 但这里是 ActuatorState，可能 unit 不确定。假设是弧度。
+    // 旧代码：state.currentAngle
+    // 假设 0-45 度对应 0-0.785 rad
+    const RAD2DEG = 57.29578
+    state.currentAngle = Number((newState.position * RAD2DEG).toFixed(1))
+  }
+  if (newState.velocity !== undefined) state.currentSpeed = Math.round(Number(newState.velocity))
+  const inPosition = newState.in_position ?? newState.inPosition
+  if (inPosition !== undefined) state.positionReached = inPosition
+  // enabled, alarm 等字段暂未映射
+})
+
+watch(isConnected, (connected) => {
+  if (!connected) {
+    state.connected = false
   }
 })
 
-// 定时刷新状�?
-let stateInterval: number | null = null
+// 生命周期
 
 onMounted(() => {
-  if (!isConnected.value) connect()
-  setTimeout(() => {
-    if (isConnected.value) subscribe(['actuator_state', 'robot_state'])
-  }, 1000)
+  connect()
+  watch(isAuthenticated, (authed) => {
+    if (!authed) return
+    subscribe(['actuator_state'])
+  }, { immediate: true })
 
   fetchWaistPoints()
 })
 
 onUnmounted(() => {
-  if (stateInterval) {
-    clearInterval(stateInterval)
-  }
   if (isManualMoving) {
     stopManualMove()
   }
@@ -940,7 +948,7 @@ onUnmounted(() => {
   font-weight: 600;
 }
 
-/* 控制�?*/
+/* 控制区 */
 .control-compact {
   display: flex;
   flex-direction: column;
@@ -1194,5 +1202,3 @@ onUnmounted(() => {
   opacity: 1;
 }
 </style>
-
-

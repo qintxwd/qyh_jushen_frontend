@@ -38,11 +38,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import apiClient from '@/api/client'
+import { ref, onMounted, watch } from 'vue'
+import { useDataPlaneSingleton } from '@/composables/useDataPlane'
 
 const isCollapsed = ref(false)
 const connected = ref(false)
+
+const dataPlane = useDataPlaneSingleton()
+const { isAuthenticated, connect, subscribe, jointState } = dataPlane
 
 // 关节角度 (弧度值，从后端获取)
 const leftJoints = ref([0, 0, 0, 0, 0, 0, 0])
@@ -57,45 +60,70 @@ function radToDeg(rad: number): number {
   return rad * 180 / Math.PI
 }
 
-// 关节状态轮询
-let jointStateInterval: number | null = null
-
-async function fetchJointStates() {
-  try {
-    const data = await apiClient.get('/api/v1/robot-model/joint_states')
-    
-    // 判断是否是真实的 ROS2 数据
-    const isRealData = data.source === 'ros2'
-    
-    if (isRealData && data.left && data.right) {
-      // 真实数据：转换弧度为角度
-      leftJoints.value = data.left.map((rad: number) => radToDeg(rad))
-      rightJoints.value = data.right.map((rad: number) => radToDeg(rad))
-      connected.value = true
-    } else {
-      // 未连接或 Mock 模式：显示全 0
-      leftJoints.value = [0, 0, 0, 0, 0, 0, 0]
-      rightJoints.value = [0, 0, 0, 0, 0, 0, 0]
-      connected.value = false
-    }
-  } catch (error) {
-    // 请求失败：显示全 0
+function updateFromJointState(state: any) {
+  if (!state?.positions || state.positions.length === 0) {
+    connected.value = false
     leftJoints.value = [0, 0, 0, 0, 0, 0, 0]
     rightJoints.value = [0, 0, 0, 0, 0, 0, 0]
-    connected.value = false
+    return
   }
+
+  const names = Array.isArray(state.names) ? state.names.map((name: any) => String(name ?? '')) : []
+  const positions = state.positions.map((pos: any) => Number(pos ?? 0))
+
+  let left: number[] = []
+  let right: number[] = []
+  const unknown: number[] = []
+
+  if (names.length) {
+    for (let i = 0; i < names.length; i++) {
+      const lower = names[i].toLowerCase()
+      const pos = positions[i] ?? 0
+
+      if (lower.includes('left') || lower.startsWith('l_') || lower.startsWith('l-')) {
+        if (left.length < 7) left.push(pos)
+        continue
+      }
+      if (lower.includes('right') || lower.startsWith('r_') || lower.startsWith('r-')) {
+        if (right.length < 7) right.push(pos)
+        continue
+      }
+      unknown.push(pos)
+    }
+  } else {
+    unknown.push(...positions)
+  }
+
+  if (left.length === 0 && right.length === 0 && positions.length >= 14) {
+    left = positions.slice(0, 7)
+    right = positions.slice(7, 14)
+  } else {
+    for (const pos of unknown) {
+      if (left.length < 7) {
+        left.push(pos)
+      } else if (right.length < 7) {
+        right.push(pos)
+      }
+    }
+  }
+
+  while (left.length < 7) left.push(0)
+  while (right.length < 7) right.push(0)
+
+  leftJoints.value = left.map(radToDeg)
+  rightJoints.value = right.map(radToDeg)
+  connected.value = true
 }
 
-onMounted(() => {
-  fetchJointStates()
-  jointStateInterval = window.setInterval(fetchJointStates, 100)
-})
+watch(isAuthenticated, (authed) => {
+  if (!authed) return
+  subscribe(['joint_state'])
+}, { immediate: true })
 
-onUnmounted(() => {
-  if (jointStateInterval) {
-    clearInterval(jointStateInterval)
-    jointStateInterval = null
-  }
+watch(jointState, updateFromJointState, { deep: true, immediate: true })
+
+onMounted(() => {
+  connect()
 })
 </script>
 

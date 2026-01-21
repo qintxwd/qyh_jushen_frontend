@@ -1,6 +1,6 @@
 <template>
   <div class="gripper-panel">
-    <!-- 夹爪选择 + 状态一行显示 -->
+    <!-- 夹爪选择 + 状态显示 -->
     <div class="header-row">
       <div class="gripper-tabs">
         <div 
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <!-- 实时反馈：位置 + 力 -->
+    <!-- 实时反馈 + 力控 -->
     <div class="feedback-section">
       <div class="feedback-item">
         <div class="feedback-header">
@@ -47,7 +47,7 @@
       </div>
       <div class="feedback-item">
         <div class="feedback-header">
-          <span class="feedback-label">力反馈</span>
+          <span class="feedback-label">当前力度</span>
           <span class="feedback-value force">{{ currentGripperState.current_force }}<small>/255</small></span>
         </div>
         <div class="progress-bar">
@@ -64,7 +64,7 @@
         :loading="loading || activating"
       >
         <SvgIcon name="gripper-open" :size="14" />
-        {{ currentGripperState.is_activated ? '全开' : '激活' }}
+        {{ currentGripperState.is_activated ? '松开' : '激活' }}
       </el-button>
       <el-button 
         type="danger" 
@@ -73,7 +73,7 @@
         :disabled="!currentGripperState.is_activated"
       >
         <SvgIcon name="gripper-close" :size="14" />
-        全闭
+        闭合
       </el-button>
       <el-button 
         type="warning"
@@ -90,7 +90,7 @@
         :disabled="!currentGripperState.is_activated"
       >
         <SvgIcon name="orange" :size="14" />
-        轻抓
+        柔抓
       </el-button>
     </div>
 
@@ -112,7 +112,7 @@
           <span class="control-value">{{ speed }}</span>
         </div>
         <div class="control-item">
-          <span class="control-label">力限制</span>
+          <span class="control-label">力度</span>
           <div class="slider-wrapper">
             <el-slider v-model="force" :min="0" :max="255" :show-tooltip="true" />
           </div>
@@ -127,7 +127,7 @@
         :disabled="!currentGripperState.is_activated"
       >
         <SvgIcon name="execute-move" :size="14" />
-        执行移动
+        执行动作
       </el-button>
     </div>
   </div>
@@ -135,10 +135,9 @@
 
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue'
-import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import apiClient from '@/api/client'
-import { useDataPlane } from '@/composables/useDataPlane'
+import { useDataPlaneSingleton } from '@/composables/useDataPlane'
 
 interface GripperState {
   is_activated: boolean
@@ -159,7 +158,20 @@ interface GripperState {
 const selectedGripper = ref<'left' | 'right'>('left')
 const loading = ref(false)
 const activating = ref(false)
-const { robotState, isConnected } = useDataPlane()
+const targetPosition = ref(0)
+const speed = ref(255)
+const force = ref(150)
+
+const dataPlane = useDataPlaneSingleton()
+const {
+  isConnected,
+  isAuthenticated,
+  connect,
+  subscribe,
+  leftGripperState,
+  rightGripperState,
+  sendGripperCommand,
+} = dataPlane
 
 const leftState = reactive<GripperState>({
   is_activated: false,
@@ -174,7 +186,7 @@ const leftState = reactive<GripperState>({
   current_force: 0,
   fault_code: 0,
   fault_message: '',
-  communication_ok: false
+  communication_ok: false,
 })
 
 const rightState = reactive<GripperState>({
@@ -190,153 +202,131 @@ const rightState = reactive<GripperState>({
   current_force: 0,
   fault_code: 0,
   fault_message: '',
-  communication_ok: false
+  communication_ok: false,
 })
 
 const currentGripperState = computed(() => {
   return selectedGripper.value === 'left' ? leftState : rightState
 })
 
-const targetPosition = ref(0)
-const speed = ref(255)
-const force = ref(150)
+const positionScaleMax = ref(1)
 
-// Data Plane 监听
-watch(robotState, (state) => {
-  if (!state) return
+function normalizePosition(raw: number) {
+  if (raw > 1.5) {
+    positionScaleMax.value = 255
+  }
+  return positionScaleMax.value === 255 ? raw / 255 : raw
+}
 
-  // 更新左夹爪
-  if (state.left_gripper) {
-    // 假设 WebSocket 返回 normalized position (0.0-1.0) -> 映射回 0-255
-    leftState.current_position = Math.round((state.left_gripper.position || 0) * 255)
-    leftState.is_moving = state.left_gripper.in_motion || false
-    leftState.object_status = state.left_gripper.object_detected ? 1 : 0
-    leftState.object_status_text = state.left_gripper.object_detected ? '抓住' : '空闲'
-    // force? 单位不明，暂不更新或假设 N
+function toCommandPositionFromNormalized(normalized: number) {
+  if (positionScaleMax.value === 255) {
+    return Math.round(Math.max(0, Math.min(1, normalized)) * 255)
+  }
+  return Math.max(0, Math.min(1, normalized))
+}
+
+function toCommandPositionFromUi(uiValue: number) {
+  const clamped = Math.max(0, Math.min(255, uiValue))
+  return positionScaleMax.value === 255 ? clamped : clamped / 255
+}
+
+const actionLabels: Record<string, string> = {
+  open: '松开',
+  close: '闭合',
+  half: '半开',
+  soft: '柔抓',
+}
+
+function applyWsState(source: any, target: GripperState, side: 'left' | 'right') {
+  if (source && (source.position !== undefined || source.gripperId === side || source.gripper_id === side)) {
+    const rawPosition = Number(source.position ?? source.current_position ?? 0)
+    const normalizedPosition = normalizePosition(rawPosition)
+    target.current_position = Math.round(normalizedPosition * 255)
+    target.current_force = Math.round(source.force ?? source.current_force ?? 0)
+    target.is_moving = !!source.in_motion
+    target.object_status = source.object_detected ? 1 : 0
+    target.object_status_text = source.object_detected ? '检测到物体' : '未检测到'
+    target.communication_ok = true
+    target.is_activated = true
+    return
   }
 
-  // 更新右夹爪
-  if (state.right_gripper) {
-    rightState.current_position = Math.round((state.right_gripper.position || 0) * 255)
-    rightState.is_moving = state.right_gripper.in_motion || false
-    rightState.object_status = state.right_gripper.object_detected ? 1 : 0
-    rightState.object_status_text = state.right_gripper.object_detected ? '抓住' : '空闲'
-  }
-}, { deep: true })
-
-let pollTimer: number | null = null
-
-// 获取夹爪状态
-async function fetchGripperState() {
-  try {
-    const data = await apiClient.get('/api/v1/gripper/state')
-    if (data) {
-      if (isConnected.value) {
-        // Data Plane 连接时，仅合并 HTTP 返回的状态位（激活、故障、通信），保留 WS 的实时运动数据
-        if (data.left) {
-          leftState.is_activated = data.left.is_activated
-          leftState.fault_code = data.left.fault_code
-          leftState.fault_message = data.left.fault_message
-          leftState.communication_ok = data.left.communication_ok
-        }
-        if (data.right) {
-          rightState.is_activated = data.right.is_activated
-          rightState.fault_code = data.right.fault_code
-          rightState.fault_message = data.right.fault_message
-          rightState.communication_ok = data.right.communication_ok
-        }
-      } else {
-        Object.assign(leftState, data.left)
-        Object.assign(rightState, data.right)
-      }
-    }
-  } catch (error) {
-    // 静默失败，避免刷屏
+  if (!isConnected.value) {
+    target.communication_ok = false
+    target.is_activated = false
+    target.object_status_text = '已离线'
   }
 }
 
-// 激活夹爪
+watch([leftGripperState, rightGripperState], () => {
+  applyWsState(leftGripperState as any, leftState, 'left')
+  applyWsState(rightGripperState as any, rightState, 'right')
+}, { deep: true })
+
+function sendCommand(position: number, appliedForce: number, successMessage: string) {
+  if (!isAuthenticated.value) {
+    ElMessage.warning('未登录/未认证')
+    return false
+  }
+
+  const sent = sendGripperCommand(selectedGripper.value, position, appliedForce)
+  if (!sent) {
+    ElMessage.error('发送指令失败')
+    return false
+  }
+
+  ElMessage.success(successMessage)
+  return true
+}
+
 async function activateGripper() {
   activating.value = true
   try {
-    const data = await apiClient.post('/api/v1/gripper/activate', {
-      side: selectedGripper.value
-    })
-
-    if (data.success) {
-      ElMessage.success(data.message)
-      await fetchGripperState()
-    } else {
-      ElMessage.error(data.message)
-    }
-  } catch (error: any) {
-    ElMessage.error(error.response?.data?.detail || '激活失败')
+    const sideLabel = selectedGripper.value === 'left' ? '左' : '右'
+    sendCommand(toCommandPositionFromNormalized(1.0), force.value, `${sideLabel}夹爪激活指令已发送`)
   } finally {
     activating.value = false
   }
 }
 
-// 快捷操作
 async function quickAction(action: string) {
   loading.value = true
   try {
-    const data = await apiClient.post(
-      `/api/v1/gripper/${selectedGripper.value}/${action}`,
-      {}
-    )
-
-    if (data.success) {
-      const actionNames: Record<string, string> = {
-        'open': '全开',
-        'close': '全闭',
-        'half': '半开',
-        'soft': '轻抓'
-      }
-      ElMessage.success(`${selectedGripper.value === 'left' ? '左' : '右'}夹爪${actionNames[action]}完成`)
-    } else {
-      ElMessage.error(data.message)
+    const actionMap: Record<string, number> = {
+      open: 1.0,
+      close: 0.0,
+      half: 0.5,
+      soft: 0.7,
     }
-  } catch (error: any) {
-    ElMessage.error(error.response?.data?.detail || '操作失败')
+    const position = toCommandPositionFromNormalized(actionMap[action] ?? 0.0)
+    const appliedForce = action === 'soft' ? Math.max(10, Math.round(force.value * 0.3)) : force.value
+    const sideLabel = selectedGripper.value === 'left' ? '左' : '右'
+    const label = actionLabels[action] ?? '未知'
+
+    sendCommand(position, appliedForce, `${sideLabel}夹爪${label}指令已发送`)
   } finally {
     loading.value = false
   }
 }
 
-// 执行移动
 async function executeMove() {
   loading.value = true
   try {
-    const data = await apiClient.post('/api/v1/gripper/move', {
-      side: selectedGripper.value,
-      position: targetPosition.value,
-      speed: speed.value,
-      force: force.value
-    })
-
-    if (data.success) {
-      ElMessage.success('夹爪移动命令已发送')
-    } else {
-      ElMessage.error(data.message)
-    }
-  } catch (error: any) {
-    ElMessage.error(error.response?.data?.detail || '移动失败')
+    const position = toCommandPositionFromUi(targetPosition.value)
+    const sideLabel = selectedGripper.value === 'left' ? '左' : '右'
+    sendCommand(position, force.value, `${sideLabel}夹爪运动指令已发送`)
   } finally {
     loading.value = false
   }
 }
 
 onMounted(() => {
-  // 立即获取一次状态
-  fetchGripperState()
-  // 每 500ms 轮询状态
-  pollTimer = window.setInterval(fetchGripperState, 500)
-})
+  connect()
 
-onUnmounted(() => {
-  if (pollTimer) {
-    clearInterval(pollTimer)
-  }
+  watch(isAuthenticated, (authed) => {
+    if (!authed) return
+    subscribe(['gripper_state'])
+  }, { immediate: true })
 })
 </script>
 
@@ -419,7 +409,7 @@ onUnmounted(() => {
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-/* 实时反馈区 - 两列卡片 */
+/* 瀹炴椂鍙嶉鍖?- 涓ゅ垪鍗＄墖 */
 .feedback-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -487,7 +477,7 @@ onUnmounted(() => {
   background: linear-gradient(90deg, var(--color-primary), #fbbf24);
 }
 
-/* 快捷操作 */
+/* 蹇嵎鎿嶄綔 */
 .quick-section {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -501,7 +491,7 @@ onUnmounted(() => {
   font-weight: 500;
 }
 
-/* 精确控制区 - 滑动条单独一行 */
+/* 绮剧‘鎺у埗鍖?- 婊戝姩鏉″崟鐙竴琛?*/
 .control-section {
   background: rgba(30, 41, 59, 0.3);
   border: 1px solid rgba(148, 163, 184, 0.12);
@@ -577,7 +567,7 @@ onUnmounted(() => {
   margin-top: 14px;
 }
 
-/* ===== 浅色主题适配 ===== */
+/* ===== 娴呰壊涓婚閫傞厤 ===== */
 :global(html.light) .gripper-panel {
   background: linear-gradient(135deg, #fafbfc 0%, #f1f5f9 100%);
 }
@@ -678,7 +668,7 @@ onUnmounted(() => {
   box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
 }
 
-/* 亮色主题按钮优化 */
+/* 浜壊涓婚鎸夐挳浼樺寲 */
 :global(html.light) .quick-section .el-button--success {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border-color: transparent;
@@ -731,3 +721,17 @@ onUnmounted(() => {
   box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
