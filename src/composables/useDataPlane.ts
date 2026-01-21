@@ -245,12 +245,14 @@ export function useDataPlane() {
     
     try {
       ws = new WebSocket(url)
+      console.log("[DataPlane] 🔌 WebSocket对象创建完成, readyState:", ws.readyState)
       ws.binaryType = 'arraybuffer'  // Protobuf 使用二进制
       
       ws.onopen = handleOpen
       ws.onmessage = handleMessage
       ws.onerror = handleError
       ws.onclose = handleClose
+      console.log("[DataPlane] 📌 事件处理器绑定完成")
     } catch (error: any) {
       console.error('[DataPlane] 连接失败:', error)
       connectionState.value = 'error'
@@ -281,6 +283,7 @@ export function useDataPlane() {
    * 发送消息 (使用 Protobuf 序列化)
    */
   function send(message: qyh.dataplane.IWebSocketMessage): boolean {
+    console.log("[DataPlane] 📤 send调用, ws存在:", !!ws, "readyState:", ws?.readyState, "OPEN=", WebSocket.OPEN)
     if (!ws || ws.readyState !== WebSocket.OPEN) {
       console.warn('[DataPlane] WebSocket 未连接，无法发送消息')
       return false
@@ -297,7 +300,10 @@ export function useDataPlane() {
       // 使用 Protobuf 编码
       const protoMsg = WebSocketMessage.create(message)
       const buffer = WebSocketMessage.encode(protoMsg).finish()
+      console.log("[DataPlane] 🔍 发送数据, 大小:", buffer.length, "字节")
+      console.log("[DataPlane] 🔍 前20字节:", Array.from(buffer.slice(0, 20)))
       ws.send(buffer)
+      console.log("[DataPlane] ✅ ws.send() 完成")
       return true
     } catch (error) {
       console.error('[DataPlane] Protobuf 编码失败:', error)
@@ -309,6 +315,7 @@ export function useDataPlane() {
    * 认证
    */
   function authenticate() {
+    console.log("[DataPlane] 🔐 authenticate调用, ws存在:", !!ws, "readyState:", ws?.readyState)
     const token = localStorage.getItem('token')
     if (!token) {
       console.error('[DataPlane] 无 Token，无法认证')
@@ -588,6 +595,7 @@ export function useDataPlane() {
   // ==================== 内部处理函数 ====================
   
   function handleOpen() {
+    console.log("[DataPlane] ✅ handleOpen触发! ws存在:", !!ws, "readyState:", ws?.readyState)
     console.log('[DataPlane] WebSocket 已连接')
     reconnectAttempts.value = 0
     authenticate()
