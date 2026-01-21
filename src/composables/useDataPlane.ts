@@ -151,6 +151,7 @@ export type ConnectionState = 'disconnected' | 'connecting' | 'authenticating' |
 
 /** 可订阅的话题 */
 export const SUBSCRIBABLE_TOPICS = [
+  'basic_state',      // 基础状态 (1Hz)
   'robot_state',      // 综合状态 (30Hz)
   'joint_state',      // 关节状态 (100Hz)
   'arm_state',        // 机械臂状态
@@ -604,7 +605,6 @@ export function useDataPlane() {
   function handleMessage(event: MessageEvent) {
     let message: qyh.dataplane.WebSocketMessage
     console.log("[DataPlane] 📩 handleMessage 收到消息, 类型:", typeof event.data, event.data instanceof ArrayBuffer ? "ArrayBuffer" : (event.data instanceof Blob ? "Blob" : "其他"), "大小:", event.data?.byteLength || event.data?.size || event.data?.length)
-    console.log("[DataPlane] 📩 handleMessage 收到消息, 类型:", typeof event.data, event.data instanceof ArrayBuffer ? "ArrayBuffer" : (event.data instanceof Blob ? "Blob" : "其他"), "大小:", event.data?.byteLength || event.data?.size || event.data?.length)
     
     try {
       // 使用 Protobuf 解码二进制数据
@@ -623,6 +623,8 @@ export function useDataPlane() {
       console.error('[DataPlane] Protobuf 解码失败:', e)
       return
     }
+    
+    console.log("[DataPlane] 📦 解析后消息类型:", message.type, "MessageType.MSG_ARM_STATE=", MessageType.MSG_ARM_STATE)
     
     switch (message.type) {
       case MessageType.MSG_AUTH_RESPONSE:
@@ -644,6 +646,7 @@ export function useDataPlane() {
         break
         
       case MessageType.MSG_ARM_STATE:
+        console.log("[DataPlane] 🦾 收到手臂状态:", message.armState)
         if (message.armState) {
           Object.assign(armState, message.armState)
           emit('arm_state', message.armState)
@@ -651,6 +654,7 @@ export function useDataPlane() {
         break
         
       case MessageType.MSG_CHASSIS_STATE:
+        console.log("[DataPlane] 🚗 收到底盘状态:", message.chassisState)
         if (message.chassisState) {
           Object.assign(chassisState, message.chassisState)
           emit('chassis_state', message.chassisState)
@@ -701,6 +705,22 @@ export function useDataPlane() {
               break
           }
           emit('actuator_state', as)
+        }
+        break
+        
+      case MessageType.MSG_BASIC_STATE:
+        console.log("[DataPlane] 📊 收到基础状态:", message.basicState)
+        if (message.basicState) {
+          Object.assign(basicState, message.basicState)
+          emit('basic_state', message.basicState)
+        }
+        break
+        
+      case MessageType.MSG_BASIC_STATE:
+        console.log("[DataPlane] 📊 收到基础状态:", message.basicState)
+        if (message.basicState) {
+          Object.assign(basicState, message.basicState)
+          emit('basic_state', message.basicState)
         }
         break
         
@@ -850,6 +870,8 @@ export function useDataPlane() {
     chassisState,
     vrSystemState,
     taskState,
+    basicState,
+    basicState,
     liftState,
     waistState,
     headPanState,

@@ -3097,6 +3097,7 @@ export namespace qyh {
             MSG_VR_SYSTEM_STATE = 517,
             MSG_TASK_STATE = 518,
             MSG_ACTUATOR_STATE = 519,
+            MSG_BASIC_STATE = 520,
             MSG_ERROR = 768,
             MSG_MODE_CHANGED = 1024,
             MSG_CONTROL_CHANGED = 1025,
@@ -3189,6 +3190,9 @@ export namespace qyh {
 
             /** WebSocketMessage actuatorState */
             actuatorState?: (qyh.dataplane.IActuatorState|null);
+
+            /** WebSocketMessage basicState */
+            basicState?: (qyh.dataplane.IBasicState|null);
 
             /** WebSocketMessage error */
             error?: (qyh.dataplane.IError|null);
@@ -3296,6 +3300,9 @@ export namespace qyh {
             /** WebSocketMessage actuatorState. */
             public actuatorState?: (qyh.dataplane.IActuatorState|null);
 
+            /** WebSocketMessage basicState. */
+            public basicState?: (qyh.dataplane.IBasicState|null);
+
             /** WebSocketMessage error. */
             public error?: (qyh.dataplane.IError|null);
 
@@ -3309,7 +3316,7 @@ export namespace qyh {
             public emergencyStop?: (qyh.dataplane.IEmergencyStopNotification|null);
 
             /** WebSocketMessage payload. */
-            public payload?: ("authRequest"|"authResponse"|"subscribe"|"unsubscribe"|"heartbeat"|"vrControl"|"chassisVelocity"|"jointCommand"|"endEffectorCmd"|"gripperCommand"|"navigationGoal"|"navigationControl"|"liftCommand"|"waistCommand"|"headCommand"|"armMove"|"armJog"|"robotState"|"jointState"|"armState"|"chassisState"|"gripperState"|"vrSystemState"|"taskState"|"actuatorState"|"error"|"modeChanged"|"controlChanged"|"emergencyStop");
+            public payload?: ("authRequest"|"authResponse"|"subscribe"|"unsubscribe"|"heartbeat"|"vrControl"|"chassisVelocity"|"jointCommand"|"endEffectorCmd"|"gripperCommand"|"navigationGoal"|"navigationControl"|"liftCommand"|"waistCommand"|"headCommand"|"armMove"|"armJog"|"robotState"|"jointState"|"armState"|"chassisState"|"gripperState"|"vrSystemState"|"taskState"|"actuatorState"|"basicState"|"error"|"modeChanged"|"controlChanged"|"emergencyStop");
 
             /**
              * Creates a new WebSocketMessage instance using the specified properties.
@@ -5169,6 +5176,665 @@ export namespace qyh {
                 FAILED = 4,
                 CANCELLED = 5
             }
+        }
+
+        /** Properties of a ModuleStatus. */
+        interface IModuleStatus {
+
+            /** ModuleStatus connected */
+            connected?: (boolean|null);
+
+            /** ModuleStatus enabled */
+            enabled?: (boolean|null);
+
+            /** ModuleStatus error */
+            error?: (boolean|null);
+
+            /** ModuleStatus errorCode */
+            errorCode?: (number|null);
+        }
+
+        /** Represents a ModuleStatus. */
+        class ModuleStatus implements IModuleStatus {
+
+            /**
+             * Constructs a new ModuleStatus.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IModuleStatus);
+
+            /** ModuleStatus connected. */
+            public connected: boolean;
+
+            /** ModuleStatus enabled. */
+            public enabled: boolean;
+
+            /** ModuleStatus error. */
+            public error: boolean;
+
+            /** ModuleStatus errorCode. */
+            public errorCode: number;
+
+            /**
+             * Creates a new ModuleStatus instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns ModuleStatus instance
+             */
+            public static create(properties?: qyh.dataplane.IModuleStatus): qyh.dataplane.ModuleStatus;
+
+            /**
+             * Encodes the specified ModuleStatus message. Does not implicitly {@link qyh.dataplane.ModuleStatus.verify|verify} messages.
+             * @param message ModuleStatus message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IModuleStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified ModuleStatus message, length delimited. Does not implicitly {@link qyh.dataplane.ModuleStatus.verify|verify} messages.
+             * @param message ModuleStatus message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IModuleStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a ModuleStatus message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns ModuleStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.ModuleStatus;
+
+            /**
+             * Decodes a ModuleStatus message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns ModuleStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.ModuleStatus;
+
+            /**
+             * Verifies a ModuleStatus message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a ModuleStatus message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns ModuleStatus
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.ModuleStatus;
+
+            /**
+             * Creates a plain object from a ModuleStatus message. Also converts values to other types if specified.
+             * @param message ModuleStatus
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.ModuleStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this ModuleStatus to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for ModuleStatus
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a CameraStatus. */
+        interface ICameraStatus {
+
+            /** CameraStatus headConnected */
+            headConnected?: (boolean|null);
+
+            /** CameraStatus leftHandConnected */
+            leftHandConnected?: (boolean|null);
+
+            /** CameraStatus rightHandConnected */
+            rightHandConnected?: (boolean|null);
+        }
+
+        /** Represents a CameraStatus. */
+        class CameraStatus implements ICameraStatus {
+
+            /**
+             * Constructs a new CameraStatus.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.ICameraStatus);
+
+            /** CameraStatus headConnected. */
+            public headConnected: boolean;
+
+            /** CameraStatus leftHandConnected. */
+            public leftHandConnected: boolean;
+
+            /** CameraStatus rightHandConnected. */
+            public rightHandConnected: boolean;
+
+            /**
+             * Creates a new CameraStatus instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns CameraStatus instance
+             */
+            public static create(properties?: qyh.dataplane.ICameraStatus): qyh.dataplane.CameraStatus;
+
+            /**
+             * Encodes the specified CameraStatus message. Does not implicitly {@link qyh.dataplane.CameraStatus.verify|verify} messages.
+             * @param message CameraStatus message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.ICameraStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified CameraStatus message, length delimited. Does not implicitly {@link qyh.dataplane.CameraStatus.verify|verify} messages.
+             * @param message CameraStatus message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.ICameraStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a CameraStatus message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns CameraStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.CameraStatus;
+
+            /**
+             * Decodes a CameraStatus message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns CameraStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.CameraStatus;
+
+            /**
+             * Verifies a CameraStatus message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a CameraStatus message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns CameraStatus
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.CameraStatus;
+
+            /**
+             * Creates a plain object from a CameraStatus message. Also converts values to other types if specified.
+             * @param message CameraStatus
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.CameraStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this CameraStatus to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for CameraStatus
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a GripperStatusSummary. */
+        interface IGripperStatusSummary {
+
+            /** GripperStatusSummary leftConnected */
+            leftConnected?: (boolean|null);
+
+            /** GripperStatusSummary leftActivated */
+            leftActivated?: (boolean|null);
+
+            /** GripperStatusSummary leftFault */
+            leftFault?: (number|null);
+
+            /** GripperStatusSummary rightConnected */
+            rightConnected?: (boolean|null);
+
+            /** GripperStatusSummary rightActivated */
+            rightActivated?: (boolean|null);
+
+            /** GripperStatusSummary rightFault */
+            rightFault?: (number|null);
+        }
+
+        /** Represents a GripperStatusSummary. */
+        class GripperStatusSummary implements IGripperStatusSummary {
+
+            /**
+             * Constructs a new GripperStatusSummary.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IGripperStatusSummary);
+
+            /** GripperStatusSummary leftConnected. */
+            public leftConnected: boolean;
+
+            /** GripperStatusSummary leftActivated. */
+            public leftActivated: boolean;
+
+            /** GripperStatusSummary leftFault. */
+            public leftFault: number;
+
+            /** GripperStatusSummary rightConnected. */
+            public rightConnected: boolean;
+
+            /** GripperStatusSummary rightActivated. */
+            public rightActivated: boolean;
+
+            /** GripperStatusSummary rightFault. */
+            public rightFault: number;
+
+            /**
+             * Creates a new GripperStatusSummary instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GripperStatusSummary instance
+             */
+            public static create(properties?: qyh.dataplane.IGripperStatusSummary): qyh.dataplane.GripperStatusSummary;
+
+            /**
+             * Encodes the specified GripperStatusSummary message. Does not implicitly {@link qyh.dataplane.GripperStatusSummary.verify|verify} messages.
+             * @param message GripperStatusSummary message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IGripperStatusSummary, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified GripperStatusSummary message, length delimited. Does not implicitly {@link qyh.dataplane.GripperStatusSummary.verify|verify} messages.
+             * @param message GripperStatusSummary message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IGripperStatusSummary, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GripperStatusSummary message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GripperStatusSummary
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.GripperStatusSummary;
+
+            /**
+             * Decodes a GripperStatusSummary message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns GripperStatusSummary
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.GripperStatusSummary;
+
+            /**
+             * Verifies a GripperStatusSummary message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a GripperStatusSummary message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GripperStatusSummary
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.GripperStatusSummary;
+
+            /**
+             * Creates a plain object from a GripperStatusSummary message. Also converts values to other types if specified.
+             * @param message GripperStatusSummary
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.GripperStatusSummary, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GripperStatusSummary to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for GripperStatusSummary
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a BatteryStatus. */
+        interface IBatteryStatus {
+
+            /** BatteryStatus percentage */
+            percentage?: (number|null);
+
+            /** BatteryStatus voltage */
+            voltage?: (number|null);
+
+            /** BatteryStatus charging */
+            charging?: (boolean|null);
+        }
+
+        /** Represents a BatteryStatus. */
+        class BatteryStatus implements IBatteryStatus {
+
+            /**
+             * Constructs a new BatteryStatus.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IBatteryStatus);
+
+            /** BatteryStatus percentage. */
+            public percentage: number;
+
+            /** BatteryStatus voltage. */
+            public voltage: number;
+
+            /** BatteryStatus charging. */
+            public charging: boolean;
+
+            /**
+             * Creates a new BatteryStatus instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns BatteryStatus instance
+             */
+            public static create(properties?: qyh.dataplane.IBatteryStatus): qyh.dataplane.BatteryStatus;
+
+            /**
+             * Encodes the specified BatteryStatus message. Does not implicitly {@link qyh.dataplane.BatteryStatus.verify|verify} messages.
+             * @param message BatteryStatus message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IBatteryStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified BatteryStatus message, length delimited. Does not implicitly {@link qyh.dataplane.BatteryStatus.verify|verify} messages.
+             * @param message BatteryStatus message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IBatteryStatus, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a BatteryStatus message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns BatteryStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.BatteryStatus;
+
+            /**
+             * Decodes a BatteryStatus message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns BatteryStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.BatteryStatus;
+
+            /**
+             * Verifies a BatteryStatus message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a BatteryStatus message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns BatteryStatus
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.BatteryStatus;
+
+            /**
+             * Creates a plain object from a BatteryStatus message. Also converts values to other types if specified.
+             * @param message BatteryStatus
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.BatteryStatus, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this BatteryStatus to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for BatteryStatus
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a BasicState. */
+        interface IBasicState {
+
+            /** BasicState header */
+            header?: (qyh.dataplane.IHeader|null);
+
+            /** BasicState wsConnected */
+            wsConnected?: (boolean|null);
+
+            /** BasicState rosConnected */
+            rosConnected?: (boolean|null);
+
+            /** BasicState arm */
+            arm?: (qyh.dataplane.IModuleStatus|null);
+
+            /** BasicState chassis */
+            chassis?: (qyh.dataplane.IModuleStatus|null);
+
+            /** BasicState lift */
+            lift?: (qyh.dataplane.IModuleStatus|null);
+
+            /** BasicState waist */
+            waist?: (qyh.dataplane.IModuleStatus|null);
+
+            /** BasicState head */
+            head?: (qyh.dataplane.IModuleStatus|null);
+
+            /** BasicState camera */
+            camera?: (qyh.dataplane.ICameraStatus|null);
+
+            /** BasicState gripper */
+            gripper?: (qyh.dataplane.IGripperStatusSummary|null);
+
+            /** BasicState vrConnected */
+            vrConnected?: (boolean|null);
+
+            /** BasicState vrLeftController */
+            vrLeftController?: (boolean|null);
+
+            /** BasicState vrRightController */
+            vrRightController?: (boolean|null);
+
+            /** BasicState emergencyStop */
+            emergencyStop?: (boolean|null);
+
+            /** BasicState battery */
+            battery?: (qyh.dataplane.IBatteryStatus|null);
+
+            /** BasicState mode */
+            mode?: (qyh.dataplane.RobotMode|null);
+
+            /** BasicState controlHeld */
+            controlHeld?: (boolean|null);
+
+            /** BasicState controlHolder */
+            controlHolder?: (string|null);
+        }
+
+        /** Represents a BasicState. */
+        class BasicState implements IBasicState {
+
+            /**
+             * Constructs a new BasicState.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: qyh.dataplane.IBasicState);
+
+            /** BasicState header. */
+            public header?: (qyh.dataplane.IHeader|null);
+
+            /** BasicState wsConnected. */
+            public wsConnected: boolean;
+
+            /** BasicState rosConnected. */
+            public rosConnected: boolean;
+
+            /** BasicState arm. */
+            public arm?: (qyh.dataplane.IModuleStatus|null);
+
+            /** BasicState chassis. */
+            public chassis?: (qyh.dataplane.IModuleStatus|null);
+
+            /** BasicState lift. */
+            public lift?: (qyh.dataplane.IModuleStatus|null);
+
+            /** BasicState waist. */
+            public waist?: (qyh.dataplane.IModuleStatus|null);
+
+            /** BasicState head. */
+            public head?: (qyh.dataplane.IModuleStatus|null);
+
+            /** BasicState camera. */
+            public camera?: (qyh.dataplane.ICameraStatus|null);
+
+            /** BasicState gripper. */
+            public gripper?: (qyh.dataplane.IGripperStatusSummary|null);
+
+            /** BasicState vrConnected. */
+            public vrConnected: boolean;
+
+            /** BasicState vrLeftController. */
+            public vrLeftController: boolean;
+
+            /** BasicState vrRightController. */
+            public vrRightController: boolean;
+
+            /** BasicState emergencyStop. */
+            public emergencyStop: boolean;
+
+            /** BasicState battery. */
+            public battery?: (qyh.dataplane.IBatteryStatus|null);
+
+            /** BasicState mode. */
+            public mode: qyh.dataplane.RobotMode;
+
+            /** BasicState controlHeld. */
+            public controlHeld: boolean;
+
+            /** BasicState controlHolder. */
+            public controlHolder: string;
+
+            /**
+             * Creates a new BasicState instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns BasicState instance
+             */
+            public static create(properties?: qyh.dataplane.IBasicState): qyh.dataplane.BasicState;
+
+            /**
+             * Encodes the specified BasicState message. Does not implicitly {@link qyh.dataplane.BasicState.verify|verify} messages.
+             * @param message BasicState message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: qyh.dataplane.IBasicState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified BasicState message, length delimited. Does not implicitly {@link qyh.dataplane.BasicState.verify|verify} messages.
+             * @param message BasicState message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: qyh.dataplane.IBasicState, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a BasicState message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns BasicState
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): qyh.dataplane.BasicState;
+
+            /**
+             * Decodes a BasicState message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns BasicState
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): qyh.dataplane.BasicState;
+
+            /**
+             * Verifies a BasicState message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a BasicState message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns BasicState
+             */
+            public static fromObject(object: { [k: string]: any }): qyh.dataplane.BasicState;
+
+            /**
+             * Creates a plain object from a BasicState message. Also converts values to other types if specified.
+             * @param message BasicState
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: qyh.dataplane.BasicState, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this BasicState to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for BasicState
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
     }
 }

@@ -7712,6 +7712,7 @@ export const qyh = $root.qyh = (() => {
          * @property {number} MSG_VR_SYSTEM_STATE=517 MSG_VR_SYSTEM_STATE value
          * @property {number} MSG_TASK_STATE=518 MSG_TASK_STATE value
          * @property {number} MSG_ACTUATOR_STATE=519 MSG_ACTUATOR_STATE value
+         * @property {number} MSG_BASIC_STATE=520 MSG_BASIC_STATE value
          * @property {number} MSG_ERROR=768 MSG_ERROR value
          * @property {number} MSG_MODE_CHANGED=1024 MSG_MODE_CHANGED value
          * @property {number} MSG_CONTROL_CHANGED=1025 MSG_CONTROL_CHANGED value
@@ -7748,6 +7749,7 @@ export const qyh = $root.qyh = (() => {
             values[valuesById[517] = "MSG_VR_SYSTEM_STATE"] = 517;
             values[valuesById[518] = "MSG_TASK_STATE"] = 518;
             values[valuesById[519] = "MSG_ACTUATOR_STATE"] = 519;
+            values[valuesById[520] = "MSG_BASIC_STATE"] = 520;
             values[valuesById[768] = "MSG_ERROR"] = 768;
             values[valuesById[1024] = "MSG_MODE_CHANGED"] = 1024;
             values[valuesById[1025] = "MSG_CONTROL_CHANGED"] = 1025;
@@ -7789,6 +7791,7 @@ export const qyh = $root.qyh = (() => {
              * @property {qyh.dataplane.IVRSystemState|null} [vrSystemState] WebSocketMessage vrSystemState
              * @property {qyh.dataplane.ITaskState|null} [taskState] WebSocketMessage taskState
              * @property {qyh.dataplane.IActuatorState|null} [actuatorState] WebSocketMessage actuatorState
+             * @property {qyh.dataplane.IBasicState|null} [basicState] WebSocketMessage basicState
              * @property {qyh.dataplane.IError|null} [error] WebSocketMessage error
              * @property {qyh.dataplane.IModeChangedNotification|null} [modeChanged] WebSocketMessage modeChanged
              * @property {qyh.dataplane.IControlChangedNotification|null} [controlChanged] WebSocketMessage controlChanged
@@ -8035,6 +8038,14 @@ export const qyh = $root.qyh = (() => {
             WebSocketMessage.prototype.actuatorState = null;
 
             /**
+             * WebSocketMessage basicState.
+             * @member {qyh.dataplane.IBasicState|null|undefined} basicState
+             * @memberof qyh.dataplane.WebSocketMessage
+             * @instance
+             */
+            WebSocketMessage.prototype.basicState = null;
+
+            /**
              * WebSocketMessage error.
              * @member {qyh.dataplane.IError|null|undefined} error
              * @memberof qyh.dataplane.WebSocketMessage
@@ -8071,12 +8082,12 @@ export const qyh = $root.qyh = (() => {
 
             /**
              * WebSocketMessage payload.
-             * @member {"authRequest"|"authResponse"|"subscribe"|"unsubscribe"|"heartbeat"|"vrControl"|"chassisVelocity"|"jointCommand"|"endEffectorCmd"|"gripperCommand"|"navigationGoal"|"navigationControl"|"liftCommand"|"waistCommand"|"headCommand"|"armMove"|"armJog"|"robotState"|"jointState"|"armState"|"chassisState"|"gripperState"|"vrSystemState"|"taskState"|"actuatorState"|"error"|"modeChanged"|"controlChanged"|"emergencyStop"|undefined} payload
+             * @member {"authRequest"|"authResponse"|"subscribe"|"unsubscribe"|"heartbeat"|"vrControl"|"chassisVelocity"|"jointCommand"|"endEffectorCmd"|"gripperCommand"|"navigationGoal"|"navigationControl"|"liftCommand"|"waistCommand"|"headCommand"|"armMove"|"armJog"|"robotState"|"jointState"|"armState"|"chassisState"|"gripperState"|"vrSystemState"|"taskState"|"actuatorState"|"basicState"|"error"|"modeChanged"|"controlChanged"|"emergencyStop"|undefined} payload
              * @memberof qyh.dataplane.WebSocketMessage
              * @instance
              */
             Object.defineProperty(WebSocketMessage.prototype, "payload", {
-                get: $util.oneOfGetter($oneOfFields = ["authRequest", "authResponse", "subscribe", "unsubscribe", "heartbeat", "vrControl", "chassisVelocity", "jointCommand", "endEffectorCmd", "gripperCommand", "navigationGoal", "navigationControl", "liftCommand", "waistCommand", "headCommand", "armMove", "armJog", "robotState", "jointState", "armState", "chassisState", "gripperState", "vrSystemState", "taskState", "actuatorState", "error", "modeChanged", "controlChanged", "emergencyStop"]),
+                get: $util.oneOfGetter($oneOfFields = ["authRequest", "authResponse", "subscribe", "unsubscribe", "heartbeat", "vrControl", "chassisVelocity", "jointCommand", "endEffectorCmd", "gripperCommand", "navigationGoal", "navigationControl", "liftCommand", "waistCommand", "headCommand", "armMove", "armJog", "robotState", "jointState", "armState", "chassisState", "gripperState", "vrSystemState", "taskState", "actuatorState", "basicState", "error", "modeChanged", "controlChanged", "emergencyStop"]),
                 set: $util.oneOfSetter($oneOfFields)
             });
 
@@ -8160,6 +8171,8 @@ export const qyh = $root.qyh = (() => {
                     $root.qyh.dataplane.TaskState.encode(message.taskState, writer.uint32(/* id 206, wireType 2 =*/1650).fork()).ldelim();
                 if (message.actuatorState != null && Object.hasOwnProperty.call(message, "actuatorState"))
                     $root.qyh.dataplane.ActuatorState.encode(message.actuatorState, writer.uint32(/* id 207, wireType 2 =*/1658).fork()).ldelim();
+                if (message.basicState != null && Object.hasOwnProperty.call(message, "basicState"))
+                    $root.qyh.dataplane.BasicState.encode(message.basicState, writer.uint32(/* id 208, wireType 2 =*/1666).fork()).ldelim();
                 if (message.error != null && Object.hasOwnProperty.call(message, "error"))
                     $root.qyh.dataplane.Error.encode(message.error, writer.uint32(/* id 300, wireType 2 =*/2402).fork()).ldelim();
                 if (message.modeChanged != null && Object.hasOwnProperty.call(message, "modeChanged"))
@@ -8316,6 +8329,10 @@ export const qyh = $root.qyh = (() => {
                             message.actuatorState = $root.qyh.dataplane.ActuatorState.decode(reader, reader.uint32());
                             break;
                         }
+                    case 208: {
+                            message.basicState = $root.qyh.dataplane.BasicState.decode(reader, reader.uint32());
+                            break;
+                        }
                     case 300: {
                             message.error = $root.qyh.dataplane.Error.decode(reader, reader.uint32());
                             break;
@@ -8401,6 +8418,7 @@ export const qyh = $root.qyh = (() => {
                     case 517:
                     case 518:
                     case 519:
+                    case 520:
                     case 768:
                     case 1024:
                     case 1025:
@@ -8663,6 +8681,16 @@ export const qyh = $root.qyh = (() => {
                             return "actuatorState." + error;
                     }
                 }
+                if (message.basicState != null && message.hasOwnProperty("basicState")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    {
+                        let error = $root.qyh.dataplane.BasicState.verify(message.basicState);
+                        if (error)
+                            return "basicState." + error;
+                    }
+                }
                 if (message.error != null && message.hasOwnProperty("error")) {
                     if (properties.payload === 1)
                         return "payload: multiple values";
@@ -8841,6 +8869,10 @@ export const qyh = $root.qyh = (() => {
                 case 519:
                     message.type = 519;
                     break;
+                case "MSG_BASIC_STATE":
+                case 520:
+                    message.type = 520;
+                    break;
                 case "MSG_ERROR":
                 case 768:
                     message.type = 768;
@@ -8996,6 +9028,11 @@ export const qyh = $root.qyh = (() => {
                     if (typeof object.actuatorState !== "object")
                         throw TypeError(".qyh.dataplane.WebSocketMessage.actuatorState: object expected");
                     message.actuatorState = $root.qyh.dataplane.ActuatorState.fromObject(object.actuatorState);
+                }
+                if (object.basicState != null) {
+                    if (typeof object.basicState !== "object")
+                        throw TypeError(".qyh.dataplane.WebSocketMessage.basicState: object expected");
+                    message.basicState = $root.qyh.dataplane.BasicState.fromObject(object.basicState);
                 }
                 if (object.error != null) {
                     if (typeof object.error !== "object")
@@ -9175,6 +9212,11 @@ export const qyh = $root.qyh = (() => {
                     object.actuatorState = $root.qyh.dataplane.ActuatorState.toObject(message.actuatorState, options);
                     if (options.oneofs)
                         object.payload = "actuatorState";
+                }
+                if (message.basicState != null && message.hasOwnProperty("basicState")) {
+                    object.basicState = $root.qyh.dataplane.BasicState.toObject(message.basicState, options);
+                    if (options.oneofs)
+                        object.payload = "basicState";
                 }
                 if (message.error != null && message.hasOwnProperty("error")) {
                     object.error = $root.qyh.dataplane.Error.toObject(message.error, options);
@@ -14367,6 +14409,1782 @@ export const qyh = $root.qyh = (() => {
             })();
 
             return TaskState;
+        })();
+
+        dataplane.ModuleStatus = (function() {
+
+            /**
+             * Properties of a ModuleStatus.
+             * @memberof qyh.dataplane
+             * @interface IModuleStatus
+             * @property {boolean|null} [connected] ModuleStatus connected
+             * @property {boolean|null} [enabled] ModuleStatus enabled
+             * @property {boolean|null} [error] ModuleStatus error
+             * @property {number|null} [errorCode] ModuleStatus errorCode
+             */
+
+            /**
+             * Constructs a new ModuleStatus.
+             * @memberof qyh.dataplane
+             * @classdesc Represents a ModuleStatus.
+             * @implements IModuleStatus
+             * @constructor
+             * @param {qyh.dataplane.IModuleStatus=} [properties] Properties to set
+             */
+            function ModuleStatus(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * ModuleStatus connected.
+             * @member {boolean} connected
+             * @memberof qyh.dataplane.ModuleStatus
+             * @instance
+             */
+            ModuleStatus.prototype.connected = false;
+
+            /**
+             * ModuleStatus enabled.
+             * @member {boolean} enabled
+             * @memberof qyh.dataplane.ModuleStatus
+             * @instance
+             */
+            ModuleStatus.prototype.enabled = false;
+
+            /**
+             * ModuleStatus error.
+             * @member {boolean} error
+             * @memberof qyh.dataplane.ModuleStatus
+             * @instance
+             */
+            ModuleStatus.prototype.error = false;
+
+            /**
+             * ModuleStatus errorCode.
+             * @member {number} errorCode
+             * @memberof qyh.dataplane.ModuleStatus
+             * @instance
+             */
+            ModuleStatus.prototype.errorCode = 0;
+
+            /**
+             * Creates a new ModuleStatus instance using the specified properties.
+             * @function create
+             * @memberof qyh.dataplane.ModuleStatus
+             * @static
+             * @param {qyh.dataplane.IModuleStatus=} [properties] Properties to set
+             * @returns {qyh.dataplane.ModuleStatus} ModuleStatus instance
+             */
+            ModuleStatus.create = function create(properties) {
+                return new ModuleStatus(properties);
+            };
+
+            /**
+             * Encodes the specified ModuleStatus message. Does not implicitly {@link qyh.dataplane.ModuleStatus.verify|verify} messages.
+             * @function encode
+             * @memberof qyh.dataplane.ModuleStatus
+             * @static
+             * @param {qyh.dataplane.IModuleStatus} message ModuleStatus message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ModuleStatus.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.connected != null && Object.hasOwnProperty.call(message, "connected"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).bool(message.connected);
+                if (message.enabled != null && Object.hasOwnProperty.call(message, "enabled"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).bool(message.enabled);
+                if (message.error != null && Object.hasOwnProperty.call(message, "error"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).bool(message.error);
+                if (message.errorCode != null && Object.hasOwnProperty.call(message, "errorCode"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int32(message.errorCode);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified ModuleStatus message, length delimited. Does not implicitly {@link qyh.dataplane.ModuleStatus.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof qyh.dataplane.ModuleStatus
+             * @static
+             * @param {qyh.dataplane.IModuleStatus} message ModuleStatus message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            ModuleStatus.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a ModuleStatus message from the specified reader or buffer.
+             * @function decode
+             * @memberof qyh.dataplane.ModuleStatus
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {qyh.dataplane.ModuleStatus} ModuleStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ModuleStatus.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.qyh.dataplane.ModuleStatus();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.connected = reader.bool();
+                            break;
+                        }
+                    case 2: {
+                            message.enabled = reader.bool();
+                            break;
+                        }
+                    case 3: {
+                            message.error = reader.bool();
+                            break;
+                        }
+                    case 4: {
+                            message.errorCode = reader.int32();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a ModuleStatus message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof qyh.dataplane.ModuleStatus
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {qyh.dataplane.ModuleStatus} ModuleStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            ModuleStatus.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a ModuleStatus message.
+             * @function verify
+             * @memberof qyh.dataplane.ModuleStatus
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            ModuleStatus.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.connected != null && message.hasOwnProperty("connected"))
+                    if (typeof message.connected !== "boolean")
+                        return "connected: boolean expected";
+                if (message.enabled != null && message.hasOwnProperty("enabled"))
+                    if (typeof message.enabled !== "boolean")
+                        return "enabled: boolean expected";
+                if (message.error != null && message.hasOwnProperty("error"))
+                    if (typeof message.error !== "boolean")
+                        return "error: boolean expected";
+                if (message.errorCode != null && message.hasOwnProperty("errorCode"))
+                    if (!$util.isInteger(message.errorCode))
+                        return "errorCode: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a ModuleStatus message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof qyh.dataplane.ModuleStatus
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {qyh.dataplane.ModuleStatus} ModuleStatus
+             */
+            ModuleStatus.fromObject = function fromObject(object) {
+                if (object instanceof $root.qyh.dataplane.ModuleStatus)
+                    return object;
+                let message = new $root.qyh.dataplane.ModuleStatus();
+                if (object.connected != null)
+                    message.connected = Boolean(object.connected);
+                if (object.enabled != null)
+                    message.enabled = Boolean(object.enabled);
+                if (object.error != null)
+                    message.error = Boolean(object.error);
+                if (object.errorCode != null)
+                    message.errorCode = object.errorCode | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a ModuleStatus message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof qyh.dataplane.ModuleStatus
+             * @static
+             * @param {qyh.dataplane.ModuleStatus} message ModuleStatus
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            ModuleStatus.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (options.defaults) {
+                    object.connected = false;
+                    object.enabled = false;
+                    object.error = false;
+                    object.errorCode = 0;
+                }
+                if (message.connected != null && message.hasOwnProperty("connected"))
+                    object.connected = message.connected;
+                if (message.enabled != null && message.hasOwnProperty("enabled"))
+                    object.enabled = message.enabled;
+                if (message.error != null && message.hasOwnProperty("error"))
+                    object.error = message.error;
+                if (message.errorCode != null && message.hasOwnProperty("errorCode"))
+                    object.errorCode = message.errorCode;
+                return object;
+            };
+
+            /**
+             * Converts this ModuleStatus to JSON.
+             * @function toJSON
+             * @memberof qyh.dataplane.ModuleStatus
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            ModuleStatus.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for ModuleStatus
+             * @function getTypeUrl
+             * @memberof qyh.dataplane.ModuleStatus
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            ModuleStatus.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/qyh.dataplane.ModuleStatus";
+            };
+
+            return ModuleStatus;
+        })();
+
+        dataplane.CameraStatus = (function() {
+
+            /**
+             * Properties of a CameraStatus.
+             * @memberof qyh.dataplane
+             * @interface ICameraStatus
+             * @property {boolean|null} [headConnected] CameraStatus headConnected
+             * @property {boolean|null} [leftHandConnected] CameraStatus leftHandConnected
+             * @property {boolean|null} [rightHandConnected] CameraStatus rightHandConnected
+             */
+
+            /**
+             * Constructs a new CameraStatus.
+             * @memberof qyh.dataplane
+             * @classdesc Represents a CameraStatus.
+             * @implements ICameraStatus
+             * @constructor
+             * @param {qyh.dataplane.ICameraStatus=} [properties] Properties to set
+             */
+            function CameraStatus(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * CameraStatus headConnected.
+             * @member {boolean} headConnected
+             * @memberof qyh.dataplane.CameraStatus
+             * @instance
+             */
+            CameraStatus.prototype.headConnected = false;
+
+            /**
+             * CameraStatus leftHandConnected.
+             * @member {boolean} leftHandConnected
+             * @memberof qyh.dataplane.CameraStatus
+             * @instance
+             */
+            CameraStatus.prototype.leftHandConnected = false;
+
+            /**
+             * CameraStatus rightHandConnected.
+             * @member {boolean} rightHandConnected
+             * @memberof qyh.dataplane.CameraStatus
+             * @instance
+             */
+            CameraStatus.prototype.rightHandConnected = false;
+
+            /**
+             * Creates a new CameraStatus instance using the specified properties.
+             * @function create
+             * @memberof qyh.dataplane.CameraStatus
+             * @static
+             * @param {qyh.dataplane.ICameraStatus=} [properties] Properties to set
+             * @returns {qyh.dataplane.CameraStatus} CameraStatus instance
+             */
+            CameraStatus.create = function create(properties) {
+                return new CameraStatus(properties);
+            };
+
+            /**
+             * Encodes the specified CameraStatus message. Does not implicitly {@link qyh.dataplane.CameraStatus.verify|verify} messages.
+             * @function encode
+             * @memberof qyh.dataplane.CameraStatus
+             * @static
+             * @param {qyh.dataplane.ICameraStatus} message CameraStatus message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            CameraStatus.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.headConnected != null && Object.hasOwnProperty.call(message, "headConnected"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).bool(message.headConnected);
+                if (message.leftHandConnected != null && Object.hasOwnProperty.call(message, "leftHandConnected"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).bool(message.leftHandConnected);
+                if (message.rightHandConnected != null && Object.hasOwnProperty.call(message, "rightHandConnected"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).bool(message.rightHandConnected);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified CameraStatus message, length delimited. Does not implicitly {@link qyh.dataplane.CameraStatus.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof qyh.dataplane.CameraStatus
+             * @static
+             * @param {qyh.dataplane.ICameraStatus} message CameraStatus message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            CameraStatus.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a CameraStatus message from the specified reader or buffer.
+             * @function decode
+             * @memberof qyh.dataplane.CameraStatus
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {qyh.dataplane.CameraStatus} CameraStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            CameraStatus.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.qyh.dataplane.CameraStatus();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.headConnected = reader.bool();
+                            break;
+                        }
+                    case 2: {
+                            message.leftHandConnected = reader.bool();
+                            break;
+                        }
+                    case 3: {
+                            message.rightHandConnected = reader.bool();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a CameraStatus message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof qyh.dataplane.CameraStatus
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {qyh.dataplane.CameraStatus} CameraStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            CameraStatus.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a CameraStatus message.
+             * @function verify
+             * @memberof qyh.dataplane.CameraStatus
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            CameraStatus.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.headConnected != null && message.hasOwnProperty("headConnected"))
+                    if (typeof message.headConnected !== "boolean")
+                        return "headConnected: boolean expected";
+                if (message.leftHandConnected != null && message.hasOwnProperty("leftHandConnected"))
+                    if (typeof message.leftHandConnected !== "boolean")
+                        return "leftHandConnected: boolean expected";
+                if (message.rightHandConnected != null && message.hasOwnProperty("rightHandConnected"))
+                    if (typeof message.rightHandConnected !== "boolean")
+                        return "rightHandConnected: boolean expected";
+                return null;
+            };
+
+            /**
+             * Creates a CameraStatus message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof qyh.dataplane.CameraStatus
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {qyh.dataplane.CameraStatus} CameraStatus
+             */
+            CameraStatus.fromObject = function fromObject(object) {
+                if (object instanceof $root.qyh.dataplane.CameraStatus)
+                    return object;
+                let message = new $root.qyh.dataplane.CameraStatus();
+                if (object.headConnected != null)
+                    message.headConnected = Boolean(object.headConnected);
+                if (object.leftHandConnected != null)
+                    message.leftHandConnected = Boolean(object.leftHandConnected);
+                if (object.rightHandConnected != null)
+                    message.rightHandConnected = Boolean(object.rightHandConnected);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a CameraStatus message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof qyh.dataplane.CameraStatus
+             * @static
+             * @param {qyh.dataplane.CameraStatus} message CameraStatus
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            CameraStatus.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (options.defaults) {
+                    object.headConnected = false;
+                    object.leftHandConnected = false;
+                    object.rightHandConnected = false;
+                }
+                if (message.headConnected != null && message.hasOwnProperty("headConnected"))
+                    object.headConnected = message.headConnected;
+                if (message.leftHandConnected != null && message.hasOwnProperty("leftHandConnected"))
+                    object.leftHandConnected = message.leftHandConnected;
+                if (message.rightHandConnected != null && message.hasOwnProperty("rightHandConnected"))
+                    object.rightHandConnected = message.rightHandConnected;
+                return object;
+            };
+
+            /**
+             * Converts this CameraStatus to JSON.
+             * @function toJSON
+             * @memberof qyh.dataplane.CameraStatus
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            CameraStatus.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for CameraStatus
+             * @function getTypeUrl
+             * @memberof qyh.dataplane.CameraStatus
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            CameraStatus.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/qyh.dataplane.CameraStatus";
+            };
+
+            return CameraStatus;
+        })();
+
+        dataplane.GripperStatusSummary = (function() {
+
+            /**
+             * Properties of a GripperStatusSummary.
+             * @memberof qyh.dataplane
+             * @interface IGripperStatusSummary
+             * @property {boolean|null} [leftConnected] GripperStatusSummary leftConnected
+             * @property {boolean|null} [leftActivated] GripperStatusSummary leftActivated
+             * @property {number|null} [leftFault] GripperStatusSummary leftFault
+             * @property {boolean|null} [rightConnected] GripperStatusSummary rightConnected
+             * @property {boolean|null} [rightActivated] GripperStatusSummary rightActivated
+             * @property {number|null} [rightFault] GripperStatusSummary rightFault
+             */
+
+            /**
+             * Constructs a new GripperStatusSummary.
+             * @memberof qyh.dataplane
+             * @classdesc Represents a GripperStatusSummary.
+             * @implements IGripperStatusSummary
+             * @constructor
+             * @param {qyh.dataplane.IGripperStatusSummary=} [properties] Properties to set
+             */
+            function GripperStatusSummary(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * GripperStatusSummary leftConnected.
+             * @member {boolean} leftConnected
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @instance
+             */
+            GripperStatusSummary.prototype.leftConnected = false;
+
+            /**
+             * GripperStatusSummary leftActivated.
+             * @member {boolean} leftActivated
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @instance
+             */
+            GripperStatusSummary.prototype.leftActivated = false;
+
+            /**
+             * GripperStatusSummary leftFault.
+             * @member {number} leftFault
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @instance
+             */
+            GripperStatusSummary.prototype.leftFault = 0;
+
+            /**
+             * GripperStatusSummary rightConnected.
+             * @member {boolean} rightConnected
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @instance
+             */
+            GripperStatusSummary.prototype.rightConnected = false;
+
+            /**
+             * GripperStatusSummary rightActivated.
+             * @member {boolean} rightActivated
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @instance
+             */
+            GripperStatusSummary.prototype.rightActivated = false;
+
+            /**
+             * GripperStatusSummary rightFault.
+             * @member {number} rightFault
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @instance
+             */
+            GripperStatusSummary.prototype.rightFault = 0;
+
+            /**
+             * Creates a new GripperStatusSummary instance using the specified properties.
+             * @function create
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @static
+             * @param {qyh.dataplane.IGripperStatusSummary=} [properties] Properties to set
+             * @returns {qyh.dataplane.GripperStatusSummary} GripperStatusSummary instance
+             */
+            GripperStatusSummary.create = function create(properties) {
+                return new GripperStatusSummary(properties);
+            };
+
+            /**
+             * Encodes the specified GripperStatusSummary message. Does not implicitly {@link qyh.dataplane.GripperStatusSummary.verify|verify} messages.
+             * @function encode
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @static
+             * @param {qyh.dataplane.IGripperStatusSummary} message GripperStatusSummary message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GripperStatusSummary.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.leftConnected != null && Object.hasOwnProperty.call(message, "leftConnected"))
+                    writer.uint32(/* id 1, wireType 0 =*/8).bool(message.leftConnected);
+                if (message.leftActivated != null && Object.hasOwnProperty.call(message, "leftActivated"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).bool(message.leftActivated);
+                if (message.leftFault != null && Object.hasOwnProperty.call(message, "leftFault"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).int32(message.leftFault);
+                if (message.rightConnected != null && Object.hasOwnProperty.call(message, "rightConnected"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).bool(message.rightConnected);
+                if (message.rightActivated != null && Object.hasOwnProperty.call(message, "rightActivated"))
+                    writer.uint32(/* id 5, wireType 0 =*/40).bool(message.rightActivated);
+                if (message.rightFault != null && Object.hasOwnProperty.call(message, "rightFault"))
+                    writer.uint32(/* id 6, wireType 0 =*/48).int32(message.rightFault);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified GripperStatusSummary message, length delimited. Does not implicitly {@link qyh.dataplane.GripperStatusSummary.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @static
+             * @param {qyh.dataplane.IGripperStatusSummary} message GripperStatusSummary message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GripperStatusSummary.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a GripperStatusSummary message from the specified reader or buffer.
+             * @function decode
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {qyh.dataplane.GripperStatusSummary} GripperStatusSummary
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GripperStatusSummary.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.qyh.dataplane.GripperStatusSummary();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.leftConnected = reader.bool();
+                            break;
+                        }
+                    case 2: {
+                            message.leftActivated = reader.bool();
+                            break;
+                        }
+                    case 3: {
+                            message.leftFault = reader.int32();
+                            break;
+                        }
+                    case 4: {
+                            message.rightConnected = reader.bool();
+                            break;
+                        }
+                    case 5: {
+                            message.rightActivated = reader.bool();
+                            break;
+                        }
+                    case 6: {
+                            message.rightFault = reader.int32();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a GripperStatusSummary message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {qyh.dataplane.GripperStatusSummary} GripperStatusSummary
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GripperStatusSummary.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a GripperStatusSummary message.
+             * @function verify
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            GripperStatusSummary.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.leftConnected != null && message.hasOwnProperty("leftConnected"))
+                    if (typeof message.leftConnected !== "boolean")
+                        return "leftConnected: boolean expected";
+                if (message.leftActivated != null && message.hasOwnProperty("leftActivated"))
+                    if (typeof message.leftActivated !== "boolean")
+                        return "leftActivated: boolean expected";
+                if (message.leftFault != null && message.hasOwnProperty("leftFault"))
+                    if (!$util.isInteger(message.leftFault))
+                        return "leftFault: integer expected";
+                if (message.rightConnected != null && message.hasOwnProperty("rightConnected"))
+                    if (typeof message.rightConnected !== "boolean")
+                        return "rightConnected: boolean expected";
+                if (message.rightActivated != null && message.hasOwnProperty("rightActivated"))
+                    if (typeof message.rightActivated !== "boolean")
+                        return "rightActivated: boolean expected";
+                if (message.rightFault != null && message.hasOwnProperty("rightFault"))
+                    if (!$util.isInteger(message.rightFault))
+                        return "rightFault: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a GripperStatusSummary message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {qyh.dataplane.GripperStatusSummary} GripperStatusSummary
+             */
+            GripperStatusSummary.fromObject = function fromObject(object) {
+                if (object instanceof $root.qyh.dataplane.GripperStatusSummary)
+                    return object;
+                let message = new $root.qyh.dataplane.GripperStatusSummary();
+                if (object.leftConnected != null)
+                    message.leftConnected = Boolean(object.leftConnected);
+                if (object.leftActivated != null)
+                    message.leftActivated = Boolean(object.leftActivated);
+                if (object.leftFault != null)
+                    message.leftFault = object.leftFault | 0;
+                if (object.rightConnected != null)
+                    message.rightConnected = Boolean(object.rightConnected);
+                if (object.rightActivated != null)
+                    message.rightActivated = Boolean(object.rightActivated);
+                if (object.rightFault != null)
+                    message.rightFault = object.rightFault | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a GripperStatusSummary message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @static
+             * @param {qyh.dataplane.GripperStatusSummary} message GripperStatusSummary
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            GripperStatusSummary.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (options.defaults) {
+                    object.leftConnected = false;
+                    object.leftActivated = false;
+                    object.leftFault = 0;
+                    object.rightConnected = false;
+                    object.rightActivated = false;
+                    object.rightFault = 0;
+                }
+                if (message.leftConnected != null && message.hasOwnProperty("leftConnected"))
+                    object.leftConnected = message.leftConnected;
+                if (message.leftActivated != null && message.hasOwnProperty("leftActivated"))
+                    object.leftActivated = message.leftActivated;
+                if (message.leftFault != null && message.hasOwnProperty("leftFault"))
+                    object.leftFault = message.leftFault;
+                if (message.rightConnected != null && message.hasOwnProperty("rightConnected"))
+                    object.rightConnected = message.rightConnected;
+                if (message.rightActivated != null && message.hasOwnProperty("rightActivated"))
+                    object.rightActivated = message.rightActivated;
+                if (message.rightFault != null && message.hasOwnProperty("rightFault"))
+                    object.rightFault = message.rightFault;
+                return object;
+            };
+
+            /**
+             * Converts this GripperStatusSummary to JSON.
+             * @function toJSON
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            GripperStatusSummary.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for GripperStatusSummary
+             * @function getTypeUrl
+             * @memberof qyh.dataplane.GripperStatusSummary
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            GripperStatusSummary.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/qyh.dataplane.GripperStatusSummary";
+            };
+
+            return GripperStatusSummary;
+        })();
+
+        dataplane.BatteryStatus = (function() {
+
+            /**
+             * Properties of a BatteryStatus.
+             * @memberof qyh.dataplane
+             * @interface IBatteryStatus
+             * @property {number|null} [percentage] BatteryStatus percentage
+             * @property {number|null} [voltage] BatteryStatus voltage
+             * @property {boolean|null} [charging] BatteryStatus charging
+             */
+
+            /**
+             * Constructs a new BatteryStatus.
+             * @memberof qyh.dataplane
+             * @classdesc Represents a BatteryStatus.
+             * @implements IBatteryStatus
+             * @constructor
+             * @param {qyh.dataplane.IBatteryStatus=} [properties] Properties to set
+             */
+            function BatteryStatus(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * BatteryStatus percentage.
+             * @member {number} percentage
+             * @memberof qyh.dataplane.BatteryStatus
+             * @instance
+             */
+            BatteryStatus.prototype.percentage = 0;
+
+            /**
+             * BatteryStatus voltage.
+             * @member {number} voltage
+             * @memberof qyh.dataplane.BatteryStatus
+             * @instance
+             */
+            BatteryStatus.prototype.voltage = 0;
+
+            /**
+             * BatteryStatus charging.
+             * @member {boolean} charging
+             * @memberof qyh.dataplane.BatteryStatus
+             * @instance
+             */
+            BatteryStatus.prototype.charging = false;
+
+            /**
+             * Creates a new BatteryStatus instance using the specified properties.
+             * @function create
+             * @memberof qyh.dataplane.BatteryStatus
+             * @static
+             * @param {qyh.dataplane.IBatteryStatus=} [properties] Properties to set
+             * @returns {qyh.dataplane.BatteryStatus} BatteryStatus instance
+             */
+            BatteryStatus.create = function create(properties) {
+                return new BatteryStatus(properties);
+            };
+
+            /**
+             * Encodes the specified BatteryStatus message. Does not implicitly {@link qyh.dataplane.BatteryStatus.verify|verify} messages.
+             * @function encode
+             * @memberof qyh.dataplane.BatteryStatus
+             * @static
+             * @param {qyh.dataplane.IBatteryStatus} message BatteryStatus message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            BatteryStatus.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.percentage != null && Object.hasOwnProperty.call(message, "percentage"))
+                    writer.uint32(/* id 1, wireType 1 =*/9).double(message.percentage);
+                if (message.voltage != null && Object.hasOwnProperty.call(message, "voltage"))
+                    writer.uint32(/* id 2, wireType 1 =*/17).double(message.voltage);
+                if (message.charging != null && Object.hasOwnProperty.call(message, "charging"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).bool(message.charging);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified BatteryStatus message, length delimited. Does not implicitly {@link qyh.dataplane.BatteryStatus.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof qyh.dataplane.BatteryStatus
+             * @static
+             * @param {qyh.dataplane.IBatteryStatus} message BatteryStatus message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            BatteryStatus.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a BatteryStatus message from the specified reader or buffer.
+             * @function decode
+             * @memberof qyh.dataplane.BatteryStatus
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {qyh.dataplane.BatteryStatus} BatteryStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            BatteryStatus.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.qyh.dataplane.BatteryStatus();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.percentage = reader.double();
+                            break;
+                        }
+                    case 2: {
+                            message.voltage = reader.double();
+                            break;
+                        }
+                    case 3: {
+                            message.charging = reader.bool();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a BatteryStatus message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof qyh.dataplane.BatteryStatus
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {qyh.dataplane.BatteryStatus} BatteryStatus
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            BatteryStatus.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a BatteryStatus message.
+             * @function verify
+             * @memberof qyh.dataplane.BatteryStatus
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            BatteryStatus.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.percentage != null && message.hasOwnProperty("percentage"))
+                    if (typeof message.percentage !== "number")
+                        return "percentage: number expected";
+                if (message.voltage != null && message.hasOwnProperty("voltage"))
+                    if (typeof message.voltage !== "number")
+                        return "voltage: number expected";
+                if (message.charging != null && message.hasOwnProperty("charging"))
+                    if (typeof message.charging !== "boolean")
+                        return "charging: boolean expected";
+                return null;
+            };
+
+            /**
+             * Creates a BatteryStatus message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof qyh.dataplane.BatteryStatus
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {qyh.dataplane.BatteryStatus} BatteryStatus
+             */
+            BatteryStatus.fromObject = function fromObject(object) {
+                if (object instanceof $root.qyh.dataplane.BatteryStatus)
+                    return object;
+                let message = new $root.qyh.dataplane.BatteryStatus();
+                if (object.percentage != null)
+                    message.percentage = Number(object.percentage);
+                if (object.voltage != null)
+                    message.voltage = Number(object.voltage);
+                if (object.charging != null)
+                    message.charging = Boolean(object.charging);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a BatteryStatus message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof qyh.dataplane.BatteryStatus
+             * @static
+             * @param {qyh.dataplane.BatteryStatus} message BatteryStatus
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            BatteryStatus.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (options.defaults) {
+                    object.percentage = 0;
+                    object.voltage = 0;
+                    object.charging = false;
+                }
+                if (message.percentage != null && message.hasOwnProperty("percentage"))
+                    object.percentage = options.json && !isFinite(message.percentage) ? String(message.percentage) : message.percentage;
+                if (message.voltage != null && message.hasOwnProperty("voltage"))
+                    object.voltage = options.json && !isFinite(message.voltage) ? String(message.voltage) : message.voltage;
+                if (message.charging != null && message.hasOwnProperty("charging"))
+                    object.charging = message.charging;
+                return object;
+            };
+
+            /**
+             * Converts this BatteryStatus to JSON.
+             * @function toJSON
+             * @memberof qyh.dataplane.BatteryStatus
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            BatteryStatus.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for BatteryStatus
+             * @function getTypeUrl
+             * @memberof qyh.dataplane.BatteryStatus
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            BatteryStatus.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/qyh.dataplane.BatteryStatus";
+            };
+
+            return BatteryStatus;
+        })();
+
+        dataplane.BasicState = (function() {
+
+            /**
+             * Properties of a BasicState.
+             * @memberof qyh.dataplane
+             * @interface IBasicState
+             * @property {qyh.dataplane.IHeader|null} [header] BasicState header
+             * @property {boolean|null} [wsConnected] BasicState wsConnected
+             * @property {boolean|null} [rosConnected] BasicState rosConnected
+             * @property {qyh.dataplane.IModuleStatus|null} [arm] BasicState arm
+             * @property {qyh.dataplane.IModuleStatus|null} [chassis] BasicState chassis
+             * @property {qyh.dataplane.IModuleStatus|null} [lift] BasicState lift
+             * @property {qyh.dataplane.IModuleStatus|null} [waist] BasicState waist
+             * @property {qyh.dataplane.IModuleStatus|null} [head] BasicState head
+             * @property {qyh.dataplane.ICameraStatus|null} [camera] BasicState camera
+             * @property {qyh.dataplane.IGripperStatusSummary|null} [gripper] BasicState gripper
+             * @property {boolean|null} [vrConnected] BasicState vrConnected
+             * @property {boolean|null} [vrLeftController] BasicState vrLeftController
+             * @property {boolean|null} [vrRightController] BasicState vrRightController
+             * @property {boolean|null} [emergencyStop] BasicState emergencyStop
+             * @property {qyh.dataplane.IBatteryStatus|null} [battery] BasicState battery
+             * @property {qyh.dataplane.RobotMode|null} [mode] BasicState mode
+             * @property {boolean|null} [controlHeld] BasicState controlHeld
+             * @property {string|null} [controlHolder] BasicState controlHolder
+             */
+
+            /**
+             * Constructs a new BasicState.
+             * @memberof qyh.dataplane
+             * @classdesc Represents a BasicState.
+             * @implements IBasicState
+             * @constructor
+             * @param {qyh.dataplane.IBasicState=} [properties] Properties to set
+             */
+            function BasicState(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null)
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * BasicState header.
+             * @member {qyh.dataplane.IHeader|null|undefined} header
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.header = null;
+
+            /**
+             * BasicState wsConnected.
+             * @member {boolean} wsConnected
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.wsConnected = false;
+
+            /**
+             * BasicState rosConnected.
+             * @member {boolean} rosConnected
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.rosConnected = false;
+
+            /**
+             * BasicState arm.
+             * @member {qyh.dataplane.IModuleStatus|null|undefined} arm
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.arm = null;
+
+            /**
+             * BasicState chassis.
+             * @member {qyh.dataplane.IModuleStatus|null|undefined} chassis
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.chassis = null;
+
+            /**
+             * BasicState lift.
+             * @member {qyh.dataplane.IModuleStatus|null|undefined} lift
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.lift = null;
+
+            /**
+             * BasicState waist.
+             * @member {qyh.dataplane.IModuleStatus|null|undefined} waist
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.waist = null;
+
+            /**
+             * BasicState head.
+             * @member {qyh.dataplane.IModuleStatus|null|undefined} head
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.head = null;
+
+            /**
+             * BasicState camera.
+             * @member {qyh.dataplane.ICameraStatus|null|undefined} camera
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.camera = null;
+
+            /**
+             * BasicState gripper.
+             * @member {qyh.dataplane.IGripperStatusSummary|null|undefined} gripper
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.gripper = null;
+
+            /**
+             * BasicState vrConnected.
+             * @member {boolean} vrConnected
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.vrConnected = false;
+
+            /**
+             * BasicState vrLeftController.
+             * @member {boolean} vrLeftController
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.vrLeftController = false;
+
+            /**
+             * BasicState vrRightController.
+             * @member {boolean} vrRightController
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.vrRightController = false;
+
+            /**
+             * BasicState emergencyStop.
+             * @member {boolean} emergencyStop
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.emergencyStop = false;
+
+            /**
+             * BasicState battery.
+             * @member {qyh.dataplane.IBatteryStatus|null|undefined} battery
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.battery = null;
+
+            /**
+             * BasicState mode.
+             * @member {qyh.dataplane.RobotMode} mode
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.mode = 0;
+
+            /**
+             * BasicState controlHeld.
+             * @member {boolean} controlHeld
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.controlHeld = false;
+
+            /**
+             * BasicState controlHolder.
+             * @member {string} controlHolder
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             */
+            BasicState.prototype.controlHolder = "";
+
+            /**
+             * Creates a new BasicState instance using the specified properties.
+             * @function create
+             * @memberof qyh.dataplane.BasicState
+             * @static
+             * @param {qyh.dataplane.IBasicState=} [properties] Properties to set
+             * @returns {qyh.dataplane.BasicState} BasicState instance
+             */
+            BasicState.create = function create(properties) {
+                return new BasicState(properties);
+            };
+
+            /**
+             * Encodes the specified BasicState message. Does not implicitly {@link qyh.dataplane.BasicState.verify|verify} messages.
+             * @function encode
+             * @memberof qyh.dataplane.BasicState
+             * @static
+             * @param {qyh.dataplane.IBasicState} message BasicState message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            BasicState.encode = function encode(message, writer) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (message.header != null && Object.hasOwnProperty.call(message, "header"))
+                    $root.qyh.dataplane.Header.encode(message.header, writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+                if (message.wsConnected != null && Object.hasOwnProperty.call(message, "wsConnected"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).bool(message.wsConnected);
+                if (message.rosConnected != null && Object.hasOwnProperty.call(message, "rosConnected"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).bool(message.rosConnected);
+                if (message.arm != null && Object.hasOwnProperty.call(message, "arm"))
+                    $root.qyh.dataplane.ModuleStatus.encode(message.arm, writer.uint32(/* id 4, wireType 2 =*/34).fork()).ldelim();
+                if (message.chassis != null && Object.hasOwnProperty.call(message, "chassis"))
+                    $root.qyh.dataplane.ModuleStatus.encode(message.chassis, writer.uint32(/* id 5, wireType 2 =*/42).fork()).ldelim();
+                if (message.lift != null && Object.hasOwnProperty.call(message, "lift"))
+                    $root.qyh.dataplane.ModuleStatus.encode(message.lift, writer.uint32(/* id 6, wireType 2 =*/50).fork()).ldelim();
+                if (message.waist != null && Object.hasOwnProperty.call(message, "waist"))
+                    $root.qyh.dataplane.ModuleStatus.encode(message.waist, writer.uint32(/* id 7, wireType 2 =*/58).fork()).ldelim();
+                if (message.head != null && Object.hasOwnProperty.call(message, "head"))
+                    $root.qyh.dataplane.ModuleStatus.encode(message.head, writer.uint32(/* id 8, wireType 2 =*/66).fork()).ldelim();
+                if (message.camera != null && Object.hasOwnProperty.call(message, "camera"))
+                    $root.qyh.dataplane.CameraStatus.encode(message.camera, writer.uint32(/* id 9, wireType 2 =*/74).fork()).ldelim();
+                if (message.gripper != null && Object.hasOwnProperty.call(message, "gripper"))
+                    $root.qyh.dataplane.GripperStatusSummary.encode(message.gripper, writer.uint32(/* id 10, wireType 2 =*/82).fork()).ldelim();
+                if (message.vrConnected != null && Object.hasOwnProperty.call(message, "vrConnected"))
+                    writer.uint32(/* id 11, wireType 0 =*/88).bool(message.vrConnected);
+                if (message.vrLeftController != null && Object.hasOwnProperty.call(message, "vrLeftController"))
+                    writer.uint32(/* id 12, wireType 0 =*/96).bool(message.vrLeftController);
+                if (message.vrRightController != null && Object.hasOwnProperty.call(message, "vrRightController"))
+                    writer.uint32(/* id 13, wireType 0 =*/104).bool(message.vrRightController);
+                if (message.emergencyStop != null && Object.hasOwnProperty.call(message, "emergencyStop"))
+                    writer.uint32(/* id 14, wireType 0 =*/112).bool(message.emergencyStop);
+                if (message.battery != null && Object.hasOwnProperty.call(message, "battery"))
+                    $root.qyh.dataplane.BatteryStatus.encode(message.battery, writer.uint32(/* id 15, wireType 2 =*/122).fork()).ldelim();
+                if (message.mode != null && Object.hasOwnProperty.call(message, "mode"))
+                    writer.uint32(/* id 16, wireType 0 =*/128).int32(message.mode);
+                if (message.controlHeld != null && Object.hasOwnProperty.call(message, "controlHeld"))
+                    writer.uint32(/* id 17, wireType 0 =*/136).bool(message.controlHeld);
+                if (message.controlHolder != null && Object.hasOwnProperty.call(message, "controlHolder"))
+                    writer.uint32(/* id 18, wireType 2 =*/146).string(message.controlHolder);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified BasicState message, length delimited. Does not implicitly {@link qyh.dataplane.BasicState.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof qyh.dataplane.BasicState
+             * @static
+             * @param {qyh.dataplane.IBasicState} message BasicState message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            BasicState.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer).ldelim();
+            };
+
+            /**
+             * Decodes a BasicState message from the specified reader or buffer.
+             * @function decode
+             * @memberof qyh.dataplane.BasicState
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {qyh.dataplane.BasicState} BasicState
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            BasicState.decode = function decode(reader, length, error) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.qyh.dataplane.BasicState();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.header = $root.qyh.dataplane.Header.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 2: {
+                            message.wsConnected = reader.bool();
+                            break;
+                        }
+                    case 3: {
+                            message.rosConnected = reader.bool();
+                            break;
+                        }
+                    case 4: {
+                            message.arm = $root.qyh.dataplane.ModuleStatus.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 5: {
+                            message.chassis = $root.qyh.dataplane.ModuleStatus.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 6: {
+                            message.lift = $root.qyh.dataplane.ModuleStatus.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 7: {
+                            message.waist = $root.qyh.dataplane.ModuleStatus.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 8: {
+                            message.head = $root.qyh.dataplane.ModuleStatus.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 9: {
+                            message.camera = $root.qyh.dataplane.CameraStatus.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 10: {
+                            message.gripper = $root.qyh.dataplane.GripperStatusSummary.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 11: {
+                            message.vrConnected = reader.bool();
+                            break;
+                        }
+                    case 12: {
+                            message.vrLeftController = reader.bool();
+                            break;
+                        }
+                    case 13: {
+                            message.vrRightController = reader.bool();
+                            break;
+                        }
+                    case 14: {
+                            message.emergencyStop = reader.bool();
+                            break;
+                        }
+                    case 15: {
+                            message.battery = $root.qyh.dataplane.BatteryStatus.decode(reader, reader.uint32());
+                            break;
+                        }
+                    case 16: {
+                            message.mode = reader.int32();
+                            break;
+                        }
+                    case 17: {
+                            message.controlHeld = reader.bool();
+                            break;
+                        }
+                    case 18: {
+                            message.controlHolder = reader.string();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a BasicState message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof qyh.dataplane.BasicState
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {qyh.dataplane.BasicState} BasicState
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            BasicState.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a BasicState message.
+             * @function verify
+             * @memberof qyh.dataplane.BasicState
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            BasicState.verify = function verify(message) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (message.header != null && message.hasOwnProperty("header")) {
+                    let error = $root.qyh.dataplane.Header.verify(message.header);
+                    if (error)
+                        return "header." + error;
+                }
+                if (message.wsConnected != null && message.hasOwnProperty("wsConnected"))
+                    if (typeof message.wsConnected !== "boolean")
+                        return "wsConnected: boolean expected";
+                if (message.rosConnected != null && message.hasOwnProperty("rosConnected"))
+                    if (typeof message.rosConnected !== "boolean")
+                        return "rosConnected: boolean expected";
+                if (message.arm != null && message.hasOwnProperty("arm")) {
+                    let error = $root.qyh.dataplane.ModuleStatus.verify(message.arm);
+                    if (error)
+                        return "arm." + error;
+                }
+                if (message.chassis != null && message.hasOwnProperty("chassis")) {
+                    let error = $root.qyh.dataplane.ModuleStatus.verify(message.chassis);
+                    if (error)
+                        return "chassis." + error;
+                }
+                if (message.lift != null && message.hasOwnProperty("lift")) {
+                    let error = $root.qyh.dataplane.ModuleStatus.verify(message.lift);
+                    if (error)
+                        return "lift." + error;
+                }
+                if (message.waist != null && message.hasOwnProperty("waist")) {
+                    let error = $root.qyh.dataplane.ModuleStatus.verify(message.waist);
+                    if (error)
+                        return "waist." + error;
+                }
+                if (message.head != null && message.hasOwnProperty("head")) {
+                    let error = $root.qyh.dataplane.ModuleStatus.verify(message.head);
+                    if (error)
+                        return "head." + error;
+                }
+                if (message.camera != null && message.hasOwnProperty("camera")) {
+                    let error = $root.qyh.dataplane.CameraStatus.verify(message.camera);
+                    if (error)
+                        return "camera." + error;
+                }
+                if (message.gripper != null && message.hasOwnProperty("gripper")) {
+                    let error = $root.qyh.dataplane.GripperStatusSummary.verify(message.gripper);
+                    if (error)
+                        return "gripper." + error;
+                }
+                if (message.vrConnected != null && message.hasOwnProperty("vrConnected"))
+                    if (typeof message.vrConnected !== "boolean")
+                        return "vrConnected: boolean expected";
+                if (message.vrLeftController != null && message.hasOwnProperty("vrLeftController"))
+                    if (typeof message.vrLeftController !== "boolean")
+                        return "vrLeftController: boolean expected";
+                if (message.vrRightController != null && message.hasOwnProperty("vrRightController"))
+                    if (typeof message.vrRightController !== "boolean")
+                        return "vrRightController: boolean expected";
+                if (message.emergencyStop != null && message.hasOwnProperty("emergencyStop"))
+                    if (typeof message.emergencyStop !== "boolean")
+                        return "emergencyStop: boolean expected";
+                if (message.battery != null && message.hasOwnProperty("battery")) {
+                    let error = $root.qyh.dataplane.BatteryStatus.verify(message.battery);
+                    if (error)
+                        return "battery." + error;
+                }
+                if (message.mode != null && message.hasOwnProperty("mode"))
+                    switch (message.mode) {
+                    default:
+                        return "mode: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        break;
+                    }
+                if (message.controlHeld != null && message.hasOwnProperty("controlHeld"))
+                    if (typeof message.controlHeld !== "boolean")
+                        return "controlHeld: boolean expected";
+                if (message.controlHolder != null && message.hasOwnProperty("controlHolder"))
+                    if (!$util.isString(message.controlHolder))
+                        return "controlHolder: string expected";
+                return null;
+            };
+
+            /**
+             * Creates a BasicState message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof qyh.dataplane.BasicState
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {qyh.dataplane.BasicState} BasicState
+             */
+            BasicState.fromObject = function fromObject(object) {
+                if (object instanceof $root.qyh.dataplane.BasicState)
+                    return object;
+                let message = new $root.qyh.dataplane.BasicState();
+                if (object.header != null) {
+                    if (typeof object.header !== "object")
+                        throw TypeError(".qyh.dataplane.BasicState.header: object expected");
+                    message.header = $root.qyh.dataplane.Header.fromObject(object.header);
+                }
+                if (object.wsConnected != null)
+                    message.wsConnected = Boolean(object.wsConnected);
+                if (object.rosConnected != null)
+                    message.rosConnected = Boolean(object.rosConnected);
+                if (object.arm != null) {
+                    if (typeof object.arm !== "object")
+                        throw TypeError(".qyh.dataplane.BasicState.arm: object expected");
+                    message.arm = $root.qyh.dataplane.ModuleStatus.fromObject(object.arm);
+                }
+                if (object.chassis != null) {
+                    if (typeof object.chassis !== "object")
+                        throw TypeError(".qyh.dataplane.BasicState.chassis: object expected");
+                    message.chassis = $root.qyh.dataplane.ModuleStatus.fromObject(object.chassis);
+                }
+                if (object.lift != null) {
+                    if (typeof object.lift !== "object")
+                        throw TypeError(".qyh.dataplane.BasicState.lift: object expected");
+                    message.lift = $root.qyh.dataplane.ModuleStatus.fromObject(object.lift);
+                }
+                if (object.waist != null) {
+                    if (typeof object.waist !== "object")
+                        throw TypeError(".qyh.dataplane.BasicState.waist: object expected");
+                    message.waist = $root.qyh.dataplane.ModuleStatus.fromObject(object.waist);
+                }
+                if (object.head != null) {
+                    if (typeof object.head !== "object")
+                        throw TypeError(".qyh.dataplane.BasicState.head: object expected");
+                    message.head = $root.qyh.dataplane.ModuleStatus.fromObject(object.head);
+                }
+                if (object.camera != null) {
+                    if (typeof object.camera !== "object")
+                        throw TypeError(".qyh.dataplane.BasicState.camera: object expected");
+                    message.camera = $root.qyh.dataplane.CameraStatus.fromObject(object.camera);
+                }
+                if (object.gripper != null) {
+                    if (typeof object.gripper !== "object")
+                        throw TypeError(".qyh.dataplane.BasicState.gripper: object expected");
+                    message.gripper = $root.qyh.dataplane.GripperStatusSummary.fromObject(object.gripper);
+                }
+                if (object.vrConnected != null)
+                    message.vrConnected = Boolean(object.vrConnected);
+                if (object.vrLeftController != null)
+                    message.vrLeftController = Boolean(object.vrLeftController);
+                if (object.vrRightController != null)
+                    message.vrRightController = Boolean(object.vrRightController);
+                if (object.emergencyStop != null)
+                    message.emergencyStop = Boolean(object.emergencyStop);
+                if (object.battery != null) {
+                    if (typeof object.battery !== "object")
+                        throw TypeError(".qyh.dataplane.BasicState.battery: object expected");
+                    message.battery = $root.qyh.dataplane.BatteryStatus.fromObject(object.battery);
+                }
+                switch (object.mode) {
+                default:
+                    if (typeof object.mode === "number") {
+                        message.mode = object.mode;
+                        break;
+                    }
+                    break;
+                case "MODE_IDLE":
+                case 0:
+                    message.mode = 0;
+                    break;
+                case "MODE_TELEOP":
+                case 1:
+                    message.mode = 1;
+                    break;
+                case "MODE_AUTO":
+                case 2:
+                    message.mode = 2;
+                    break;
+                case "MODE_MAINTENANCE":
+                case 3:
+                    message.mode = 3;
+                    break;
+                case "MODE_ERROR":
+                case 4:
+                    message.mode = 4;
+                    break;
+                }
+                if (object.controlHeld != null)
+                    message.controlHeld = Boolean(object.controlHeld);
+                if (object.controlHolder != null)
+                    message.controlHolder = String(object.controlHolder);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a BasicState message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof qyh.dataplane.BasicState
+             * @static
+             * @param {qyh.dataplane.BasicState} message BasicState
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            BasicState.toObject = function toObject(message, options) {
+                if (!options)
+                    options = {};
+                let object = {};
+                if (options.defaults) {
+                    object.header = null;
+                    object.wsConnected = false;
+                    object.rosConnected = false;
+                    object.arm = null;
+                    object.chassis = null;
+                    object.lift = null;
+                    object.waist = null;
+                    object.head = null;
+                    object.camera = null;
+                    object.gripper = null;
+                    object.vrConnected = false;
+                    object.vrLeftController = false;
+                    object.vrRightController = false;
+                    object.emergencyStop = false;
+                    object.battery = null;
+                    object.mode = options.enums === String ? "MODE_IDLE" : 0;
+                    object.controlHeld = false;
+                    object.controlHolder = "";
+                }
+                if (message.header != null && message.hasOwnProperty("header"))
+                    object.header = $root.qyh.dataplane.Header.toObject(message.header, options);
+                if (message.wsConnected != null && message.hasOwnProperty("wsConnected"))
+                    object.wsConnected = message.wsConnected;
+                if (message.rosConnected != null && message.hasOwnProperty("rosConnected"))
+                    object.rosConnected = message.rosConnected;
+                if (message.arm != null && message.hasOwnProperty("arm"))
+                    object.arm = $root.qyh.dataplane.ModuleStatus.toObject(message.arm, options);
+                if (message.chassis != null && message.hasOwnProperty("chassis"))
+                    object.chassis = $root.qyh.dataplane.ModuleStatus.toObject(message.chassis, options);
+                if (message.lift != null && message.hasOwnProperty("lift"))
+                    object.lift = $root.qyh.dataplane.ModuleStatus.toObject(message.lift, options);
+                if (message.waist != null && message.hasOwnProperty("waist"))
+                    object.waist = $root.qyh.dataplane.ModuleStatus.toObject(message.waist, options);
+                if (message.head != null && message.hasOwnProperty("head"))
+                    object.head = $root.qyh.dataplane.ModuleStatus.toObject(message.head, options);
+                if (message.camera != null && message.hasOwnProperty("camera"))
+                    object.camera = $root.qyh.dataplane.CameraStatus.toObject(message.camera, options);
+                if (message.gripper != null && message.hasOwnProperty("gripper"))
+                    object.gripper = $root.qyh.dataplane.GripperStatusSummary.toObject(message.gripper, options);
+                if (message.vrConnected != null && message.hasOwnProperty("vrConnected"))
+                    object.vrConnected = message.vrConnected;
+                if (message.vrLeftController != null && message.hasOwnProperty("vrLeftController"))
+                    object.vrLeftController = message.vrLeftController;
+                if (message.vrRightController != null && message.hasOwnProperty("vrRightController"))
+                    object.vrRightController = message.vrRightController;
+                if (message.emergencyStop != null && message.hasOwnProperty("emergencyStop"))
+                    object.emergencyStop = message.emergencyStop;
+                if (message.battery != null && message.hasOwnProperty("battery"))
+                    object.battery = $root.qyh.dataplane.BatteryStatus.toObject(message.battery, options);
+                if (message.mode != null && message.hasOwnProperty("mode"))
+                    object.mode = options.enums === String ? $root.qyh.dataplane.RobotMode[message.mode] === undefined ? message.mode : $root.qyh.dataplane.RobotMode[message.mode] : message.mode;
+                if (message.controlHeld != null && message.hasOwnProperty("controlHeld"))
+                    object.controlHeld = message.controlHeld;
+                if (message.controlHolder != null && message.hasOwnProperty("controlHolder"))
+                    object.controlHolder = message.controlHolder;
+                return object;
+            };
+
+            /**
+             * Converts this BasicState to JSON.
+             * @function toJSON
+             * @memberof qyh.dataplane.BasicState
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            BasicState.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for BasicState
+             * @function getTypeUrl
+             * @memberof qyh.dataplane.BasicState
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            BasicState.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/qyh.dataplane.BasicState";
+            };
+
+            return BasicState;
         })();
 
         return dataplane;

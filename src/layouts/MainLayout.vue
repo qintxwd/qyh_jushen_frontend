@@ -320,7 +320,8 @@ const {
   headTiltState,
   leftGripperState,
   rightGripperState,
-  vrSystemState
+  vrSystemState,
+  basicState
 } = dataPlane
 
 let shutdownInterval: number | null = null
@@ -498,7 +499,7 @@ onMounted(() => {
       stopShutdownPolling()
       return
     }
-    subscribe(['arm_state', 'chassis_state', 'gripper_state', 'actuator_state', 'vr_system_state'])
+    subscribe(['basic_state', 'arm_state', 'chassis_state', 'gripper_state', 'actuator_state', 'vr_system_state'])
     startShutdownPolling()
   }, { immediate: true })
 
@@ -584,6 +585,95 @@ onMounted(() => {
       leftController: state.left_controller_active ?? false,
       rightController: state.right_controller_active ?? false
     })
+  }, { deep: true, immediate: true })
+
+  // 监听基础状态（来自 WebSocket 推送，更全面的状态）
+  watch(basicState, (state) => {
+    console.log('[MainLayout] 📊 收到基础状态更新:', state)
+    
+    // 更新 ROS 连接状态
+    if (state.rosConnected !== undefined) {
+      layoutStore.updateConnectionStatus({ ros: state.rosConnected })
+    }
+    
+    // 更新机械臂状态
+    if (state.arm) {
+      layoutStore.updateArmStatus({
+        connected: state.arm.connected ?? false,
+        powered: state.arm.enabled ?? false,
+        enabled: state.arm.enabled ?? false,
+        servoMode: false,
+        error: state.arm.error ?? false,
+        errorCode: state.arm.errorCode ?? 0
+      })
+    }
+    
+    // 更新底盘状态
+    if (state.chassis || state.battery) {
+      const chassis = state.chassis || {}
+      const battery = state.battery || {}
+      layoutStore.updateChassisStatus({
+        connected: chassis.connected ?? true,
+        system_status: state.emergencyStop ? 0x03 : 0x02,
+        system_status_text: state.emergencyStop ? '急停' : '在线',
+        emergency: state.emergencyStop ?? false,
+        error: chassis.error ?? false,
+        batteryPercentage: Math.round(battery.percentage ?? 0),
+        batteryVoltage: battery.voltage ?? 0,
+        isCharging: battery.charging ?? false
+      })
+    }
+    
+    // 更新升降状态
+    if (state.lift) {
+      layoutStore.updateLiftStatus({
+        connected: state.lift.connected ?? false,
+        enabled: state.lift.enabled ?? false,
+        alarm: state.lift.error ?? false
+      })
+    }
+    
+    // 更新腰部状态
+    if (state.waist) {
+      layoutStore.updateWaistStatus({
+        connected: state.waist.connected ?? false,
+        enabled: state.waist.enabled ?? false,
+        error: state.waist.error ?? false
+      })
+    }
+    
+    // 更新头部状态
+    if (state.head) {
+      layoutStore.updateHeadStatus({
+        connected: state.head.connected ?? false,
+        enabled: state.head.enabled ?? false,
+        error: state.head.error ?? false
+      })
+    }
+    
+    // 更新夹爪状态
+    if (state.gripper) {
+      layoutStore.updateGripperStatus('left', {
+        communication_ok: state.gripper.leftConnected ?? false,
+        is_activated: state.gripper.leftActivated ?? false,
+        fault_code: state.gripper.leftFault ?? 0
+      })
+      layoutStore.updateGripperStatus('right', {
+        communication_ok: state.gripper.rightConnected ?? false,
+        is_activated: state.gripper.rightActivated ?? false,
+        fault_code: state.gripper.rightFault ?? 0
+      })
+    }
+    
+    // 更新 VR 状态
+    if (state.vrConnected !== undefined) {
+      layoutStore.updateVRStatus({
+        connected: state.vrConnected ?? false,
+        headsetActive: state.vrConnected ?? false,
+        leftController: state.vrLeftController ?? false,
+        rightController: state.vrRightController ?? false
+      })
+    }
   }, { deep: true, immediate: true })
 
   // 监听硬件关机事件
